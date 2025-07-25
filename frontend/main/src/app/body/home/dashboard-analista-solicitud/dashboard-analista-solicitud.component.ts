@@ -8,6 +8,7 @@ import moment from 'moment';
 import { Smartwfm } from 'src/app/core/Util/smartwfm/smartwfm';
 import { UserAp } from 'src/app/core/interface/apUser/apUser';
 import { SelectMenu } from 'src/app/core/interface/menu/select-menu';
+import { AuthenticationService } from 'src/app/core/services/authentication-service/authentication.service';
 import { ExcelService } from 'src/app/core/services/excel-service/excel-service.service';
 import { SubResourceService } from 'src/app/core/services/service-crud-operations/sub-resource.service';
 import { GlobalVariable, SolicitudVariable } from 'src/app/core/static/variables/url/URLImages';
@@ -89,7 +90,8 @@ export class DashboardAnalistaSolicitudComponent implements OnInit {
     nombre : "",
     RFC: "",
     tramite: "",
-    status: ""
+    status: "",
+    categoria: null
   };
 
   constructor(
@@ -98,28 +100,32 @@ export class DashboardAnalistaSolicitudComponent implements OnInit {
     private excelService:ExcelService,
     private modal: ModalService,
     private announcer: LiveAnnouncer,
+    private AuthenticationService : AuthenticationService
   ) {}
 
   ngOnInit() {
-    let userExterno = JSON.parse(localStorage.getItem('currentUser'));
-    let com = JSON.parse(localStorage.getItem('currentUserComercial'));
-    let sin = JSON.parse(localStorage.getItem('currentUserSiniestros'));
-    let cont = JSON.parse(localStorage.getItem('currentUserContabilidad'));
-    if(com !== null){
-      this.userApp = com;
-      this.isComercial = true;
-    }else
-    if(sin !== null){
-      this.userApp = sin;
-      this.isSiniestros = true;
-    }else
-    if(cont !== null){
-      this.userApp = cont;
-      this.isContabilidad = true;
-    }else
-    if(userExterno !== null){
-      this.userApp = userExterno;
-      this.isExterno = true;
+    let allUsuarios = [];
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUser")))
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserComercial")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserSiniestros")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserContabilidad")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserAdmin")));
+    allUsuarios.push(JSON.parse(localStorage.getItem('idCuenta')));
+    this.userApp = allUsuarios.find( (value) => value !== null );
+    switch (this.userApp.authorities[0]['authority']) {
+        case 'ROLE_ACOME':
+          this.isComercial = true;
+        break;
+        case 'ROLE_ASINI':
+          this.isSiniestros = true;
+        break;
+        case 'ROLE_ACONT':
+          this.isContabilidad = true;
+        break;
+
+      default:
+        this.AuthenticationService.validacionUser();
+        break;
     }
 
     this.refreshList();
@@ -135,6 +141,7 @@ export class DashboardAnalistaSolicitudComponent implements OnInit {
     this.getSolicitudes();
     this.initOptionsTipoTramite();
     this.initOptionsEstatus();
+    //this.AuthenticationService.validacionUser();
     if(this.isContabilidad){
       this.getListCalculo();
     }
@@ -159,14 +166,14 @@ export class DashboardAnalistaSolicitudComponent implements OnInit {
   }
 
   getSolicitudes(){
-    this.subResourceService.list(SolicitudVariable.GET_SOLIITUDES_ANALISTAS,'' ,{nombre: '', RFC: '', tramite: '', status: ''})
+    this.subResourceService.list(SolicitudVariable.GET_SOLIITUDES_ANALISTAS,'' ,{nombre: '', RFC: '', tramite: '', status: '', fechaIni: '', fechaFin: '', categoriaSolicitud: ''})
       .subscribe( data=> {
         data.forEach(item => {
           item.isLayout = false;
           item.isReporteContable = false;
         });
        let dataFiltrada = data.filter((data) => data.empleadoAsignacion === this.userApp.username  );
-       this.solicitudes = dataFiltrada;
+       this.solicitudes = dataFiltrada.sort(((a, b) => a.numeroRegistro - b.numeroRegistro));;
        this.solicitudesAux = Object.assign([],data);
        this.dataSource.data = this.solicitudes
       }, error=>{
@@ -521,6 +528,8 @@ export class DashboardAnalistaSolicitudComponent implements OnInit {
       this.router.navigate(['/angular/dashboard-analista']);
     }else if( ruta === 'analista' ){
       this.router.navigate(['/angular/dashboard-all-analista']);
+    }else if( ruta === 'aclaraciones' ){
+      this.router.navigate(['/angular/main-aclaraciones']);
     }
   }
 
@@ -652,6 +661,7 @@ export class DashboardAnalistaSolicitudComponent implements OnInit {
       })
       let data = {
         id: item.numeroRegistro,
+        FechaRegistro: moment(item.fechaSolicitudAPV).format('DD/MM/YYYY'),
         FechaDeSolicitud: moment(item.fechaSolicitud).format('DD/MM/YYYY'),
         Dependencia: item.dependencia,
         Ap_Paterno: item.apellidoPaterno,
@@ -714,6 +724,7 @@ export class DashboardAnalistaSolicitudComponent implements OnInit {
         RFC: this.solicitud.RFC,
         tramite: this.solicitud.tramite,
         status: this.solicitud.status,
+        categoriaSolicitud : ''
       }
     ).subscribe( (data) => {
       this.solicitudes = data;

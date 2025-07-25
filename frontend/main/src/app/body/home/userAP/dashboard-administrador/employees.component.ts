@@ -27,6 +27,9 @@ import { InactiveUsersButtonComponent } from "src/app/shared/components/inactive
 import { tableHeaders } from "src/app/shared/constants/employees-table-headers";
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from "@angular/router";
+import { AuthenticationService } from "src/app/core/services/authentication-service/authentication.service";
+import { ExcelService } from "src/app/core/services/excel-service/excel-service.service";
+import swal from "sweetalert2";
 
 
 @Component({
@@ -62,6 +65,7 @@ export class EmployeesComponent implements OnInit, AfterViewInit {
     dependencia: string;
     unidadAdministrativa: string;
   };
+  userApp: any;
   selectedUnitAdmin = '';
   selectedDependency='';
   unidadesAdministrativas=[];
@@ -82,7 +86,9 @@ export class EmployeesComponent implements OnInit, AfterViewInit {
     private announcer: LiveAnnouncer,
     private modal: ModalService,
     private dependenciesService: DependenciesService,
-    private adminUnitsService: AdminUnitsService
+    private adminUnitsService: AdminUnitsService,
+    private authencationService: AuthenticationService,
+    private excelService: ExcelService
     ) {
     this.user = {
       rfc: '',
@@ -93,6 +99,7 @@ export class EmployeesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.authencationService.validacionAdmin();
     this.refreshList();
   }
 
@@ -198,15 +205,17 @@ export class EmployeesComponent implements OnInit, AfterViewInit {
         Nombre: item.nombre + " " + item.apellidoPaterno + " " + item.apellidoMaterno,
         RFC: item.rfc,
         Email: item.mail,
+        Status: item.estatus === 1 ? "Activo" : "Inactivo",
         NumeroDeEmpleado: item.noEmpleado,
         Dependencia: item.dependenciaCatalogo,
         UnidadAdministrativa: item.unidadCatalogo,
-        FechaDeNacimiento: item.fechaNacimiento,
-        Sexo: item.sexo,
-        FechaDeAlta: item.fechaCreacion,
+        FechaDeNacimiento: item.fechaNacimiento ? moment(item.fechaNacimiento).format('DD/MM/YYYY') : '',
+        Sexo: item.sexo !== "1" ? item.sexo : item.sexo !== "0" ? item.sexo : item.sexo === "1" ? "" : item.sexo === "0" ? "" : "",
+        FechaDeAlta: item.fechaCreacion ? moment(item.fechaCreacion).format('DD/MM/YYYY') : '',
       };
     });
-    downloadCSV("Reporte_Empleados_" + moment().format("YYYY-MM-DD"), arrayReporte);
+    this.excelService.exportAsExcelFile(arrayReporte, "Reporte_Empleados_" + moment().format("YYYY-MM-DD"));
+    swal('Éxito', 'Se generó correctamente la descarga de empleados', 'success');
   }
 
   changeEstatus(item, estatus) {
@@ -235,7 +244,6 @@ export class EmployeesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Agg 7-7-2023
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();

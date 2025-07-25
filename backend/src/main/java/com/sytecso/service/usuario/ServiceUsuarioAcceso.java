@@ -71,5 +71,7 @@ public interface ServiceUsuarioAcceso {
 	
 	public List<EmpleadoAPDTO> getEmpleadosExternos();
 	
+	public boolean getUserExist(String rfc) throws SQLException;
+	
 	
 }

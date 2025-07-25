@@ -2,6 +2,7 @@ package com.sytecso.dto.batchmodel;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 public class DTOBatchTransform implements Serializable {
 	/**
@@ -17,6 +18,31 @@ public class DTOBatchTransform implements Serializable {
 	private List<DTODetalle> batchDetalleSinRFC;
 	private boolean status;
 	private boolean tipo;
+	private Set<String> rfcLista;
+	private Set<String> rfcListaInvalidos;
+	private Set<DTOAsegurado> asegurados;
+	
+	
+	
+	
+	public Set<DTOAsegurado> getAsegurados() {
+		return asegurados;
+	}
+	public void setAsegurados(Set<DTOAsegurado> asegurados) {
+		this.asegurados = asegurados;
+	}
+	public Set<String> getRfcListaInvalidos() {
+		return rfcListaInvalidos;
+	}
+	public void setRfcListaInvalidos(Set<String> rfcListaInvalidos) {
+		this.rfcListaInvalidos = rfcListaInvalidos;
+	}
+	public Set<String> getRfcLista() {
+		return rfcLista;
+	}
+	public void setRfcLista(Set<String> rfcLista) {
+		this.rfcLista = rfcLista;
+	}
 	public List<DTOResumen> getBatchResumen() {
 		return batchResumen;
 	}

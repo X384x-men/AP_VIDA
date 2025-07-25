@@ -310,6 +310,8 @@ export class DashboardAllAnalistasComponent implements OnInit {
       this.router.navigate(['/angular/dashboard-analista']);
     }else if( ruta === 'analista' ){
       this.router.navigate(['/angular/dashboard-all-analista']);
+    }else if( ruta === 'aclaraciones' ){
+      this.router.navigate(['/angular/main-aclaraciones']);
     }
   }
 

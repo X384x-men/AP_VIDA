@@ -10,6 +10,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { ConceptsService } from "src/app/shared/services/concepts.service";
 import swal from "sweetalert2";
+import { AuthenticationService } from "src/app/core/services/authentication-service/authentication.service";
 
 @Component({
   standalone: true,
@@ -29,13 +30,17 @@ import swal from "sweetalert2";
 })
 export class ConceptsComponent  implements OnInit {
 
+  userApp : any;
   public dataSource = new MatTableDataSource<Concept>();
 
-  constructor (private conceptsService: ConceptsService){}
+  constructor (private conceptsService: ConceptsService,
+    private authencationService: AuthenticationService){}
 
   ngOnInit(){
+    this.authencationService.validacionAdmin();
     this.getConceptsInfo();
   }
+
 
   openConceptModal() {
     swal({

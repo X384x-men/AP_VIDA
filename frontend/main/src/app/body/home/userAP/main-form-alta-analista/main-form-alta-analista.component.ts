@@ -68,7 +68,6 @@ export class MainFormAltaAnalistaComponent {
   }
 
   guardar() {
-    console.log(this.user);
     if(this.user.invalid){
       swal("Alerta", 'Debes completar toda la información solicitada', "info");
       return;
@@ -98,11 +97,9 @@ export class MainFormAltaAnalistaComponent {
       this.user.value.dependencia =  data[0].descripcionCatalogo;
 
       if (this.user.value.ididDependencia && this.user.value.idUnidad) {
-        console.log('pase');
         this.createAnalista(this.user.value).subscribe(
           (result) => {
             this.loading = false;
-            console.log({result});
             this.welcome = true;
           },
           (error) => {

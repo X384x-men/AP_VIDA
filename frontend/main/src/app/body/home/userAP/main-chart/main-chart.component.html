@@ -3,49 +3,121 @@
 </div>
 
 <div *ngIf="!loading" >
-  <div class="row">
-    <div class="col-6">
-      <apx-chart
-        [series]="chartOptions.series"
-        [chart]="chartOptions.chart"
-        [plotOptions]="chartOptions.plotOptions"
-        [labels]="chartOptions.labels"
-        [legend]="chartOptions.legend"
-        [colors]="chartOptions.colors"
-        [responsive]="chartOptions.responsive"
-      ></apx-chart>
+
+  <div id="chart" *ngIf="!mes">
+    <div *ngIf="loading && !mes" >
+      <div class=" text-center animate__animated animate__flash animate__infinite	infinite animate__slow	2s">
+        <i  class="fa fa-spinner fa-spin fa-4x mt-5 " aria-hidden="true"></i>
+      </div>
     </div>
-    <div class="col-6">
-      <div id="chart" >
-        <apx-chart
+    <div *ngIf="!mes && !loading" > <p class="fw-bold">¡Debes Seleccionar una fecha para ver las grafica!</p>
+      <div class="row g-2 ">
+        <div class="col-md">
+          <div class="widthTd">
+            <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha comienzo</mat-label>
+                  <input matInput [matDatepicker]="picker1" [max]="maxDate" (dateInput)="solicituFechaInicial($event.value)" [disabled]="fecha1 !== ''">
+                  <mat-datepicker-toggle matSuffix [for]="picker1" [disabled]="fecha1 !== ''"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1 [disabled]="isExterno"></mat-datepicker>
+                </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="widthTd">
+            <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha final</mat-label>
+                  <input matInput [matDatepicker]="picker2" [max]="maxDate" (dateInput)="solicituFechafinal($event.value)" [disabled]="fecha1 === ''" >
+                  <mat-datepicker-toggle matSuffix [for]="picker2" [disabled]="fecha1 === ''"></mat-datepicker-toggle>
+                  <mat-datepicker #picker2 [disabled]="isExterno"></mat-datepicker>
+                </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-busqueda" (click)="almacenarFecha()" [disabled]="fecha1 === '' && fecha2 === '' || fecha1 !== '' && fecha2 === ''" > Buscar </button>
+
+    </div>
+    <div *ngIf="mes && !loading" >
+      <!-- <apx-chart
         [series]="chartOptions1.series"
         [chart]="chartOptions1.chart"
+        [dataLabels]="chartOptions1.dataLabels"
         [plotOptions]="chartOptions1.plotOptions"
-        [labels]="chartOptions1.labels"
-        [legend]="chartOptions1.legend"
-        [colors]="chartOptions1.colors"
-        [responsive]="chartOptions1.responsive"
+        [yaxis]="chartOptions1.yaxis"
+        [xaxis]="chartOptions1.xaxis"
+        [stroke]="chartOptions1.stroke"
+        [grid]="chartOptions1.grid"
+        [fill]="chartOptions1.fill"
+        [annotations]="chartOptions1.annotations"
+      ></apx-chart> -->
+
+    </div>
+
+  </div>
+
+
+  <div class="row" *ngIf="mes">
+    <div class="col-6">
+      <div *ngIf="seleccion" class="text-center mt-5">
+        <p class="fw-bold">¡SELECCIONAR UN TIPO DE GRAFICA!</p>
+      </div>
+      <div id="chart" *ngIf="status">
+        <apx-chart
+          [series]="chartOptions2.series"
+          [chart]="chartOptions2.chart"
+          [dataLabels]="chartOptions2.dataLabels"
+          [plotOptions]="chartOptions2.plotOptions"
+          [yaxis]="chartOptions2.yaxis"
+          [xaxis]="chartOptions2.xaxis"
+          [stroke]="chartOptions2.stroke"
+          [grid]="chartOptions2.grid"
+          [fill]="chartOptions2.fill"
+          [annotations]="chartOptions2.annotations"
+        ></apx-chart>
+      </div>
+      <div id="chart" *ngIf="tramite">
+        <apx-chart
+          [series]="chartOptions.series"
+          [chart]="chartOptions.chart"
+          [dataLabels]="chartOptions.dataLabels"
+          [plotOptions]="chartOptions.plotOptions"
+          [yaxis]="chartOptions.yaxis"
+          [xaxis]="chartOptions.xaxis"
+          [stroke]="chartOptions.stroke"
+          [grid]="chartOptions.grid"
+          [fill]="chartOptions.fill"
+          [annotations]="chartOptions.annotations"
+        ></apx-chart>
+      </div>
+      <div id="chart" *ngIf="analista">
+        <apx-chart
+          [series]="chartOptions3.series"
+          [chart]="chartOptions3.chart"
+          [dataLabels]="chartOptions3.dataLabels"
+          [plotOptions]="chartOptions3.plotOptions"
+          [yaxis]="chartOptions3.yaxis"
+          [xaxis]="chartOptions3.xaxis"
+          [stroke]="chartOptions3.stroke"
+          [grid]="chartOptions3.grid"
+          [fill]="chartOptions3.fill"
+          [annotations]="chartOptions3.annotations"
         ></apx-chart>
       </div>
     </div>
-  </div>
+    <div class="col-6">
+      <div class="text-left">
+        <button type="button" class="btn btn-busqueda mt-5" (click)="condicionalFront('tramite')" > Por Tramite </button>
+        <br>
+        <button type="button" class="btn btn-busqueda mt-5" (click)="condicionalFront('status')"> Por Status </button>
+        <br>
+        <button type="button" class="btn btn-busqueda mt-5" (click)="condicionalFront('analista')"> Por Analista </button>
+        <br>
+        <!-- <button type="button" class="btn btn-busqueda mt-5" (click)="condicionalFront('fecha')"> Por Fecha </button> -->
+        <button class="btn btn-busqueda mt-5" (click)="reiniciarFechas()"> Cambiar fechas </button>
+      </div>
+    </div>
 
-  <div id="chart">
-    <apx-chart
-      [series]="chartOptions2.series"
-      [chart]="chartOptions2.chart"
-      [dataLabels]="chartOptions2.dataLabels"
-      [plotOptions]="chartOptions2.plotOptions"
-      [yaxis]="chartOptions2.yaxis"
-      [xaxis]="chartOptions2.xaxis"
-      [stroke]="chartOptions2.stroke"
-      [grid]="chartOptions2.grid"
-      [fill]="chartOptions2.fill"
-      [annotations]="chartOptions2.annotations"
-    ></apx-chart>
-  </div>
-  <div class="text-end">
-    <button type="button" class="btn btn-busqueda " (click)="refresh()" >Refrescar</button>
-  </div>
 </div>
-

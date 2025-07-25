@@ -5,7 +5,7 @@
 <form [formGroup]="adminUnitForm" (ngSubmit)="deleteAdminUnit()">
   <div mat-dialog-content>
     <p>¿Desea eliminar unidad administrativa <b>{{adminUnit.data}}</b>?</p>
-    <mat-form-field color="default" appearance="legacy">
+    <mat-form-field color="default">
       <mat-label>Confirme la unidad administrativa</mat-label>
       <input matInput required formControlName="confirmData">
     </mat-form-field>

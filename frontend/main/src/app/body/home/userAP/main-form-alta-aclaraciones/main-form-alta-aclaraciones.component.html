@@ -1,0 +1,162 @@
+<div class="margin-bottom" *ngIf="!prueba" >
+
+  <div class="form-user-ap">
+    <div class="divTitle">
+      <label class="titleListTablesSolic">Alta de Aclaración</label>
+    </div>
+
+    <div class="actions-button">
+      <button type="button" class="btn btn-danger button rounded" (click)="end()"
+      [innerText]='"Regresar"' [style.margin-left]="'5px'"></button>
+
+    </div>
+
+  </div>
+  <div class="lineSeparator mt-3" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'">
+    <label class="section-userAP"></label>
+  </div>
+</div>
+
+  <div *ngIf="loading" class="animate__animated animate__flash animate__infinite	infinite animate__slow	2s text-center">
+    <i  class="fa fa-spinner fa-spin fa-4x mt-5 " aria-hidden="true"></i>
+  </div>
+
+  <div class="containerForm" *ngIf="!loading" [class.mt-5]= "prueba" >
+
+      <form (ngSubmit)="guardar( forma )" #forma="ngForm">
+
+        <div class="row g-2">
+          <div class="col-md">
+            <div class="form-floating m-1">
+                <select class="form-select" id="floatingInputGridTipoTramite" [class.is-invalid]="tipoAclaracion.invalid && tipoAclaracion.touched" [(ngModel)]="aclaracion.tipoAclaracion" name="tipoAclaracion" #tipoAclaracion="ngModel" required [disabled]="aclaracion.idAclaracion !== ''" >
+                  <option selected > Seleccionar una opcion </option>
+                  <option *ngFor="let optionsTramite of optionsTipoTramite" [value]=optionsTramite.idTipoAclaracion> {{ optionsTramite.descripcion }} </option>
+                </select>
+                <label for="floatingInputGridTipoTramite">Tipo de Aclaración</label>
+                  <small *ngIf="tipoAclaracion.invalid && tipoAclaracion.touched" class="form-text text-danger"> Debe ingresar un trámite valido</small>
+            </div>
+          </div>
+
+          <div class="col-md">
+            <div class="form-floating m-1">
+                <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfc.invalid && rfc.touched" [(ngModel)]="aclaracion.rfc" [disabled]="aclaracion.idAclaracion !== ''" minlength="12" placeholder="RFC" name="rfc" #rfc="ngModel" required >
+                <label for="floatingInputGridRfc">RFC Asegurado</label>
+                <small *ngIf="rfc.invalid && rfc.touched" class="form-text text-danger"> Debe confirmar el RFC</small>
+            </div>
+          </div>
+
+        </div>
+        <div class="row g-2 mt-2">
+          <div class="col-md">
+            <div class="form-floating m-1">
+              <input class="form-control" id="floatingInputGridNombre" [class.is-invalid]=" nombre.invalid && nombre.touched " [(ngModel)]="aclaracion.nombre" [disabled]="aclaracion.idAclaracion !== ''" name="nombre"  pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,40}" type="text" placeholder="Nombre" #nombre="ngModel" required >
+              <label for="floatingInputGridNombre">Nombre Completo</label>
+              <small *ngIf="nombre.invalid && nombre.touched" class="form-text text-danger"> Debe ingresar un nombre valido</small>
+            </div>
+          </div>
+
+          <div class="col-md">
+            <div class="form-floating">
+              <input class="form-control" type="email" placeholder="Correo electrónico" [class.is-invalid]=" emailAclaracion.invalid && emailAclaracion.touched" [(ngModel)]="aclaracion.emailAclaracion" [disabled]="aclaracion.idAclaracion !== ''" name="emailAclaracion" #emailAclaracion="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required>
+              <label>Correo</label>
+              <small *ngIf="emailAclaracion.invalid && emailAclaracion.touched" class="form-text text-danger"> Debe ingresar un correo valido</small>
+            </div>
+          </div>
+
+        </div>
+        <div class="row g-2 mt-2">
+          <!-- Se comenta ya que el cliente no quiere este campo -->
+          <!-- <div class="col-md">
+            <div class="form-floating m-1">
+              <select class="form-select" id="floatingInputGridTipoTramite" [class.is-invalid]="documentoTipo.invalid && documentoTipo.touched" [(ngModel)]="aclaracion.documentoTipo" name="documentoTipo" #documentoTipo="ngModel" required [disabled]="aclaracion.idAclaracion !== ''" >
+                <option selected > Seleccionar una opcion </option>
+                <option *ngFor="let optionsTramite of optionsTipoTramiteDoc" [value]="optionsTramite.idCatalogoDocumento"> {{ optionsTramite.tipoDocumento }} </option>
+              </select>
+              <label for="floatingInputGridTipoTramite">Tipo de Documento</label>
+                <small *ngIf="documentoTipo.invalid && documentoTipo.touched" class="form-text text-danger"> Debe ingresar un documento valido</small>
+            </div>
+          </div> -->
+
+
+
+          <div class="col-md" *ngIf="!prueba">
+            <div class="form-floating">
+              <input class="form-control" id="floatingInputGridTelefono" [class.is-invalid]=" telefono.invalid && telefono.touched " [(ngModel)]="aclaracion.telefono" [disabled]="aclaracion.idAclaracion !== ''" name="telefono" minlength="10" type="tel" pattern="[0-9]{10,12}" placeholder="Telefono" #telefono="ngModel" required >
+              <label for="floatingInputGridTelefono">telefono</label>
+              <small *ngIf="telefono.invalid && telefono.touched" class="form-text text-danger"> Debe ingresar un telefono valido</small>
+            </div>
+          </div>
+
+          <div class="col-md">
+            <div class="widthTd">
+              <div class="dateClass">
+                  <mat-form-field [style.width]="'100%'">
+                    <mat-label class="label-date">Fecha Registro</mat-label>
+                    <input matInput [matDatepicker]="picker4" [max]="maxDate" (dateInput)="getFechaRegistro('change', $event)" (dateChange)="getFechaRegistro('change', $event)" [formControl]="date4" required [disabled]="prueba">
+                    <mat-datepicker-toggle matSuffix [for]="picker4" [disabled]="prueba"></mat-datepicker-toggle>
+                    <mat-datepicker #picker4 [disabled]="isExterno"></mat-datepicker>
+                  </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="widthTd">
+              <div class="dateClass">
+                  <mat-form-field [style.width]="'100%'">
+                    <mat-label class="label-date">Fecha Aclaracion</mat-label>
+                    <input matInput [matDatepicker]="picker3" [max]="maxDate" (dateInput)="getFechaAclaracion('change', $event)" (dateChange)="getFechaAclaracion('change', $event)" [formControl]="date3" required [disabled]="prueba">
+                    <mat-datepicker-toggle matSuffix [for]="picker3" [disabled]="prueba"></mat-datepicker-toggle>
+                    <mat-datepicker #picker3 [disabled]="isExterno"></mat-datepicker>
+                  </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'">
+          <label class="section-userAP">Documentos requeridos</label>
+        </div>
+
+        <td class="widthTd">
+          <div class="loadDoc">
+            <label >Último recibo de nómina</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" (change)="getArchivo($event.target.files)" id="file1" accept="application/pdf,image/jpeg,image/png" [disabled]="prueba">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[0].label}}</span></label>
+              <label class="buttonFile" for="file1" [disabled]="prueba"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="aclaracion.documentoList[0] ? donwloadPdf('RECIBO_NOMINA', aclaracion.documentoList[0].documentoString) : null">{{aclaracion.documentoList[0] ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[0].id && llenarForm" class="form-text text-danger"> Debe ingresar su último recibo de nómina</small>
+          </div>
+
+        </td>
+        <div class="row g-2 mt-2">
+
+          <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'">
+            <label class="section-userAP">Comentarios</label>
+          </div>
+          <div class=" obsText mb-5">
+            <label>Razon de Aclaración ( Explica el motivo de tu aclaración sea por registros, solicitudes y/o estados de cuenta )</label>
+              <textarea class="textArea-comment" name="comentarios" #observaciones="ngModel" [(ngModel)]="aclaracion.comentarios" [disabled]="aclaracion.idAclaracion !== ''" ></textarea>
+          </div>
+          <div class=" obsText" *ngIf="aclaracion.descripcionEmpleado !== null && aclaracion.descripcionEmpleado !== '' && aclaracion.descripcionEmpleado !== 'null'">
+            <label>Respuesta del coordinador</label>
+              <textarea class="textArea-comment" name="descripcionEmpleado" #descripcionEmpleado="ngModel" [(ngModel)]="aclaracion.descripcionEmpleado" disabled ></textarea>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-block text-center" *ngIf="aclaracion.idAclaracion === ''">
+          <!-- Mantener en caso de que las validaciones anteriores no sean validas -->
+          <!--  ESTILO PARA QUE SE VEA MAS NO SEA ACCESIBLE PARA CLICKEAR : [style.pointer-events]="aclaracion.statusSolicitud === 'Importes validados' && aclaracion.fechaOrdenPago != null && isSiniestros ? 'auto' : 'none'" -->
+            <button *ngIf="!isComercial"  type="button" class="btn btn-danger button rounded p-2 m-2" (click)="end()">Cancelar</button>
+            <button *ngIf="aclaracion.statusSolicitud !== 'PENDIENTE DE DOCS'" type="submit" class="btn btn-primary button rounded p-2 m-2">
+              Guardar
+            </button>
+          <small *ngIf="llenarForm && forma.invalid" class="form-text text-danger"> Debe completar el registro</small>
+        </div>
+      </form>
+
+  </div>
+

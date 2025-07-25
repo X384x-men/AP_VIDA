@@ -683,6 +683,7 @@ public class DAOUsuarioAccesoImpl implements DAOUsuarioAcceso {
 			preparedStatement.executeUpdate();
 			rs = preparedStatement.getGeneratedKeys();
 			
+			System.out.println("Actualizando DB ");
 		} catch (Exception e) {
 			SytecsoController.logClassAndMethodWithException(e);
 		} finally {
@@ -1160,6 +1161,28 @@ public class DAOUsuarioAccesoImpl implements DAOUsuarioAcceso {
 			UtileriaSql.closePreparedStatemetAndResultSet( pst, rs);
 		}
 		return RFC;
+	}
+	
+	@Override
+	public boolean getExistUserbyRfc(String rfc) throws SQLException {
+		Connection connection = dataSource.getConnection();
+		ResultSet rs = null;
+		PreparedStatement pst = null;
+		boolean resultado=false;
+		 
+		String sql = "select rfc from empleado_ap  where rfc='"+rfc+"' ";
+		try {
+			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				resultado=true;
+			}
+		} catch (Exception e) {
+			SytecsoController.logClassAndMethodWithException(e);
+		} finally {
+			UtileriaSql.closeConection(connection, pst, rs);
+		}
+		return resultado;
 	}
 
 }

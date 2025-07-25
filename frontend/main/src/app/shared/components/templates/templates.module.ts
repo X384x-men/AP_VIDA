@@ -29,6 +29,6 @@ import { PipeModule } from 'src/app/core/Util/pipe/pipe.module';
   providers: [
     LoaderComponentService
   ],
-  entryComponents: []
+  // entryComponents: []
 })
 export class TemplatesModule { }

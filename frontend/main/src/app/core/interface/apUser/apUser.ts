@@ -49,6 +49,7 @@ export interface UserAp {
   }
 
   export interface solicitudAP {
+
     idSolicitud?: number;
     numeroRegistro?: number;
     fechaSolicitud?: string;
@@ -121,6 +122,43 @@ export interface UserAp {
     sueldo?: string;
     fechaPago?: string;
     empleadoAsignacion?: string
+
+
+    //prueba de aclaracion en actualizacion
+    idEmpleadoAP?:number,
+    idAclaracion?:string | number,
+    documentoTipo?:string | number,
+    tipoAclaracion?:string | number,
+    rfc?:string,
+    fechaRegistroPortal?:any,
+    comentarios?:string | null,
+    status?: number | string
+
+    //Puebla
+    tipoSolicitud?: string;
+  }
+
+  export interface AcaracionesAp {
+    idEmpleadoAP:any,
+    idAclaracion:any,
+    documentoTipo:any,
+    tipoAclaracion:any,
+    nombre: string,
+    rfc:string,
+    dependencia: string,
+    fechaRegistroPortal:any,
+    telefono:any,
+    email:string,
+    comentarios:string | null,
+    status: any,
+    fechaReal? : any,
+    fechaAclaracion? : any
+    documentoList?: any,
+    descripcionEmpleado? : string
+    nombreAclaracion? : string;
+    emailAclaracion? : string ;
+    categoriaAclaracion? : boolean;
+    rfcAclaracion?: string;
   }
 
 

@@ -1,7 +1,0 @@
-mail.username=cliente.gem@apvida.mx
-mail.password=Cliente#2
-mail.host=smtp.gmail.com
-mail.port=587
-mail.auth=true
-mail.enable=true
-mail.from=cliente.gem@apvida.mx

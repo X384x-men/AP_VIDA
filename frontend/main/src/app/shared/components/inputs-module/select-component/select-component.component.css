@@ -6,10 +6,11 @@
     font-size: 12px !important;
   }
 
-   .mat-select-panel mat-option.mat-option {
+   .mat-select-panel mat-option.mat-mdc-option {
       height: unset;
     }
 
+   /*TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version.*/
    .mat-option-text.mat-option-text {
       /*white-space: normal;*/
       white-space: nowrap !important;
@@ -39,7 +40,7 @@
       color: #257aa9;
     }
 
-    .mat-select-panel{
+    .mat-mdc-select-panel{
       width: auto !important;
       max-width: 2000px !important;
     }

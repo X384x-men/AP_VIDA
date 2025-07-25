@@ -52,7 +52,7 @@ interface ModalData {
     h1 {
       text-align: center;
     }
-    .mat-dialog-actions {
+    .mat-mdc-dialog-actions {
       justify-content: center
     }
     button.success {

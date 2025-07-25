@@ -128,7 +128,7 @@ public class ServiceUsuarioAccesoImpl implements ServiceUsuarioAcceso {
 		if(state && daoUsuarioAcceso.updateEmpleadoAP(empleado)) {
 		System.out.println("Update DB complete");
 			//String nombreCompleo= empleado.getNombre()+" "+empleado.getApellidoPaterno()+" "+empleado.getApellidoPaterno();
-			// serviceEmail.sendEmailUpdate(nombreCompleo,empleado.getMail());
+			//serviceEmail.sendEmailUpdate(nombreCompleo,empleado.getMail());
 			return true;
 		}else {
 			return false;
@@ -261,6 +261,12 @@ public class ServiceUsuarioAccesoImpl implements ServiceUsuarioAcceso {
 	@Override
 	public List<EmpleadoAPDTO> getEmpleadosExternos() {
 		return daoUsuarioAcceso.getEmpleadosExternos();
+	}
+
+	@Override
+	public boolean getUserExist(String rfc) throws SQLException {
+		// TODO Auto-generated method stub
+		return daoUsuarioAcceso.getExistUserbyRfc(rfc);
 	}
 
 	

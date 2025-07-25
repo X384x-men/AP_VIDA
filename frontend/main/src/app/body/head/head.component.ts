@@ -27,15 +27,13 @@ export class HeadComponent implements OnInit {
   rol: string = '';
   context = '/'+nameApp+'/';
   login: boolean = true;
-
-  userName: string = '';
-
+  userName: any;
   nameUser:Observable<any>;
 
   currentUser : any;
 
 
-  constructor(private authencationService: AuthenticationService, private router: Router, private activatedRoute:             ActivatedRoute, private translate: TranslateService, private store: Store<languajeState.Language>, @Inject('ServiceResource') private subResourceService ?: SubResourceService<any>) {
+  constructor(private authencationService: AuthenticationService, private router: Router, private activatedRoute: ActivatedRoute, private translate: TranslateService, private store: Store<languajeState.Language>, @Inject('ServiceResource') private subResourceService ?: SubResourceService<any>) {
   }
 
   ngOnInit() {
@@ -47,37 +45,23 @@ export class HeadComponent implements OnInit {
       this.translate.use(lang.language);
     });
 
-      let user = JSON.parse(localStorage.getItem('currentUser'));
-      let admin = JSON.parse(localStorage.getItem('currentUserAdmin'));
-      let comercial = JSON.parse(localStorage.getItem('currentUserComercial'));
-      let siniestros = JSON.parse(localStorage.getItem('currentUserSiniestros'));
-      let contabilidad = JSON.parse(localStorage.getItem('currentUserContabilidad'));
-      if(admin !== null){
-        this.rol = admin.authorities ? admin.authorities.length > 0 ? admin.authorities[0].authority : '' : '';
-        this.currentUser = admin;
-      }else
-      if(user !== null){
-        this.rol = user.authorities ? user.authorities.length > 0 ? user.authorities[0].authority : '' : '';
-        this.currentUser = user;
-      } else
-      if(comercial !== null){
-        this.rol = comercial.authorities ? comercial.authorities.length > 0 ? comercial.authorities[0].authority : '' : '';
-        this.currentUser = comercial;
-      }else
-      if(siniestros !== null){
-        this.rol = siniestros.authorities ? siniestros.authorities.length > 0 ? siniestros.authorities[0].authority : '' : '';
-        this.currentUser = siniestros;
-      }else
-      if(contabilidad !== null){
-        this.rol = contabilidad.authorities ? contabilidad.authorities.length > 0 ? contabilidad.authorities[0].authority : '' : '';
-        this.currentUser = contabilidad;
-      }
-
+      let allUsuarios = [];
+      allUsuarios.push(JSON.parse(localStorage.getItem("currentUser")))
+      allUsuarios.push(JSON.parse(localStorage.getItem("currentUserComercial")));
+      allUsuarios.push(JSON.parse(localStorage.getItem("currentUserSiniestros")));
+      allUsuarios.push(JSON.parse(localStorage.getItem("currentUserContabilidad")));
+      allUsuarios.push(JSON.parse(localStorage.getItem("currentUserAdmin")));
+      allUsuarios.push(JSON.parse(localStorage.getItem('idCuenta')));
+      allUsuarios.push(JSON.parse(localStorage.getItem("currentUserPuebla")));
+      allUsuarios.push(JSON.parse(localStorage.getItem("currentUserFunacot")));
+      this.currentUser = allUsuarios.find( (value) => value !== null );
+      this.rol = this.currentUser.authorities[0]['authority'];
       this.user = this.authencationService.currentUserValue ? this.authencationService.currentUserValue.username.toUpperCase() : this.currentUser ? this.currentUser.username.toUpperCase() : '';
+      this.infoUser(this.user)
   }
 
   logout(): void {
-    this.authencationService.logout(this.router, this.activatedRoute);
+    this.authencationService.logout(this.router, this.activatedRoute, false);
     //localStorage.setItem('idRama', null);
     localStorage.clear();
     localStorage.setItem('idProyecto', null);
@@ -90,10 +74,11 @@ export class HeadComponent implements OnInit {
     this.translate.use(language);
   }
 
-  infoUser(rfc){
+  infoUser (rfc){
     this.subResourceService.read(UsuarioAcceso.USUARIO_NOMBRE_AP, {user: rfc })
-    .subscribe(data=>{
+    .subscribe( data=>{
       localStorage.setItem('nameUserAP', JSON.stringify(data.message));
+      this.userName = data.message
     }, error=>{
       console.log(error);
     });

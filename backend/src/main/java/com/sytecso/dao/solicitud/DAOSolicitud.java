@@ -1,5 +1,6 @@
 package com.sytecso.dao.solicitud;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sytecso.dto.EventoSolicitudDTO;
 import com.sytecso.dto.solicitud.CalculoActuariaDTO;
 import com.sytecso.dto.solicitud.CalculoActuariaHasSolicDTO;
+import com.sytecso.dto.solicitud.FonacotDTO;
 import com.sytecso.dto.solicitud.ObservacionDTO;
 import com.sytecso.dto.solicitud.OrdenPagoDTO;
 import com.sytecso.dto.solicitud.OrdenPagoHasSolicitudDTO;
@@ -21,15 +23,15 @@ public interface DAOSolicitud {
 	
 	public long subirDocumento(MultipartFile file, String fechaCreacion) throws SQLException;
 	
-	public long crearSolicitudHasDocumento(long idDocumento, long idSolicitud, int tipoDocumento, int tipoArchivo) throws SQLException;
+	public long crearSolicitudHasDocumento(long idDocumento, long idSolicitud, int tipoDocumento, int tipoArchivo, String categoriaDocumento) throws SQLException;
 	
-	public boolean actualizarSolicitudHasDocumento(long idDocumento, long idSolicitud, int tipoArchivo) throws SQLException;
+	public boolean actualizarSolicitudHasDocumento(long idDocumento, long idSolicitud, int tipoArchivo, String categoriaDocumento) throws SQLException;
 	
-	public List<SolicitudAPDTO> getSolicitudesByIdEmpleado(long idEmpleado);
+	public List<SolicitudAPDTO> getSolicitudesByIdEmpleado(long idEmpleado,String categoriaSolicitud);
 	
 	public boolean updateEstatusSolicitud(SolicitudAPDTO solicitud);
 	
-	public SolicitudAPDTO getSolicitud(long idSolicitud);
+	public SolicitudAPDTO getSolicitud(long idSolicitud, String categoriaSolicitud);
 	
 	public SolicitudAPDTO findDocumentoSolicitud(Long id);
 	
@@ -38,14 +40,16 @@ public interface DAOSolicitud {
 	public boolean actualizarSolicitud(SolicitudAPDTO solicitud) throws SQLException;
 	
 	public List<SolicitudAPDTO> getSolicitudesAnalistas(String params, String paramsSol, boolean flag );
+	public List<SolicitudAPDTO> getSolicitudesAnalistasPuebla(String params, String paramsSol, boolean flag );
+	public List<SolicitudAPDTO> getSolicitudesAnalistasFonacot(String params, String paramsSol, boolean flag );
 	
 	public boolean updateEstatusSolicitudAnalistas(SolicitudAPDTO solicitud);
 	
 	public long crearObservacionSolicitud(ObservacionDTO obs) throws Exception;
 	
-	public long crearSolicitudHasObservacion(long idObs, long idSolicitud) throws SQLException;
+	public long crearSolicitudHasObservacion(long idObs, long idSolicitud, String categoriaSolicitud) throws SQLException;
 	
-	public List<ObservacionDTO> getObservacionesSolicitud(long idSolicitud);
+	public List<ObservacionDTO> getObservacionesSolicitud(long idSolicitud, String categoriaSolicitud);
 	
 	public boolean validarImportes(SolicitudAPDTO solicitud) throws SQLException;
 	
@@ -55,27 +59,27 @@ public interface DAOSolicitud {
 
 	public List<CatalogoAseguradosDTO> getCatAsegurados();
 	
-	public List<SolicitudAPDTO> getValidarSolicitudRFC(String rfc);
+	public List<SolicitudAPDTO> getValidarSolicitudRFC(String rfc, String categoriaSolicitud);
 	
 	public long crearOrdenPago(OrdenPagoDTO orden) throws Exception;
 	
-	public long crearOrdenPagoSolicitud(OrdenPagoHasSolicitudDTO orden) throws Exception;
+	public long crearOrdenPagoSolicitud(OrdenPagoHasSolicitudDTO orden,String categoriaSolicitud) throws Exception;
 	
-	public OrdenPagoDTO getOrdenPago(long idSolicitud);
+	public OrdenPagoDTO getOrdenPago(long idSolicitud, String categoriaSolicitud);
 	
-	public List<SolicitudAPDTO> getDataReport(long idOrdenPago);
+	public List<SolicitudAPDTO> getDataReport(long idOrdenPago, String categoriaSolicitud);
 	
 	public long crearCalculoActuaria(CalculoActuariaDTO cal) throws Exception;
 	
-	public long crearCalculoActuariaSolicitud(CalculoActuariaHasSolicDTO calculoSol) throws Exception;
+	public long crearCalculoActuariaSolicitud(CalculoActuariaHasSolicDTO calculoSol,String crearCalculoActuariaSolicitud) throws Exception;
 	
-	public CalculoActuariaDTO getCalculoActuaria(long idSolicitud);
+	public CalculoActuariaDTO getCalculoActuaria(long idSolicitud, String categoriaSolicitud);
 	
-	public CalculoActuariaDTO getCalculoActuariaByFolioSolicitud(long folio);
+	public CalculoActuariaDTO getCalculoActuariaByFolioSolicitud(long folio, String categoriaSolicitud);
 	
-	public List<SolicitudAPDTO> getDataCalculoActuaria(long idCalculo);
+	public List<SolicitudAPDTO> getDataCalculoActuaria(long idCalculo, String categoriaSolicitud);
 	
-	public SolicitudAPDTO getStatusSolicitudByFolio(long folio);
+	public SolicitudAPDTO getStatusSolicitudByFolio(long folio, String categoriaSolicitud);
 	
 	public boolean updateImportesSolicitudLayout(SolicitudAPDTO solicitud) throws SQLException;
 	
@@ -85,5 +89,10 @@ public interface DAOSolicitud {
 	
 	public List<EventoSolicitudDTO> getEventosSolicitud(long solicitud);
 	
-	public boolean updateSOlicitudAsignacion(long id, String RFC) throws SQLException;
+	public boolean updateSOlicitudAsignacion(long id, String RFC, String categoriaSolicitud) throws SQLException;
+	
+	public long insertFonacot(Connection con, SolicitudAPDTO solicitud) throws SQLException;
+	
+	public  FonacotDTO getFonacot( SolicitudAPDTO solicitud) ;
+	
 }

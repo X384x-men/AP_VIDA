@@ -25,6 +25,7 @@
 /backend/target
 /backend/bin
 /backend/.settings
+/backend/src/main/webapp/WEB-INF/angular2
 /.settings
 /frontend/.angular/
 /frontend/.settings
@@ -32,7 +33,9 @@
 /frontend/main/.angular
 /frontend/main/node
 /frontend/main/node_modules
+/frontend/main/dist/
 *.pub
+
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*

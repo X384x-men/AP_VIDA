@@ -78,5 +78,7 @@ public interface DAOUsuarioAcceso {
 	public long getUsuarioByRFC(String RFC, Connection connection);
 
 
-	String getRfcUsuarioByIdC(long idUsuario, Connection connection);
+	public String getRfcUsuarioByIdC(long idUsuario, Connection connection);
+	
+	public boolean getExistUserbyRfc(String rfc) throws SQLException;
 }

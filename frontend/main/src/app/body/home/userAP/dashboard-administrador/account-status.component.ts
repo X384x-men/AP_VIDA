@@ -1,12 +1,6 @@
-import { Component } from "@angular/core";
-import {
-  getDownloadURL,
-  Storage,
-  percentage,
-  ref,
-  uploadBytesResumable
-} from "@angular/fire/storage";
+import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
+import { AuthenticationService } from "src/app/core/services/authentication-service/authentication.service";
 import { SubResourceService } from "src/app/core/services/service-crud-operations/sub-resource.service";
 import { CargaBatchVariable } from "src/app/core/static/variables/url/URLImages";
 import { AccountStatusService } from "src/app/shared/services/account-status.service";
@@ -49,14 +43,6 @@ import swal from "sweetalert2";
         <p>archivo: {{ fileName }}</p>
         <mat-progress-bar [value]="percent.progress"></mat-progress-bar>
       </div>
-      <!-- <mat-list style="flex-basis: 100%" *ngIf="false">
-        <mat-list-item *ngFor="let uploadedFile of uploadedFiles">
-          <h4 matLine>{{uploadedFile.filename}}</h4>
-          <mat-hint matLine style="display: flex; justify-content: space-between">{{uploadedFile.uploadDate }} - {{uploadedFile.status | uppercase}}</mat-hint>
-          <button mat-stroked-button *ngIf="uploadedFile.status == 'validado'" (click)="process(uploadedFile.key)">Procesar</button>
-          <mat-divider></mat-divider>
-        </mat-list-item>
-      </mat-list> -->
     </div>
     <div class="modalBatchClass" *ngIf="accountStatus_.modalBatch" style="width: 650px;background-color: #FFF;">
         <div  [style.background-color]="'#257aa9'" [style.color]="'#FFF'" style="display: flex;justify-content: space-between;align-items: center; padding: 10px;">
@@ -80,76 +66,25 @@ import swal from "sweetalert2";
   </div>
   `,
 })
-export class AccountStatusComponent {
+export class AccountStatusComponent implements OnInit{
   fileName: string;
   uploadPercent: Observable<{}>;
   isUploading: boolean;
   uploadedFiles$: Observable<any>;
   resumenBatch = this.accountStatus_.resumenBatch;
   modalBatch = false;
+  userApp : any;
 
-  constructor(private modal: ModalService, private storage: Storage, public accountStatus_: AccountStatusService, private subResourceService: SubResourceService<any>) {
+  constructor(private modal: ModalService,
+    public accountStatus_: AccountStatusService,
+    private subResourceService: SubResourceService<any>,
+    private authencationService: AuthenticationService) {
     this.isUploading = false;
     this.uploadedFiles$ = accountStatus_.accountStatusData_.asObservable();
   }
 
-  updateAccountStatusFile(file: File) {
-    if (this.isUploading) {
-      this.modal.warning(
-        "Carga en proceso",
-        "Favor de esperar la carga del archivo actual"
-      );
-      return;
-    }
-    this.isUploaded(`account-status/${file.name}`).then((result) => {
-      if (result) {
-        this.modal.warning("", "Este archivo ha sido cargado anteriormente");
-        return;
-      }
-      this.upload("account-status", file.name, file).then(() => {
-        this.accountStatus_.save(file.name).then( () => this.accountStatus_.getAll())
-        this.isUploading = false;
-        this.modal.success("Éxito", "Se cargo el archivo correctamente");
-      });
-    });
-  }
-
-  process(key: string) {
-    this.accountStatus_.process(key).then( result =>{
-      this.modal.info('Comienza procesamiento', 'El contenido del archivo estará disponible al contar con estado: PROCESADO');
-    })
-  }
-
-  private async isUploaded(path: string): Promise<boolean> {
-    const docRef = ref(this.storage, path);
-    try {
-      await getDownloadURL(docRef);
-      return true;
-    } catch (error) {
-      console.log({error});
-      return false;
-    }
-  }
-
-  private async upload(
-    folder: string,
-    name: string,
-    file: File | null
-  ): Promise<string> {
-    if (!file || this.isUploading) return;
-    this.isUploading = true;
-    const path = `${folder}/${name}`;
-    try {
-      const storageRef = ref(this.storage, path);
-      const task = uploadBytesResumable(storageRef, file);
-      this.uploadPercent = percentage(task);
-      this.fileName = name;
-      await task;
-      const url = await getDownloadURL(storageRef);
-      return url;
-    } catch (error: any) {
-      console.error(error);
-    }
+  ngOnInit(): void {
+    this.authencationService.validacionAdmin();
   }
 
   // Funcion que permite realizar subida de estados de cuenta en admin sin fireBase... Hay dos funciones anteriores que no estan correctas. No se eliminaron esas funciones para mantenerlas por si acaso trae inconvenientes

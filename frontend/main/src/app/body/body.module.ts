@@ -44,6 +44,14 @@ import { MainChartComponent } from './home/userAP/main-chart/main-chart.componen
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { DashboardAnalistaSolicitudComponent } from './home/dashboard-analista-solicitud/dashboard-analista-solicitud.component';
 import { DashboardAllAnalistasComponent } from './home/userAP/dashboard-all-analistas/dashboard-all-analistas.component';
+import { MainAclaracionesComponent } from './home/userAP/main-aclaraciones/main-aclaraciones.component';
+import { MainFormAltaAclaracionesComponent } from './home/userAP/main-form-alta-aclaraciones/main-form-alta-aclaraciones.component';
+import { MainFormActualizaAclaracionComponent } from './home/userAP/main-form-actualiza-aclaracion/main-form-actualiza-aclaracion.component';
+import { EmailListComponent } from './home/userAP/email-list/email-list.component';
+import { MainDashboardPueblaComponent } from './home/userAP/main-dashboard-puebla/main-dashboard-puebla.component';
+import { MainDashboardFunacotComponent } from './home/userAP/main-dashboard-funacot/main-dashboard-funacot.component';
+import { SolicitudesFonacotComponent } from './home/userAP/dashboard-administrador/solicitudes-fonacot/solicitudes-fonacot.component';
+import { SolicitudesPueblaComponent } from './home/userAP/dashboard-administrador/solicitudes-puebla/solicitudes-puebla.component';
 
 @NgModule({
     imports: [
@@ -94,6 +102,14 @@ import { DashboardAllAnalistasComponent } from './home/userAP/dashboard-all-anal
         MainChartComponent,
         DashboardAnalistaSolicitudComponent,
         DashboardAllAnalistasComponent,
+        MainAclaracionesComponent,
+        MainFormAltaAclaracionesComponent,
+        MainFormActualizaAclaracionComponent,
+        EmailListComponent,
+        MainDashboardPueblaComponent,
+        MainDashboardFunacotComponent,
+        SolicitudesFonacotComponent,
+        SolicitudesPueblaComponent
     ],
     exports: [
         FootComponent

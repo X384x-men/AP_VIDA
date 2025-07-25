@@ -55,6 +55,10 @@
             <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
               <span>Analistas</span>
           </button>
+          <button *ngIf="!isContabilidad" class="btn border border-dark border-bottom-0" [class.btn-light]="classRutaBtn === 'dashboard-analista'" (click)="back('aclaraciones')">
+            <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
+            <span>Aclaraciones</span>
+          </button>
         </div>
         <div class="col-4 justify-content-end"  [style.display]="'flex'" >
           <!-- <button class="btn btn-light rounded " (click)="findRFC()">

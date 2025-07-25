@@ -41,9 +41,12 @@
       <div class="col-6">
         <div class="export-title2">
           <div class="containerTabs-title">
-            <button type="reset" class="btn border border-dark border-bottom-0 btn-paginador" >
+            <button type="reset" class="btn border border-dark border-bottom-0 btn-paginador titleAdmin"  >
                 Solicitudes
             </button>
+            <button type="button" class="btn border border-dark border-bottom-0 btn-paginador" (click)="goAclaraciones()" >
+              Aclaraciones
+          </button>
           </div>
         </div>
       </div>
@@ -89,141 +92,3 @@
   </div>
 
 </div>
-
-<!--  Vista y tabla para nuevo modelo con la nueva busqueda de la api  -->
-<!--
-
-<div class="containerForm">
-    <div class="container text-center">
-          <div class="text-center mb-3 mt-3">
-            <div class="row g-3 align-items-center">
-              <div class="col-2">
-                <label for="inputPassword6" class="col-form-label">Nombre</label>
-              </div>
-              <div class="col-10">
-                <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Nombre" [(ngModel)]='user.nombre'>
-              </div>
-              <div class="col-2">
-                <label for="inputPassword6" class="col-form-label">RFC</label>
-              </div>
-              <div class="col-10">
-                <input class="form-control" type="text" placeholder="RFC" name="rfc" [(ngModel)]='user.rfc' >
-              </div>
-              <div class="col-2">
-                <label for="inputPassword6" class="col-form-label">Dependencia</label>
-              </div>
-              <div class="col-10">
-                <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedDependencies (click)=onSelectedDependencies(mySelectedDependencies.value)>
-                  <option selected value="" > - Seleccionar un opción  - </option>
-                  <option  *ngFor="let dependency of dependencias" [value]="dependency.descripcionCatalogo"
-                  > {{ dependency.descripcionCatalogo }} </option>
-                </select>
-              </div>
-              <div class="col-2">
-                <label for="inputPassword6" class="col-form-label">Unidad Administrativa</label>
-              </div>
-              <div class="col-10">
-                <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedUnitAdmin  (click)=onSelectedUnitAdmin(mySelectedUnitAdmin.value)>
-                  <option selected> - Seleccionar un opción -  </option>
-                  <option *ngFor="let adminUnit of unidadesAdministrativas"[value]="adminUnit.descripcion">{{adminUnit.descripcion}}</option>
-                </select>
-              </div>
-            </div>
-            <button class="btn btn-busqueda mt-3" type="button" (click)="filter()" ><strong class="me-1" >Buscar</strong><i class="fa fa-solid fa-magnifying-glass"></i> </button>
-        </div>
-  </div>
-</div>
-<div class="result-body">
-  <div style="display: flex; justify-content: end;" [style.display]="'flex'" >
-    <app-upload-employees-button></app-upload-employees-button>
-    -- <app-inactive-users-button></app-inactive-users-button> -- comentar
-    <button class="btn btn-busqueda" type="button" (click)="descargaReporte()">
-      <i class="fa fa-cloud-download" aria-hidden="true"></i>
-      Exportar base
-    </button>
-  </div>
-
-  -- NEW TABLE-- Comentar
-  <mat-form-field>
-    <mat-label> <strong>*Filtrar busqueda</strong> </mat-label>
-    <input class="w-5" matInput (keyup)="applyFilter($event)" #input>
-  </mat-form-field>
-  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="filter()" class="mat-elevation-z8" >
-    <tr mat-header-row *matHeaderRowDef="[ 'Nombre','RFC', 'E-mail','N° Empleado','Dependencia','Unidad Administrativa','Fecha de Nacimiento','Sexo','Fecha de Alta','Estatus','Acciones']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['Nombre','RFC', 'E-mail','N° Empleado','Dependencia','Unidad Administrativa','Fecha de Nacimiento','Sexo','Fecha de Alta','Estatus','Acciones'];"  ></tr>
-    <ng-container matColumnDef="Nombre">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by name" >NOMBRE</th>
-      <td mat-cell *matCellDef="let element">{{element.nombre}} {{element.apellidoPaterno}} {{element.apellidoMaterno}} <td>
-    </ng-container>
-    <ng-container matColumnDef="RFC">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by rfc" >RFC</th>
-      <td mat-cell *matCellDef="let element">{{element.rfc}} </td>
-    </ng-container>
-    <ng-container matColumnDef="E-mail">
-      <th mat-header-cell *matHeaderCellDef >CORREO</th>
-      <td mat-cell *matCellDef="let element">{{element.mail}} </td>
-    </ng-container>
-    <ng-container matColumnDef="N° Empleado">
-      <th mat-header-cell *matHeaderCellDef ># DE EMPLEADO</th>
-      <td mat-cell *matCellDef="let element">{{element.noEmpleado}}</td>
-    </ng-container>
-    <ng-container matColumnDef="Dependencia">
-      <th mat-header-cell *matHeaderCellDef >DEPENDENCIA</th>
-      <td mat-cell *matCellDef="let element">{{element.dependenciaCatalogo}} </td>
-    </ng-container>
-    <ng-container matColumnDef="Unidad Administrativa">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by unidadAdministrativa">UNIDAD ADMINISTRATIVA</th>
-      <td mat-cell *matCellDef="let element">{{element.unidadCatalogo}} </td>
-    </ng-container>
-    <ng-container matColumnDef="Fecha de Nacimiento">
-      <th mat-header-cell *matHeaderCellDef >FECHA DE NACIMIENTO</th>
-      <td mat-cell *matCellDef="let element">{{element.fechaNacimiento}}</td>
-    </ng-container>
-    <ng-container matColumnDef="Sexo">
-      <th mat-header-cell *matHeaderCellDef>SEXO</th>
-      <td mat-cell *matCellDef="let element">{{element.sexo}}</td>
-    </ng-container>
-    <ng-container matColumnDef="Fecha de Alta">
-      <th mat-header-cell *matHeaderCellDef >FECHA DE ALTA</th>
-      <td mat-cell *matCellDef="let element">{{element.fechaCreacion}}</td>
-    </ng-container>
-    <ng-container matColumnDef="Estatus">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by estatus" >ESTATUS</th>
-      <td mat-cell *matCellDef="let element">{{element.estatus == 1 ? 'ACTIVO' : 'INACTIVO'}}</td>
-    </ng-container>
-    <ng-container matColumnDef="Acciones">
-      <th mat-header-cell *matHeaderCellDef >ACCIONES</th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-button [matMenuTriggerFor]="userOptions" (click)="setCurrentUser(element.rfc)">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #userOptions="matMenu">
-          <button mat-menu-item (click)="goToReporteMovimientos(element.rfc)">
-            <mat-icon>event_note</mat-icon>
-            Consulta de movimientos
-          </button>
-
-          <button mat-menu-item (click)="goToUpdate(element.rfc)">
-            <mat-icon>update</mat-icon>
-            Actualizar
-          </button>
-          <app-reset-password-button *ngIf="element.mail"
-            [data]="{rfc: element.rfc, email: element.mail}"></app-reset-password-button>
-          <button mat-menu-item (click)="changeEstatus(element, (element.estatus === 1 ? 0 : 1))">
-            <mat-icon>{{element.estatus === 1 ? 'person_off' : 'person'}}</mat-icon>
-            {{element.estatus === 1 ? 'Deshabilitar usuario' : 'Habilitar usuario'}}
-          </button>
-        </mat-menu>
-      </td>
-    </ng-container>
-  </table>
-  <mat-paginator class="h-50" pageSize="5" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
-  <section style="display: flex; flex-direction: column; align-items: center; opacity: 0.7; padding: 16px;" *ngIf="empleados.length == 0">
-    <h2>Aquí serán mostrados los usuarios consultados</h2>
-    <p>Use el filtro de búsqueda</p>
-  </section>
-</div>
-
-
-
- -->

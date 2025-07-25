@@ -24,6 +24,7 @@ import com.sytecso.dao.solicitud.DAOSolicitud;
 import com.sytecso.dao.usuario.DAOUsuarioAcceso;
 import com.sytecso.dto.solicitud.CalculoActuariaDTO;
 import com.sytecso.dto.solicitud.CalculoActuariaHasSolicDTO;
+import com.sytecso.dto.solicitud.FonacotDTO;
 import com.sytecso.dto.solicitud.ObservacionDTO;
 import com.sytecso.dto.solicitud.OrdenPagoDTO;
 import com.sytecso.dto.solicitud.OrdenPagoHasSolicitudDTO;
@@ -62,8 +63,19 @@ public class DAOSolicitudImpl implements DAOSolicitud {
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
-            pst = connection.prepareStatement("INSERT INTO solicitud (fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
+            if(solicitud.getTipoSolicitud().equals("puebla")) {
+            pst = connection.prepareStatement("INSERT INTO solicitud_puebla (fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
             		"fechaSolicitudAPV, diasTranscurridos, importeSolicitado, nombreBanco, clabe, idBanco, observaciones,Empleado_idEmpleado, statusSolicitud, validadoModulo, validadoSiniestros, validadoContabilidad, TipoPago, rfcGEM, sueldo, fechaPago, pagoAnterior,usuariosacceso_idusuariosAcceso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, 'Nueva', 0, 0, 0, ?, ?,?,?,?,?) ", Statement.RETURN_GENERATED_KEYS);
+           
+            }
+            if(solicitud.getTipoSolicitud().equals("fonacot")) {
+                pst = connection.prepareStatement("INSERT INTO solicitud_fonacot (fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
+                		"fechaSolicitudAPV, diasTranscurridos, importeSolicitado, nombreBanco, clabe, idBanco, observaciones,Empleado_idEmpleado, statusSolicitud, validadoModulo, validadoSiniestros, validadoContabilidad, TipoPago, rfcGEM, sueldo, fechaPago, pagoAnterior,usuariosacceso_idusuariosAcceso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, 'Nueva', 0, 0, 0, ?, ?,?,?,?,?) ", Statement.RETURN_GENERATED_KEYS);
+               
+            }if(solicitud.getTipoSolicitud().equals("")) {
+            	  pst = connection.prepareStatement("INSERT INTO solicitud (fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
+                  		"fechaSolicitudAPV, diasTranscurridos, importeSolicitado, nombreBanco, clabe, idBanco, observaciones,Empleado_idEmpleado, statusSolicitud, validadoModulo, validadoSiniestros, validadoContabilidad, TipoPago, rfcGEM, sueldo, fechaPago, pagoAnterior,usuariosacceso_idusuariosAcceso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, 'Nueva', 0, 0, 0, ?, ?,?,?,?,?) ", Statement.RETURN_GENERATED_KEYS);
+            }
             pst.setString(1, solicitud.getFechaSolicitud());
             pst.setString(2, solicitud.getTipoTramite());
             pst.setString(3, solicitud.getRfcAsegurado());
@@ -106,18 +118,35 @@ public class DAOSolicitudImpl implements DAOSolicitud {
             	
             }
             if(solicitud.getEmpleadoAsignacion().equals("")) {
-            	solicitud.setIdAsignacion(getAsignable(connection));
+            	if(solicitud.getTipoSolicitud().equals("puebla")) {
+            		solicitud.setIdAsignacion(getAsignablePuebla(connection));
+            		
+            	}
+            	if(solicitud.getTipoSolicitud().equals("fonacot")) {
+            		
+            		solicitud.setIdAsignacion(getAsignableFonacot(connection));
+            		
+            	}
+            	if(solicitud.getTipoSolicitud().equals("")) {
+            		solicitud.setIdAsignacion(getAsignable(connection));
+            	}
             	solicitud.setEmpleadoAsignacion(usuarioAcceso.getRfcUsuarioByIdC(solicitud.getIdAsignacion(), connection));
             	pst.setLong(24, solicitud.getIdAsignacion());
             }else {
             	pst.setLong(24,usuarioAcceso.getUsuarioByRFC(solicitud.getEmpleadoAsignacion(),connection));
             }
+            System.out.println(pst.toString());
 
             pst.executeUpdate();
 			rs = pst.getGeneratedKeys();
 			if (rs.next()) {
 				
 				solicitud.setIdSolicitud(rs.getLong(1));
+				
+				if(solicitud.getTipoSolicitud().equals("fonacot")) {
+					insertFonacot(connection,solicitud);
+				}
+				
 				status=manejaEventos(solicitud,"Creacion","Creacion de solicitud", connection);
 			}
 			connection.commit();
@@ -127,7 +156,8 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 			SytecsoController.logClassAndMethodWithException(e);
 		} finally {
 			connection.setAutoCommit(true);
-			UtileriaSql.closeConnectionAndCommit(connection, pst, rs, status);
+			UtileriaSql.closeConection(connection, pst, rs);
+			
 		}
         
         return solicitud.getIdSolicitud();
@@ -206,14 +236,22 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public long crearSolicitudHasDocumento(long idDocumento, long idSolicitud, int tipoDocumento, int tipoArchivo) throws SQLException {
-		
-		String sql = "INSERT INTO solicitud_has_documentos (Solicitud_idSolicitud, Documentos_idDocumentos, tipoDocumento, tipoArchivo) VALUES (?, ?, ?, ?)";
+	public long crearSolicitudHasDocumento(long idDocumento, long idSolicitud, int tipoDocumento, int tipoArchivo, String categoriaDocumento) throws SQLException {
+		String sql="";
+		SolicitudAPDTO solicitud =  new SolicitudAPDTO();
+		solicitud.setTipoSolicitud(categoriaDocumento);
+		if(categoriaDocumento.equals("puebla")) {
+		sql = "INSERT INTO solicitud_puebla_has_documentos (Solicitud_idSolicitud, Documentos_idDocumentos, tipoDocumento, tipoArchivo) VALUES (?, ?, ?, ?)";
+		}if(categoriaDocumento.equals("fonacot")) {
+			sql = "INSERT INTO solicitud_fonacot_has_documentos (Solicitud_idSolicitud, Documentos_idDocumentos, tipoDocumento, tipoArchivo) VALUES (?, ?, ?, ?)";
+		}if(categoriaDocumento.equals("")) {
+			sql = "INSERT INTO solicitud_has_documentos (Solicitud_idSolicitud, Documentos_idDocumentos, tipoDocumento, tipoArchivo) VALUES (?, ?, ?, ?)";
+		}
 		long idTransaccion = 0L;
 		ResultSet rs = null;
 		Connection con = null;
 		PreparedStatement ps = null;
-		SolicitudAPDTO solicitud =  new SolicitudAPDTO();
+		
 		try {
 			con = dataSource.getConnection();
 			con.setAutoCommit(false);
@@ -222,6 +260,7 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 			ps.setLong(2, idDocumento);
 			ps.setInt(3, tipoDocumento);
 			ps.setInt(4, tipoArchivo);
+			System.out.println(ps.toString());
 			ps.execute();
 			rs = ps.getGeneratedKeys();
 			if (rs.next()) {
@@ -251,9 +290,15 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean actualizarSolicitudHasDocumento(long idDocumento, long idSolicitud, int tipoArchivo) throws SQLException {
+	public boolean actualizarSolicitudHasDocumento(long idDocumento, long idSolicitud, int tipoArchivo, String categoriaDocumento) throws SQLException {
 		
-		String sql = "UPDATE solicitud_has_documentos SET tipoArchivo = ? WHERE Solicitud_idSolicitud = ? and Documentos_idDocumentos = ?  ";
+		String sql="";
+		if(categoriaDocumento.equals("puebla"))
+			sql= "UPDATE solicitud_puebla_has_documentos SET tipoArchivo = ? WHERE Solicitud_idSolicitud = ? and Documentos_idDocumentos = ?  ";
+		if(categoriaDocumento.equals("fonacot"))
+			sql= "UPDATE solicitud_fonacot_has_documentos SET tipoArchivo = ? WHERE Solicitud_idSolicitud = ? and Documentos_idDocumentos = ?  ";
+		if(categoriaDocumento.equals("")) 
+			sql= "UPDATE solicitud_has_documentos SET tipoArchivo = ? WHERE Solicitud_idSolicitud = ? and Documentos_idDocumentos = ?  ";
 		boolean status = true;
 		ResultSet rs = null;
 		Connection con = null;
@@ -282,16 +327,23 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	}
 	
 	@Override
-	public List<SolicitudAPDTO> getSolicitudesByIdEmpleado(long idEmpleado) {
+	public List<SolicitudAPDTO> getSolicitudesByIdEmpleado(long idEmpleado, String categoriaSolicitud) {
 		List<SolicitudAPDTO> solicitudes= new ArrayList<SolicitudAPDTO>();
 		SolicitudAPDTO solic = null;
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		String sql = "SELECT idSolicitud, fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
+		String sql =	"SELECT idSolicitud, fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
 				"fechaSolicitudAPV, diasTranscurridos, importeSolicitado, nombreBanco, clabe, idBanco, observaciones,Empleado_idEmpleado, statusSolicitud, numeroRegistro, validadoModulo, validadoSiniestros, "
 				+ "validadoContabilidad, TipoPago, rfcGEM, aportacionTotal, retiroMaximo, importeApagar, importeContable, fechaOrdenPago, idEmpleadoGeneraOrden,"
-				+ "fechaImporteContable, fechadeTransferencia, estPagRechPen, estatus, numChequeTransf, obsSiniestros, intereses, montoCalculado, pagoAnterior, usuariosacceso_idUsuariosAcceso FROM solicitud WHERE Empleado_idEmpleado = ? and statusSolicitud <> 'Cancelada' ";
+				+ "fechaImporteContable, fechadeTransferencia, estPagRechPen, estatus, numChequeTransf, obsSiniestros, intereses, montoCalculado, pagoAnterior, usuariosacceso_idUsuariosAcceso FROM ";
+				if(categoriaSolicitud.equals("puebla"))
+					sql += sql+"solicitud_puebla ";
+				if(categoriaSolicitud.equals("fonacot"))
+					sql += sql+"solicitud_puebla ";
+				if(categoriaSolicitud.equals("")) 
+					sql += sql+"solicitud ";
+				sql=sql+ "WHERE Empleado_idEmpleado = ? and statusSolicitud <> 'Cancelada' ";
 
 		try {
 			connection = dataSource.getConnection();
@@ -362,7 +414,18 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		Connection con = null;
-		String sql = "UPDATE solicitud SET statusSolicitud = ? WHERE rfc = ?";
+		String sql = "";
+		if(solicitud.getTipoSolicitud().equals("puebla")) {
+			sql="UPDATE solicitud_puebla SET statusSolicitud = ? WHERE rfc = ?";
+			solicitud.setTipoSolicitud("puebla");
+		}
+		if(solicitud.getTipoSolicitud().equals("fonaccot")) {
+			sql="UPDATE solicitud_fonacot SET statusSolicitud = ? WHERE rfc = ?";
+			solicitud.setTipoSolicitud("fonacot");
+		}
+		if(solicitud.getTipoSolicitud().equals("")) {
+			sql="UPDATE solicitud SET statusSolicitud = ? WHERE rfc = ?";
+		}
 		try {
 			con = dataSource.getConnection();
 			pst = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -387,7 +450,7 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	
 	@Override
-	public SolicitudAPDTO getSolicitud(long idSolicitud) {
+	public SolicitudAPDTO getSolicitud(long idSolicitud, String categoriaSolicitud) {
 		SolicitudAPDTO solic= null;
 		Connection connection = null;
 		ResultSet rs = null;
@@ -395,8 +458,14 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 		String sql = "SELECT idSolicitud, fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
 				"fechaSolicitudAPV, diasTranscurridos, importeSolicitado, nombreBanco, clabe, idBanco, observaciones,Empleado_idEmpleado, statusSolicitud, numeroRegistro, validadoModulo, validadoSiniestros,validadoContabilidad, TipoPago, "
 				+ "rfcGEM, aportacionTotal, retiroMaximo, importeApagar, importeContable, fechaOrdenPago, idEmpleadoGeneraOrden, fechaImporteContable, fechadeTransferencia, estPagRechPen, estatus, numChequeTransf, obsSiniestros, intereses, montoCalculado, analistaComercialValida, "
-				+ "pagoAnterior, sueldo, saldoFinal, valRetencion, fechaCalculo, fechaPago, usuariosacceso_idUsuariosAcceso "
-				+ " FROM solicitud WHERE idSolicitud = ?  ";
+				+ "pagoAnterior, sueldo, saldoFinal, valRetencion, fechaCalculo, fechaPago, usuariosacceso_idUsuariosAcceso ";
+		if(categoriaSolicitud.equals("puebla"))
+				sql=sql+ " FROM solicitud_puebla ";
+		if(categoriaSolicitud.equals("fonacot"))
+			sql=sql+ " FROM solicitud_fonacot ";
+		if(categoriaSolicitud.equals("")) 
+			sql=sql+ " FROM solicitud ";		
+		sql=sql+" WHERE idSolicitud = ?  ";
 
 		try {
 			connection = dataSource.getConnection();
@@ -452,8 +521,8 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 				solic.setFechaCalculo(rs.getString("fechaCalculo"));
 				solic.setValRetencion(rs.getString("valRetencion"));
 				solic.setFechaPago(rs.getString("fechaPago"));
-				solic.setDocumentos(getUrlArray(idSolicitud));
-				solic.setListObs(getObservacionesSolicitud(idSolicitud));	
+				solic.setDocumentos(getUrlArray(idSolicitud,categoriaSolicitud));
+				solic.setListObs(getObservacionesSolicitud(idSolicitud,categoriaSolicitud));	
 				solic.setEmpleadoAsignacion(usuarioAcceso.getRfcUsuarioByIdC(rs.getLong("usuariosacceso_idUsuariosAcceso"), connection));
 			}
 			rs.close();
@@ -467,12 +536,18 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	}
 	
 	
-	public List<SolicitudHasDocumentoDTO> getUrlArray(long idSolicitud) {
+	public List<SolicitudHasDocumentoDTO> getUrlArray(long idSolicitud, String categoriaSolicitud) {
 		List<SolicitudHasDocumentoDTO> doc = new ArrayList<SolicitudHasDocumentoDTO>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		Connection con = null;
-		String query = "SELECT Documentos_idDocumentos, tipoDocumento, tipoArchivo FROM solicitud_has_documentos WHERE Solicitud_idSolicitud = ?";
+		String query="";
+		if(categoriaSolicitud.equals("puebla"))
+			query = "SELECT Documentos_idDocumentos, tipoDocumento, tipoArchivo FROM solicitud_puebla_has_documentos WHERE Solicitud_idSolicitud = ?";
+		if(categoriaSolicitud.equals("fonacot"))
+			query = "SELECT Documentos_idDocumentos, tipoDocumento, tipoArchivo FROM solicitud_fonacot_has_documentos WHERE Solicitud_idSolicitud = ?";
+		if(categoriaSolicitud.equals(""))
+			query = "SELECT Documentos_idDocumentos, tipoDocumento, tipoArchivo FROM solicitud_has_documentos WHERE Solicitud_idSolicitud = ?";
 		try {
 			con = dataSource.getConnection();
 			con.setAutoCommit(false);
@@ -524,8 +599,25 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	@Transactional(rollbackFor = Exception.class)
 	public boolean actualizarSolicitud(SolicitudAPDTO solicitud) throws SQLException {
 		
-		String sql = "UPDATE solicitud SET tipoTramite = ?, rfcAsegurado = ?, nombredelServidor = ?, aPaternodelServidor = ?, aMaternodelServidor = ?, dependencia = ?, telefono = ?, email = ?, fechaFinLaboral = ?, " + 
-				"fechaSolicitudAPV = ?, diasTranscurridos = ?, importeSolicitado = ?, nombreBanco = ?, clabe = ?, idBanco = ?, observaciones = ?, statusSolicitud = ?, TipoPago = ?, rfcGEM = ?, sueldo = ?, fechaPago = ?, pagoAnterior = ? WHERE idSolicitud = ?";
+		String sql = "";
+		if(solicitud.getTipoSolicitud().equals("puebla")) {
+			sql="UPDATE solicitud_puebla SET tipoTramite = ?, rfcAsegurado = ?, nombredelServidor = ?, aPaternodelServidor = ?, aMaternodelServidor = ?, dependencia = ?, telefono = ?, email = ?, fechaFinLaboral = ?, " + 
+					"fechaSolicitudAPV = ?, diasTranscurridos = ?, importeSolicitado = ?, nombreBanco = ?, clabe = ?, idBanco = ?, observaciones = ?, statusSolicitud = ?, TipoPago = ?, rfcGEM = ?, sueldo = ?, fechaPago = ?, pagoAnterior = ? WHERE idSolicitud = ?";
+			
+			
+		}
+		if(solicitud.getTipoSolicitud().equals("fonacot")) {
+			sql="UPDATE solicitud_fonacot SET tipoTramite = ?, rfcAsegurado = ?, nombredelServidor = ?, aPaternodelServidor = ?, aMaternodelServidor = ?, dependencia = ?, telefono = ?, email = ?, fechaFinLaboral = ?, " + 
+					"fechaSolicitudAPV = ?, diasTranscurridos = ?, importeSolicitado = ?, nombreBanco = ?, clabe = ?, idBanco = ?, observaciones = ?, statusSolicitud = ?, TipoPago = ?, rfcGEM = ?, sueldo = ?, fechaPago = ?, pagoAnterior = ? WHERE idSolicitud = ?";
+			
+			
+		}
+		if(solicitud.getTipoSolicitud().equals("")) {
+			sql="UPDATE solicitud SET tipoTramite = ?, rfcAsegurado = ?, nombredelServidor = ?, aPaternodelServidor = ?, aMaternodelServidor = ?, dependencia = ?, telefono = ?, email = ?, fechaFinLaboral = ?, " + 
+					"fechaSolicitudAPV = ?, diasTranscurridos = ?, importeSolicitado = ?, nombreBanco = ?, clabe = ?, idBanco = ?, observaciones = ?, statusSolicitud = ?, TipoPago = ?, rfcGEM = ?, sueldo = ?, fechaPago = ?, pagoAnterior = ? WHERE idSolicitud = ?";
+			
+			
+		}
 		ResultSet rs = null;
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -604,12 +696,7 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		/*String sql = "SELECT idSolicitud, fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
-				"fechaSolicitudAPV, diasTranscurridos, importeSolicitado, nombreBanco, clabe, idBanco, observaciones,Empleado_idEmpleado, statusSolicitud, numeroRegistro, validadoModulo, validadoSiniestros, "
-				+ "validadoContabilidad, TipoPago, rfcGEM, aportacionTotal, retiroMaximo, importeApagar, importeContable, fechaOrdenPago, idEmpleadoGeneraOrden, "
-				+ "fechaImporteContable, fechadeTransferencia, estPagRechPen, estatus, numChequeTransf, obsSiniestros, intereses, montoCalculado, pagoAnterior FROM solicitud WHERE statusSolicitud <> 'Cancelada' ";
 
-		*/
 		String sql ="SELECT sol.idSolicitud, sol.fechaSolicitud, sol.tipoTramite, sol.rfcAsegurado, sol.nombredelServidor, sol.aPaternodelServidor, sol.aMaternodelServidor, sol.dependencia, sol.telefono, sol.email, sol.fechaFinLaboral,   "
 				+ "sol.fechaSolicitudAPV, sol.diasTranscurridos, sol.importeSolicitado, sol.nombreBanco, sol.clabe, sol.idBanco, sol.observaciones,sol.Empleado_idEmpleado, sol.statusSolicitud, sol.numeroRegistro, sol.validadoModulo, sol.validadoSiniestros,  "
 				+ "sol.validadoContabilidad, sol.TipoPago, sol.rfcGEM, sol.aportacionTotal, sol.retiroMaximo, sol.importeApagar, sol.importeContable, sol.fechaOrdenPago, sol.idEmpleadoGeneraOrden,  "
@@ -708,14 +795,246 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	}
 	
 	@Override
+	public List<SolicitudAPDTO> getSolicitudesAnalistasPuebla(String params, String paramsSol, boolean flag) {
+		List<SolicitudAPDTO> solicitudes= new ArrayList<SolicitudAPDTO>();
+		SolicitudAPDTO solic = null;
+		Connection connection = null;
+		ResultSet rs = null;
+		PreparedStatement pst = null;
+		/*String sql = "SELECT idSolicitud, fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
+				"fechaSolicitudAPV, diasTranscurridos, importeSolicitado, nombreBanco, clabe, idBanco, observaciones,Empleado_idEmpleado, statusSolicitud, numeroRegistro, validadoModulo, validadoSiniestros, "
+				+ "validadoContabilidad, TipoPago, rfcGEM, aportacionTotal, retiroMaximo, importeApagar, importeContable, fechaOrdenPago, idEmpleadoGeneraOrden, "
+				+ "fechaImporteContable, fechadeTransferencia, estPagRechPen, estatus, numChequeTransf, obsSiniestros, intereses, montoCalculado, pagoAnterior FROM solicitud WHERE statusSolicitud <> 'Cancelada' ";
+
+		*/
+		String sql ="SELECT sol.idSolicitud, sol.fechaSolicitud, sol.tipoTramite, sol.rfcAsegurado, sol.nombredelServidor, sol.aPaternodelServidor, sol.aMaternodelServidor, sol.dependencia, sol.telefono, sol.email, sol.fechaFinLaboral,   "
+				+ "sol.fechaSolicitudAPV, sol.diasTranscurridos, sol.importeSolicitado, sol.nombreBanco, sol.clabe, sol.idBanco, sol.observaciones,sol.Empleado_idEmpleado, sol.statusSolicitud, sol.numeroRegistro, sol.validadoModulo, sol.validadoSiniestros,  "
+				+ "sol.validadoContabilidad, sol.TipoPago, sol.rfcGEM, sol.aportacionTotal, sol.retiroMaximo, sol.importeApagar, sol.importeContable, sol.fechaOrdenPago, sol.idEmpleadoGeneraOrden,  "
+				+ "sol.fechaImporteContable, sol.fechadeTransferencia, sol.estPagRechPen, sol.estatus, sol.numChequeTransf, sol.obsSiniestros, sol.intereses, sol.montoCalculado, sol.pagoAnterior, "
+				+ "replace(replace(epap.sexo,'HOMBRE','M'),'MUJER','F'), epap.fechaNacimiento, EmpleadoRegistra(sol.rfcGEM), getOrdenesPago(sol.idSolicitud),getcalculoActuaria(sol.idSolicitud), sol.analistaComercialValida, sol.fechaCalculo, sol.saldoFinal, sol.sueldo, sol.valRetencion, sol.usuariosacceso_idUsuariosAcceso "
+				+ "FROM solicitud_puebla sol, empleado_ap epap "
+				+ "where epap.idEmpleadoAP=sol.empleado_idEmpleado "
+				+ "and  statusSolicitud <> 'Cancelada' ";
+		if(!(params.equals(""))) {
+			sql=sql+params;
+		}
+		//System.out.println(sql);
+		if(!flag) {
+			sql=sql+"union "
+					+"SELECT sol.idSolicitud, sol.fechaSolicitud, sol.tipoTramite, sol.rfcAsegurado, sol.nombredelServidor, sol.aPaternodelServidor, sol.aMaternodelServidor, sol.dependencia, sol.telefono, sol.email, sol.fechaFinLaboral,   "
+					+"sol.fechaSolicitudAPV, sol.diasTranscurridos, sol.importeSolicitado, sol.nombreBanco, sol.clabe, sol.idBanco, sol.observaciones,sol.Empleado_idEmpleado, sol.statusSolicitud, sol.numeroRegistro, sol.validadoModulo, sol.validadoSiniestros, " 
+					+"sol.validadoContabilidad, sol.TipoPago, sol.rfcGEM, sol.aportacionTotal, sol.retiroMaximo, sol.importeApagar, sol.importeContable, sol.fechaOrdenPago, sol.idEmpleadoGeneraOrden,  "
+					+"sol.fechaImporteContable, sol.fechadeTransferencia, sol.estPagRechPen, sol.estatus, sol.numChequeTransf, sol.obsSiniestros, sol.intereses, sol.montoCalculado, sol.pagoAnterior, "
+					+"'' as sexo, '' as fechaNacimiento , EmpleadoRegistra(sol.rfcGEM), getOrdenesPago(sol.idSolicitud),getcalculoActuaria(sol.idSolicitud), sol.analistaComercialValida, sol.fechaCalculo, sol.saldoFinal, sol.sueldo, sol.valRetencion, sol.usuariosacceso_idUsuariosAcceso  "
+					+"FROM solicitud_puebla sol "
+					+"where sol.empleado_idEmpleado  is null "
+					+"and  statusSolicitud <> 'Cancelada' ";
+			if(!params.equals("")) {
+				sql=sql+paramsSol;
+			}
+		}
+		//System.out.println(sql);
+		try {
+			connection = dataSource.getConnection();
+			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				solic=new SolicitudAPDTO();
+				solic.setIdSolicitud(rs.getLong("idSolicitud"));
+				solic.setFechaSolicitud(rs.getString("fechaSolicitud"));
+				solic.setTipoTramite(rs.getString("tipoTramite"));
+				solic.setRfcAsegurado(rs.getString("rfcAsegurado"));
+				solic.setNombre(rs.getString("nombredelServidor"));
+				solic.setApellidoPaterno(rs.getString("aPaternodelServidor"));
+				solic.setApellidoMaterno(rs.getString("aMaternodelServidor"));
+				solic.setDependencia(rs.getString("dependencia"));
+				solic.setTelefono(rs.getString("telefono"));
+				solic.setEmail(rs.getString("email"));
+				solic.setFechaFinLaboral(rs.getString("fechaFinLaboral"));
+				solic.setFechaSolicitudAPV(rs.getString("fechaSolicitudAPV"));
+				solic.setDiasTranscurridos(rs.getInt("diasTranscurridos"));
+				solic.setImporteSolicitado(rs.getString("importeSolicitado"));
+				solic.setNombreBanco(rs.getString("nombreBanco"));
+				solic.setClabe(rs.getString("clabe"));
+				solic.setIdBanco(rs.getLong("idBanco"));
+				solic.setObservaciones(rs.getString("observaciones"));
+				solic.setIdEmpleado(rs.getLong("Empleado_idEmpleado"));
+				solic.setStatusSolicitud(rs.getString("statusSolicitud"));
+				solic.setNumeroRegistro(rs.getInt("numeroRegistro"));
+				solic.setValidadoModulo(rs.getInt("validadoModulo"));
+				solic.setValidadoSiniestros(rs.getInt("validadoSiniestros"));
+				solic.setValidadoContabilidad(rs.getInt("validadoContabilidad"));
+				solic.setTipoPago(rs.getString("TipoPago"));
+				solic.setRfcGEM(rs.getString("rfcGEM"));
+				solic.setAportacionTotal(rs.getDouble("aportacionTotal"));
+				solic.setRetiroMaximo(rs.getDouble("retiroMaximo"));
+				solic.setImporteApagar(rs.getDouble("importeApagar"));
+				solic.setImporteContable(rs.getDouble("importeContable"));
+				solic.setFechaOrdenPago(rs.getString("fechaOrdenPago"));
+				solic.setIdEmpleadoGeneraOrden(rs.getLong("idEmpleadoGeneraOrden"));
+				solic.setFechaImporteContable(rs.getString("fechaImporteContable"));
+				solic.setFechadeTransferencia(rs.getString("fechadeTransferencia"));
+				solic.setEstPagRechPen(rs.getString("estPagRechPen"));
+				solic.setEstatus(rs.getString("estatus"));
+				solic.setNumChequeTransf(rs.getString("numChequeTransf"));
+				solic.setObsSiniestros(rs.getString("obsSiniestros"));
+				solic.setIntereses(rs.getDouble("intereses"));
+				solic.setMontoCalculado(rs.getString("montoCalculado"));
+				solic.setPagoAnterior(rs.getString("pagoAnterior"));
+				solic.setSexo(rs.getString(42));
+				solic.setFechaNac(rs.getString(43));
+				solic.setNombreEmpleadoGeneraOrden(rs.getString(44));
+				solic.setIdOrdenPago(rs.getLong(45));
+				solic.setIdCalculoActuaria(rs.getLong(46));
+				solic.setAnalistaComercialValida(rs.getString(47));
+				solic.setFechaCalculo(rs.getString(48));
+				solic.setSaldoFinal(rs.getString(49));
+				solic.setSueldo(rs.getString(50));
+				solic.setValRetencion(rs.getString(51));
+				solic.setEmpleadoAsignacion(usuarioAcceso.getRfcUsuarioByIdC(rs.getLong("usuariosacceso_idUsuariosAcceso"), connection));
+				solicitudes.add(solic);
+			}
+			rs.close();
+
+		} catch (Exception e) {
+			SytecsoController.logClassAndMethodWithException(e);
+		} finally {
+			UtileriaSql.closeConection(connection, pst, rs);
+		}
+		return solicitudes;
+	}
+	
+	@Override
+	public List<SolicitudAPDTO> getSolicitudesAnalistasFonacot(String params, String paramsSol, boolean flag) {
+		List<SolicitudAPDTO> solicitudes= new ArrayList<SolicitudAPDTO>();
+		SolicitudAPDTO solic = null;
+		Connection connection = null;
+		ResultSet rs = null;
+		PreparedStatement pst = null;
+		/*String sql = "SELECT idSolicitud, fechaSolicitud, tipoTramite, rfcAsegurado, nombredelServidor, aPaternodelServidor, aMaternodelServidor, dependencia, telefono, email, fechaFinLaboral, " + 
+				"fechaSolicitudAPV, diasTranscurridos, importeSolicitado, nombreBanco, clabe, idBanco, observaciones,Empleado_idEmpleado, statusSolicitud, numeroRegistro, validadoModulo, validadoSiniestros, "
+				+ "validadoContabilidad, TipoPago, rfcGEM, aportacionTotal, retiroMaximo, importeApagar, importeContable, fechaOrdenPago, idEmpleadoGeneraOrden, "
+				+ "fechaImporteContable, fechadeTransferencia, estPagRechPen, estatus, numChequeTransf, obsSiniestros, intereses, montoCalculado, pagoAnterior FROM solicitud WHERE statusSolicitud <> 'Cancelada' ";
+
+		*/
+		String sql ="SELECT sol.idSolicitud, sol.fechaSolicitud, sol.tipoTramite, sol.rfcAsegurado, sol.nombredelServidor, sol.aPaternodelServidor, sol.aMaternodelServidor, sol.dependencia, sol.telefono, sol.email, sol.fechaFinLaboral,   "
+				+ "sol.fechaSolicitudAPV, sol.diasTranscurridos, sol.importeSolicitado, sol.nombreBanco, sol.clabe, sol.idBanco, sol.observaciones,sol.Empleado_idEmpleado, sol.statusSolicitud, sol.numeroRegistro, sol.validadoModulo, sol.validadoSiniestros,  "
+				+ "sol.validadoContabilidad, sol.TipoPago, sol.rfcGEM, sol.aportacionTotal, sol.retiroMaximo, sol.importeApagar, sol.importeContable, sol.fechaOrdenPago, sol.idEmpleadoGeneraOrden,  "
+				+ "sol.fechaImporteContable, sol.fechadeTransferencia, sol.estPagRechPen, sol.estatus, sol.numChequeTransf, sol.obsSiniestros, sol.intereses, sol.montoCalculado, sol.pagoAnterior, "
+				+ "replace(replace(epap.sexo,'HOMBRE','M'),'MUJER','F'), epap.fechaNacimiento, EmpleadoRegistra(sol.rfcGEM), getOrdenesPago(sol.idSolicitud),getcalculoActuaria(sol.idSolicitud), sol.analistaComercialValida, sol.fechaCalculo, sol.saldoFinal, sol.sueldo, sol.valRetencion, sol.usuariosacceso_idUsuariosAcceso "
+				+ "FROM solicitud_fonacot sol, empleado_ap epap "
+				+ "where epap.idEmpleadoAP=sol.empleado_idEmpleado "
+				+ "and  statusSolicitud <> 'Cancelada' ";
+		if(!(params.equals(""))) {
+			sql=sql+params;
+		}
+		//System.out.println(sql);
+		if(!flag) {
+			sql=sql+"union "
+					+"SELECT sol.idSolicitud, sol.fechaSolicitud, sol.tipoTramite, sol.rfcAsegurado, sol.nombredelServidor, sol.aPaternodelServidor, sol.aMaternodelServidor, sol.dependencia, sol.telefono, sol.email, sol.fechaFinLaboral,   "
+					+"sol.fechaSolicitudAPV, sol.diasTranscurridos, sol.importeSolicitado, sol.nombreBanco, sol.clabe, sol.idBanco, sol.observaciones,sol.Empleado_idEmpleado, sol.statusSolicitud, sol.numeroRegistro, sol.validadoModulo, sol.validadoSiniestros, " 
+					+"sol.validadoContabilidad, sol.TipoPago, sol.rfcGEM, sol.aportacionTotal, sol.retiroMaximo, sol.importeApagar, sol.importeContable, sol.fechaOrdenPago, sol.idEmpleadoGeneraOrden,  "
+					+"sol.fechaImporteContable, sol.fechadeTransferencia, sol.estPagRechPen, sol.estatus, sol.numChequeTransf, sol.obsSiniestros, sol.intereses, sol.montoCalculado, sol.pagoAnterior, "
+					+"'' as sexo, '' as fechaNacimiento , EmpleadoRegistra(sol.rfcGEM), getOrdenesPago(sol.idSolicitud),getcalculoActuaria(sol.idSolicitud), sol.analistaComercialValida, sol.fechaCalculo, sol.saldoFinal, sol.sueldo, sol.valRetencion, sol.usuariosacceso_idUsuariosAcceso  "
+					+"FROM solicitud_fonacot sol "
+					+"where sol.empleado_idEmpleado  is null "
+					+"and  statusSolicitud <> 'Cancelada' ";
+			if(!params.equals("")) {
+				sql=sql+paramsSol;
+			}
+		}
+		//System.out.println(sql);
+		try {
+			connection = dataSource.getConnection();
+			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				solic=new SolicitudAPDTO();
+				solic.setIdSolicitud(rs.getLong("idSolicitud"));
+				solic.setFechaSolicitud(rs.getString("fechaSolicitud"));
+				solic.setTipoTramite(rs.getString("tipoTramite"));
+				solic.setRfcAsegurado(rs.getString("rfcAsegurado"));
+				solic.setNombre(rs.getString("nombredelServidor"));
+				solic.setApellidoPaterno(rs.getString("aPaternodelServidor"));
+				solic.setApellidoMaterno(rs.getString("aMaternodelServidor"));
+				solic.setDependencia(rs.getString("dependencia"));
+				solic.setTelefono(rs.getString("telefono"));
+				solic.setEmail(rs.getString("email"));
+				solic.setFechaFinLaboral(rs.getString("fechaFinLaboral"));
+				solic.setFechaSolicitudAPV(rs.getString("fechaSolicitudAPV"));
+				solic.setDiasTranscurridos(rs.getInt("diasTranscurridos"));
+				solic.setImporteSolicitado(rs.getString("importeSolicitado"));
+				solic.setNombreBanco(rs.getString("nombreBanco"));
+				solic.setClabe(rs.getString("clabe"));
+				solic.setIdBanco(rs.getLong("idBanco"));
+				solic.setObservaciones(rs.getString("observaciones"));
+				solic.setIdEmpleado(rs.getLong("Empleado_idEmpleado"));
+				solic.setStatusSolicitud(rs.getString("statusSolicitud"));
+				solic.setNumeroRegistro(rs.getInt("numeroRegistro"));
+				solic.setValidadoModulo(rs.getInt("validadoModulo"));
+				solic.setValidadoSiniestros(rs.getInt("validadoSiniestros"));
+				solic.setValidadoContabilidad(rs.getInt("validadoContabilidad"));
+				solic.setTipoPago(rs.getString("TipoPago"));
+				solic.setRfcGEM(rs.getString("rfcGEM"));
+				solic.setAportacionTotal(rs.getDouble("aportacionTotal"));
+				solic.setRetiroMaximo(rs.getDouble("retiroMaximo"));
+				solic.setImporteApagar(rs.getDouble("importeApagar"));
+				solic.setImporteContable(rs.getDouble("importeContable"));
+				solic.setFechaOrdenPago(rs.getString("fechaOrdenPago"));
+				solic.setIdEmpleadoGeneraOrden(rs.getLong("idEmpleadoGeneraOrden"));
+				solic.setFechaImporteContable(rs.getString("fechaImporteContable"));
+				solic.setFechadeTransferencia(rs.getString("fechadeTransferencia"));
+				solic.setEstPagRechPen(rs.getString("estPagRechPen"));
+				solic.setEstatus(rs.getString("estatus"));
+				solic.setNumChequeTransf(rs.getString("numChequeTransf"));
+				solic.setObsSiniestros(rs.getString("obsSiniestros"));
+				solic.setIntereses(rs.getDouble("intereses"));
+				solic.setMontoCalculado(rs.getString("montoCalculado"));
+				solic.setPagoAnterior(rs.getString("pagoAnterior"));
+				solic.setSexo(rs.getString(42));
+				solic.setFechaNac(rs.getString(43));
+				solic.setNombreEmpleadoGeneraOrden(rs.getString(44));
+				solic.setIdOrdenPago(rs.getLong(45));
+				solic.setIdCalculoActuaria(rs.getLong(46));
+				solic.setAnalistaComercialValida(rs.getString(47));
+				solic.setFechaCalculo(rs.getString(48));
+				solic.setSaldoFinal(rs.getString(49));
+				solic.setSueldo(rs.getString(50));
+				solic.setValRetencion(rs.getString(51));
+				solic.setEmpleadoAsignacion(usuarioAcceso.getRfcUsuarioByIdC(rs.getLong("usuariosacceso_idUsuariosAcceso"), connection));
+				solicitudes.add(solic);
+			}
+			rs.close();
+
+		} catch (Exception e) {
+			SytecsoController.logClassAndMethodWithException(e);
+		} finally {
+			UtileriaSql.closeConection(connection, pst, rs);
+		}
+		return solicitudes;
+	}
+	
+	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public boolean updateEstatusSolicitudAnalistas(SolicitudAPDTO solicitud) {
 		boolean status = true;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		Connection con = null;
-		String sql = "UPDATE solicitud SET statusSolicitud = ?, validadoModulo = ?, validadoSiniestros = ?, validadoContabilidad = ?, rfcGEM = ?, analistaComercialValida = ? WHERE idSolicitud = ?";
-
+		String sql =""; 
+		
+		if(solicitud.getTipoSolicitud().equals("puebla")) {
+			sql="UPDATE solicitud_puebla SET statusSolicitud = ?, validadoModulo = ?, validadoSiniestros = ?, validadoContabilidad = ?, rfcGEM = ?, analistaComercialValida = ? WHERE idSolicitud = ?";
+			solicitud.setTipoSolicitud("puebla");
+		}if(solicitud.getTipoSolicitud().equals("fonacot")) {
+			sql="UPDATE solicitud_fonacot SET statusSolicitud = ?, validadoModulo = ?, validadoSiniestros = ?, validadoContabilidad = ?, rfcGEM = ?, analistaComercialValida = ? WHERE idSolicitud = ?";
+			solicitud.setTipoSolicitud("fonacot");
+		}
+		if(solicitud.getTipoSolicitud().equals("")) {
+			sql="UPDATE solicitud SET statusSolicitud = ?, validadoModulo = ?, validadoSiniestros = ?, validadoContabilidad = ?, rfcGEM = ?, analistaComercialValida = ? WHERE idSolicitud = ?";
+			solicitud.setTipoSolicitud("");
+		}
+			
 		try {
 			con = dataSource.getConnection();
 			pst = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -775,14 +1094,30 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public long crearSolicitudHasObservacion(long idObs, long idSolicitud) throws SQLException {
+	public long crearSolicitudHasObservacion(long idObs, long idSolicitud, String categoriaSolicitud) throws SQLException {
 		
-		String sql = "INSERT INTO solicitud_has_observaciones (Observaciones_idObservaciones, Solicitud_idSolicitud) VALUES (?, ?)";
+		String sql ="";
+		SolicitudAPDTO solicitud = new SolicitudAPDTO();
+		
+		if(categoriaSolicitud.equals("puebla")) {
+			sql= "INSERT INTO solicitud_puebla_has_observaciones (Observaciones_idObservaciones, Solicitud_idSolicitud) VALUES (?, ?)";
+			solicitud.setTipoSolicitud(categoriaSolicitud);
+		}
+		if(categoriaSolicitud.equals("fonacot")) {
+			sql= "INSERT INTO solicitud_fonacot_has_observaciones (Observaciones_idObservaciones, Solicitud_idSolicitud) VALUES (?, ?)";
+			solicitud.setTipoSolicitud(categoriaSolicitud);
+		}
+		if(categoriaSolicitud.equals("")) {
+			sql= "INSERT INTO solicitud_has_observaciones (Observaciones_idObservaciones, Solicitud_idSolicitud) VALUES (?, ?)";
+			solicitud.setTipoSolicitud(categoriaSolicitud);
+		}
+		
+		
 		long idTransaccion = 0L;
 		ResultSet rs = null;
 		Connection con = null;
 		PreparedStatement ps = null;
-		SolicitudAPDTO solicitud = new SolicitudAPDTO();
+		
 		try {
 			con = dataSource.getConnection();
 			con.setAutoCommit(false);
@@ -817,14 +1152,21 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	
 	@Override
-	public List<ObservacionDTO> getObservacionesSolicitud(long idSolicitud) {
+	public List<ObservacionDTO> getObservacionesSolicitud(long idSolicitud, String categoriaSolicitud) {
 		List<ObservacionDTO> observaciones= new ArrayList<ObservacionDTO>();
 		ObservacionDTO obs = null;
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		String sql = "SELECT obs.idObservacion, obs.fechaCreacion, obs.observacion FROM solicitud_has_observaciones sho, observaciones obs WHERE sho.Observaciones_idObservaciones = obs.idObservacion and Solicitud_idSolicitud = ?";
+		String sql = "";
 
+		if(categoriaSolicitud.equals("puebla"))
+			sql="SELECT obs.idObservacion, obs.fechaCreacion, obs.observacion FROM solicitud_puebla_has_observaciones sho, observaciones obs WHERE sho.observaciones_idObservacion = obs.idObservacion and solicitud_puebla_idSolicitud = ?";
+		if(categoriaSolicitud.equals("fonacot"))
+			sql="SELECT obs.idObservacion, obs.fechaCreacion, obs.observacion FROM solicitud_fonacot_has_observaciones sho, observaciones obs WHERE sho.observaciones_idObservacion = obs.idObservacion and solicitud_fonacot_idSolicitud = ?";
+		if(categoriaSolicitud.equals("")) 
+			sql="SELECT obs.idObservacion, obs.fechaCreacion, obs.observacion FROM solicitud_has_observaciones sho, observaciones obs WHERE sho.Observaciones_idObservaciones = obs.idObservacion and Solicitud_idSolicitud = ?";
+			
 		try {
 			connection = dataSource.getConnection();
 			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -852,8 +1194,22 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	@Transactional(rollbackFor = Exception.class)
 	public boolean validarImportes(SolicitudAPDTO solicitud) throws SQLException {
 		
-		String sql = "UPDATE solicitud SET aportacionTotal = ?, retiroMaximo = ?, importeApagar = ?, importeContable = ?, statusSolicitud = ?, intereses = ?, montoCalculado = ?, "
-				+ "pagoAnterior = ?, sueldo = ?, saldoFinal = ?, valRetencion = ?, fechaCalculo = ? WHERE idSolicitud = ?";
+		String sql = "";
+		if(solicitud.getTipoSolicitud().equals("puebla")) {
+			sql="UPDATE solicitud_puebla SET aportacionTotal = ?, retiroMaximo = ?, importeApagar = ?, importeContable = ?, statusSolicitud = ?, intereses = ?, montoCalculado = ?, "
+					+ "pagoAnterior = ?, sueldo = ?, saldoFinal = ?, valRetencion = ?, fechaCalculo = ? WHERE idSolicitud = ?";
+		}
+		if(solicitud.getTipoSolicitud().equals("fonacot")) {
+			sql="UPDATE solicitud_fonacot SET aportacionTotal = ?, retiroMaximo = ?, importeApagar = ?, importeContable = ?, statusSolicitud = ?, intereses = ?, montoCalculado = ?, "
+					+ "pagoAnterior = ?, sueldo = ?, saldoFinal = ?, valRetencion = ?, fechaCalculo = ? WHERE idSolicitud = ?";
+		}
+		if(solicitud.getTipoSolicitud().equals("")) {
+			sql="UPDATE solicitud SET aportacionTotal = ?, retiroMaximo = ?, importeApagar = ?, importeContable = ?, statusSolicitud = ?, intereses = ?, montoCalculado = ?, "
+					+ "pagoAnterior = ?, sueldo = ?, saldoFinal = ?, valRetencion = ?, fechaCalculo = ? WHERE idSolicitud = ?";
+		}
+			
+		
+		
 		ResultSet rs = null;
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -909,7 +1265,15 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	@Transactional(rollbackFor = Exception.class)
 	public boolean updateFechaOrdenPagoSolicitud(SolicitudAPDTO solicitud) throws SQLException {
 		
-		String sql = "UPDATE solicitud SET fechaOrdenPago = ?, idEmpleadoGeneraOrden = ? WHERE idSolicitud = ?";
+		
+		String sql="";
+		if(solicitud.getTipoSolicitud().equals("puebla"))
+			sql = "UPDATE solicitud_puebla SET fechaOrdenPago = ?, idEmpleadoGeneraOrden = ? WHERE idSolicitud = ?";
+		if(solicitud.getTipoSolicitud().equals("fonacot"))
+			sql = "UPDATE solicitud_fonacot SET fechaOrdenPago = ?, idEmpleadoGeneraOrden = ? WHERE idSolicitud = ?";
+		if(solicitud.getTipoSolicitud().equals(""))
+			sql = "UPDATE solicitud SET fechaOrdenPago = ?, idEmpleadoGeneraOrden = ? WHERE idSolicitud = ?";
+		
 		ResultSet rs = null;
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -953,7 +1317,21 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	@Transactional(rollbackFor = Exception.class)
 	public boolean informacionPago(SolicitudAPDTO solicitud) throws SQLException {
 		
-		String sql = "UPDATE solicitud SET importeApagar = ?, fechaImporteContable = ?, fechadeTransferencia = ?, estPagRechPen = ?, estatus = ?, numChequeTransf = ?, obsSiniestros = ?, statusSolicitud = ? WHERE idSolicitud = ?";
+		String sql = "";
+		
+		if(solicitud.getTipoSolicitud().equals("puebla")) {
+			sql="UPDATE solicitud_puebla SET importeApagar = ?, fechaImporteContable = ?, fechadeTransferencia = ?, estPagRechPen = ?, estatus = ?, numChequeTransf = ?, obsSiniestros = ?, statusSolicitud = ? WHERE idSolicitud = ?";
+			
+		}
+		if(solicitud.getTipoSolicitud().equals("fonacot")) {
+			sql="UPDATE solicitud_fonacot SET importeApagar = ?, fechaImporteContable = ?, fechadeTransferencia = ?, estPagRechPen = ?, estatus = ?, numChequeTransf = ?, obsSiniestros = ?, statusSolicitud = ? WHERE idSolicitud = ?";
+			
+		}
+		if(solicitud.getTipoSolicitud().equals("")) {
+			sql="UPDATE solicitud SET importeApagar = ?, fechaImporteContable = ?, fechadeTransferencia = ?, estPagRechPen = ?, estatus = ?, numChequeTransf = ?, obsSiniestros = ?, statusSolicitud = ? WHERE idSolicitud = ?";
+			
+		}
+		
 		ResultSet rs = null;
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -1034,15 +1412,29 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	}
 	
 	@Override
-	public List<SolicitudAPDTO> getValidarSolicitudRFC(String rfc) {
+	public List<SolicitudAPDTO> getValidarSolicitudRFC(String rfc, String categoriaSolicitud) {
 		List<SolicitudAPDTO> solicitudes= new ArrayList<SolicitudAPDTO>();
 		SolicitudAPDTO solic = null;
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		String sql = "SELECT numeroRegistro, fechaSolicitud, idSolicitud, statusSolicitud, rfcGEM FROM solicitud WHERE statusSolicitud <> 'Cancelada' " + 
-				"and statusSolicitud <> 'Terminada' and statusSolicitud <> 'Rechazada' and rfcGEM = ? order by fechaSolicitud DESC";
+		String sql = "";
+		
+		if(categoriaSolicitud.equals("puebla")) {
+			sql="SELECT numeroRegistro, fechaSolicitud, idSolicitud, statusSolicitud, rfcGEM FROM solicitud_puebla WHERE statusSolicitud <> 'Cancelada' " + 
+					"and statusSolicitud <> 'Terminada' and statusSolicitud <> 'Rechazada' and rfcGEM = ? order by fechaSolicitud DESC";
 
+		}
+		if(categoriaSolicitud.equals("fonacot")) {
+			sql="SELECT numeroRegistro, fechaSolicitud, idSolicitud, statusSolicitud, rfcGEM FROM solicitud_fonacot WHERE statusSolicitud <> 'Cancelada' " + 
+					"and statusSolicitud <> 'Terminada' and statusSolicitud <> 'Rechazada' and rfcGEM = ? order by fechaSolicitud DESC";
+
+		}
+		if(categoriaSolicitud.equals("")) {
+			sql="SELECT numeroRegistro, fechaSolicitud, idSolicitud, statusSolicitud, rfcGEM FROM solicitud WHERE statusSolicitud <> 'Cancelada' " + 
+					"and statusSolicitud <> 'Terminada' and statusSolicitud <> 'Rechazada' and rfcGEM = ? order by fechaSolicitud DESC";
+
+		}
 		try {
 			connection = dataSource.getConnection();
 			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -1101,7 +1493,7 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	@Override
     @Transactional(rollbackFor = Exception.class)
-    public long crearOrdenPagoSolicitud(OrdenPagoHasSolicitudDTO orden) throws Exception {
+    public long crearOrdenPagoSolicitud(OrdenPagoHasSolicitudDTO orden, String categoriaSolicitud) throws Exception {
         Connection connection = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
@@ -1111,7 +1503,19 @@ public class DAOSolicitudImpl implements DAOSolicitud {
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
-            pst = connection.prepareStatement("INSERT INTO ordenes_pago_has_solicitud (OrdenesPago_idOrdenPago, Solicitud_idSolicitud) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+           
+            if(categoriaSolicitud.equals("puebla")) {
+            	pst = connection.prepareStatement("INSERT INTO ordenes_pago_has_solicitud_solicitud (OrdenesPago_idOrdenPago, Solicitud_idSolicitud) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            	solicitud.setTipoSolicitud(categoriaSolicitud);
+            }
+            if(categoriaSolicitud.equals("fonacot")) {
+            	pst = connection.prepareStatement("INSERT INTO ordenes_pago_has_solicitud_fonacot (OrdenesPago_idOrdenPago, Solicitud_idSolicitud) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            	solicitud.setTipoSolicitud(categoriaSolicitud);
+            }
+            if(categoriaSolicitud.equals("")) {
+            	pst = connection.prepareStatement("INSERT INTO ordenes_pago_has_solicitud (OrdenesPago_idOrdenPago, Solicitud_idSolicitud) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            	solicitud.setTipoSolicitud(categoriaSolicitud);
+            }
             pst.setLong(1, orden.getIdOrdenPago());
             pst.setLong(2, orden.getIdSolicitud());
             pst.executeUpdate();
@@ -1133,14 +1537,31 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	
 	@Override
-	public OrdenPagoDTO getOrdenPago(long idSolicitud) {
+	public OrdenPagoDTO getOrdenPago(long idSolicitud, String categoriaSolicitud) {
 		OrdenPagoDTO orden = null;
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		String sql = "SELECT op.idOrdenesPago, op.fechaCreacion FROM ordenes_pago op, ordenes_pago_has_solicitud ophs, solicitud s " + 
-				"WHERE op.idOrdenesPago = ophs.OrdenesPago_idOrdenPago and s.idSolicitud = ophs.Solicitud_idSolicitud " + 
-				"and s.idSolicitud = ? ";
+		
+		
+		String sql = "";
+		
+		
+		if(categoriaSolicitud.equals("puebla")) {
+			sql="SELECT op.idOrdenesPago, op.fechaCreacion FROM ordenes_pago op, ordenes_pago_has_solicitud_puebla ophs, solicitud s " + 
+					"WHERE op.idOrdenesPago = ophs.OrdenesPago_idOrdenPago and s.idSolicitud = ophs.Solicitud_idSolicitud " + 
+					"and s.idSolicitud = ? ";
+		}
+		if(categoriaSolicitud.equals("fonacot")) {
+			sql="SELECT op.idOrdenesPago, op.fechaCreacion FROM ordenes_pago op, ordenes_pago_has_solicitud_fonacot ophs, solicitud s " + 
+					"WHERE op.idOrdenesPago = ophs.OrdenesPago_idOrdenPago and s.idSolicitud = ophs.Solicitud_idSolicitud " + 
+					"and s.idSolicitud = ? ";
+		}
+		if(categoriaSolicitud.equals("")) {
+			sql="SELECT op.idOrdenesPago, op.fechaCreacion FROM ordenes_pago op, ordenes_pago_has_solicitud ophs, solicitud s " + 
+					"WHERE op.idOrdenesPago = ophs.OrdenesPago_idOrdenPago and s.idSolicitud = ophs.Solicitud_idSolicitud " + 
+					"and s.idSolicitud = ? ";
+		}
 
 		try {
 			connection = dataSource.getConnection();
@@ -1164,18 +1585,40 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	
 	@Override
-	public List<SolicitudAPDTO> getDataReport(long idOrdenPago) {
+	public List<SolicitudAPDTO> getDataReport(long idOrdenPago,String categoriaSolicitud) {
 		List<SolicitudAPDTO> solicitudes= new ArrayList<SolicitudAPDTO>();
-		SolicitudAPDTO solic = null;
+		SolicitudAPDTO solic = new SolicitudAPDTO();
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		String sql = "SELECT s.idSolicitud, s.fechaSolicitud, s.tipoTramite, s.rfcAsegurado, s.nombredelServidor, s.aPaternodelServidor, s.aMaternodelServidor, s.dependencia, s.telefono, s.email, s.fechaFinLaboral,  " + 
-				"s.fechaSolicitudAPV, s.diasTranscurridos, s.importeSolicitado, s.nombreBanco, s.clabe, s.idBanco, s.observaciones,s.Empleado_idEmpleado, s.statusSolicitud, s.numeroRegistro, s.validadoModulo, s.validadoSiniestros, " + 
-				"s.validadoContabilidad, s.TipoPago, s.rfcGEM, s.aportacionTotal, s.retiroMaximo, s.importeApagar, s.importeContable, s.fechaOrdenPago, s.idEmpleadoGeneraOrden, " + 
-				"s.fechaImporteContable, s.fechadeTransferencia, s.estPagRechPen, s.estatus, s.numChequeTransf, s.obsSiniestros, op.folioOrden, op.fechaCreacion as fechaCreacionOrdenPago " + 
-				"FROM solicitud s, ordenes_pago_has_solicitud ophs, ordenes_pago op WHERE s.idSolicitud = ophs.Solicitud_idSolicitud and op.idOrdenesPago = ophs.OrdenesPago_idOrdenPago and ophs.OrdenesPago_idOrdenPago = ? ";
-
+		String sql = "";
+		if(categoriaSolicitud.equals("puebla")) {
+			sql="SELECT s.idSolicitud, s.fechaSolicitud, s.tipoTramite, s.rfcAsegurado, s.nombredelServidor, s.aPaternodelServidor, s.aMaternodelServidor, s.dependencia, s.telefono, s.email, s.fechaFinLaboral,  " + 
+					"s.fechaSolicitudAPV, s.diasTranscurridos, s.importeSolicitado, s.nombreBanco, s.clabe, s.idBanco, s.observaciones,s.Empleado_idEmpleado, s.statusSolicitud, s.numeroRegistro, s.validadoModulo, s.validadoSiniestros, " + 
+					"s.validadoContabilidad, s.TipoPago, s.rfcGEM, s.aportacionTotal, s.retiroMaximo, s.importeApagar, s.importeContable, s.fechaOrdenPago, s.idEmpleadoGeneraOrden, " + 
+					"s.fechaImporteContable, s.fechadeTransferencia, s.estPagRechPen, s.estatus, s.numChequeTransf, s.obsSiniestros, op.folioOrden, op.fechaCreacion as fechaCreacionOrdenPago " + 
+					"FROM solicitud_puebla s, ordenes_pago_has_solicitud_puebla ophs, ordenes_pago op WHERE s.idSolicitud = ophs.Solicitud_idSolicitud and op.idOrdenesPago = ophs.OrdenesPago_idOrdenPago and ophs.OrdenesPago_idOrdenPago = ? ";
+			solic.setTipoSolicitud(categoriaSolicitud);
+			
+		}
+		if(categoriaSolicitud.equals("fonacot")) {
+			
+			sql="SELECT s.idSolicitud, s.fechaSolicitud, s.tipoTramite, s.rfcAsegurado, s.nombredelServidor, s.aPaternodelServidor, s.aMaternodelServidor, s.dependencia, s.telefono, s.email, s.fechaFinLaboral,  " + 
+					"s.fechaSolicitudAPV, s.diasTranscurridos, s.importeSolicitado, s.nombreBanco, s.clabe, s.idBanco, s.observaciones,s.Empleado_idEmpleado, s.statusSolicitud, s.numeroRegistro, s.validadoModulo, s.validadoSiniestros, " + 
+					"s.validadoContabilidad, s.TipoPago, s.rfcGEM, s.aportacionTotal, s.retiroMaximo, s.importeApagar, s.importeContable, s.fechaOrdenPago, s.idEmpleadoGeneraOrden, " + 
+					"s.fechaImporteContable, s.fechadeTransferencia, s.estPagRechPen, s.estatus, s.numChequeTransf, s.obsSiniestros, op.folioOrden, op.fechaCreacion as fechaCreacionOrdenPago " + 
+					"FROM solicitud_fonacot s, ordenes_pago_has_solicitud_fonacot ophs, ordenes_pago op WHERE s.idSolicitud = ophs.Solicitud_idSolicitud and op.idOrdenesPago = ophs.OrdenesPago_idOrdenPago and ophs.OrdenesPago_idOrdenPago = ? ";
+			solic.setTipoSolicitud(categoriaSolicitud);
+		}
+		if(categoriaSolicitud.equals("")) {
+			
+			sql="SELECT s.idSolicitud, s.fechaSolicitud, s.tipoTramite, s.rfcAsegurado, s.nombredelServidor, s.aPaternodelServidor, s.aMaternodelServidor, s.dependencia, s.telefono, s.email, s.fechaFinLaboral,  " + 
+					"s.fechaSolicitudAPV, s.diasTranscurridos, s.importeSolicitado, s.nombreBanco, s.clabe, s.idBanco, s.observaciones,s.Empleado_idEmpleado, s.statusSolicitud, s.numeroRegistro, s.validadoModulo, s.validadoSiniestros, " + 
+					"s.validadoContabilidad, s.TipoPago, s.rfcGEM, s.aportacionTotal, s.retiroMaximo, s.importeApagar, s.importeContable, s.fechaOrdenPago, s.idEmpleadoGeneraOrden, " + 
+					"s.fechaImporteContable, s.fechadeTransferencia, s.estPagRechPen, s.estatus, s.numChequeTransf, s.obsSiniestros, op.folioOrden, op.fechaCreacion as fechaCreacionOrdenPago " + 
+					"FROM solicitud s, ordenes_pago_has_solicitud ophs, ordenes_pago op WHERE s.idSolicitud = ophs.Solicitud_idSolicitud and op.idOrdenesPago = ophs.OrdenesPago_idOrdenPago and ophs.OrdenesPago_idOrdenPago = ? ";
+			solic.setTipoSolicitud(categoriaSolicitud);
+		}
 		try {
 			connection = dataSource.getConnection();
 			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -1269,7 +1712,7 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	@Override
     @Transactional(rollbackFor = Exception.class)
-    public long crearCalculoActuariaSolicitud(CalculoActuariaHasSolicDTO calculoSol) throws Exception {
+    public long crearCalculoActuariaSolicitud(CalculoActuariaHasSolicDTO calculoSol, String categoriaSolicitud) throws Exception {
         Connection connection = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
@@ -1279,7 +1722,19 @@ public class DAOSolicitudImpl implements DAOSolicitud {
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
-            pst = connection.prepareStatement("INSERT INTO calculo_actuaria_has_solicitud (CalculoActuaria_idCalculo, Solicitud_idSolicitud) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            
+            if(categoriaSolicitud.equals("puebla")) {
+            	pst = connection.prepareStatement("INSERT INTO calculo_actuaria_has_solicitud_puebla (CalculoActuaria_idCalculo, Solicitud_idSolicitud) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            	solicitud.setTipoSolicitud(categoriaSolicitud);
+            }
+            if(categoriaSolicitud.equals("fonacot")) {
+            	pst = connection.prepareStatement("INSERT INTO calculo_actuaria_has_solicitud_fonacot (CalculoActuaria_idCalculo, Solicitud_idSolicitud) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            	solicitud.setTipoSolicitud(categoriaSolicitud);
+            }
+            if(categoriaSolicitud.equals("")) {
+            	pst = connection.prepareStatement("INSERT INTO calculo_actuaria_has_solicitud (CalculoActuaria_idCalculo, Solicitud_idSolicitud) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            	solicitud.setTipoSolicitud(categoriaSolicitud);
+            }
             pst.setLong(1, calculoSol.getIdCalculoActuaria());
             pst.setLong(2, calculoSol.getIdSolicitud());
             pst.executeUpdate();
@@ -1301,14 +1756,27 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	
 	
 	@Override
-	public CalculoActuariaDTO getCalculoActuaria(long idSolicitud) {
+	public CalculoActuariaDTO getCalculoActuaria(long idSolicitud, String categoriaSolicitud) {
 		CalculoActuariaDTO calculo = null;
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		String sql = "SELECT ca.idCalculoActuaria, ca.fechaCreacion, ca.registrosCargados FROM calculo_actuaria ca, calculo_actuaria_has_solicitud cahs, solicitud s " + 
-				"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo and s.idSolicitud = cahs.Solicitud_idSolicitud " + 
-				"and s.idSolicitud = ? ";
+		String sql = "";
+		if(categoriaSolicitud.equals("puebla")) {
+			sql="SELECT ca.idCalculoActuaria, ca.fechaCreacion, ca.registrosCargados FROM calculo_actuaria ca, calculo_actuaria_has_solicitud_puebla cahs, solicitud_puebla s " + 
+					"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo and s.idSolicitud = cahs.Solicitud_idSolicitud " + 
+					"and s.idSolicitud = ? ";
+		}
+		if(categoriaSolicitud.equals("fonacot")) {
+			sql="SELECT ca.idCalculoActuaria, ca.fechaCreacion, ca.registrosCargados FROM calculo_actuaria ca, calculo_actuaria_has_solicitud_fonacot cahs, solicitud_fonacot s " + 
+					"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo and s.idSolicitud = cahs.Solicitud_idSolicitud " + 
+					"and s.idSolicitud = ? ";
+		}
+		if(categoriaSolicitud.equals("")) {
+			sql="SELECT ca.idCalculoActuaria, ca.fechaCreacion, ca.registrosCargados FROM calculo_actuaria ca, calculo_actuaria_has_solicitud cahs, solicitud s " + 
+					"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo and s.idSolicitud = cahs.Solicitud_idSolicitud " + 
+					"and s.idSolicitud = ? ";
+		}
 
 		try {
 			connection = dataSource.getConnection();
@@ -1332,14 +1800,31 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	}
 	
 	@Override
-	public CalculoActuariaDTO getCalculoActuariaByFolioSolicitud(long folio) {
+	public CalculoActuariaDTO getCalculoActuariaByFolioSolicitud(long folio, String categoriaSolicitud) {
 		CalculoActuariaDTO calculo = null;
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		String sql = "SELECT ca.idCalculoActuaria, ca.fechaCreacion, ca.registrosCargados, ca.numRegistros FROM calculo_actuaria ca, calculo_actuaria_has_solicitud cahs, solicitud s " + 
-				"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo and s.idSolicitud = cahs.Solicitud_idSolicitud " + 
-				"and s.numeroRegistro = ? ";
+		String sql = "";
+		
+		if(categoriaSolicitud.equals("puebla")) {
+			
+			sql="SELECT ca.idCalculoActuaria, ca.fechaCreacion, ca.registrosCargados, ca.numRegistros FROM calculo_actuaria ca, calculo_actuaria_has_solicitud_puebla cahs, solicitud s " + 
+					"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo and s.idSolicitud = cahs.Solicitud_idSolicitud " + 
+					"and s.numeroRegistro = ? ";
+		}
+		if(categoriaSolicitud.equals("fonacot")) {
+			
+			sql="SELECT ca.idCalculoActuaria, ca.fechaCreacion, ca.registrosCargados, ca.numRegistros FROM calculo_actuaria ca, calculo_actuaria_has_solicitud_fonacot cahs, solicitud s " + 
+					"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo and s.idSolicitud = cahs.Solicitud_idSolicitud " + 
+					"and s.numeroRegistro = ? ";
+		}
+		if(categoriaSolicitud.equals("")) {
+			
+			sql="SELECT ca.idCalculoActuaria, ca.fechaCreacion, ca.registrosCargados, ca.numRegistros FROM calculo_actuaria ca, calculo_actuaria_has_solicitud cahs, solicitud s " + 
+					"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo and s.idSolicitud = cahs.Solicitud_idSolicitud " + 
+					"and s.numeroRegistro = ? ";
+		}
 
 		try {
 			connection = dataSource.getConnection();
@@ -1364,16 +1849,34 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	}
 	
 	@Override
-	public List<SolicitudAPDTO> getDataCalculoActuaria(long idCalculo) {
+	public List<SolicitudAPDTO> getDataCalculoActuaria(long idCalculo, String categoriaSolicitud) {
 		List<SolicitudAPDTO> solicitudes= new ArrayList<SolicitudAPDTO>();
 		SolicitudAPDTO solic = null;
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		String sql = "SELECT ca.fechaCreacion, ca.numProceso, s.idSolicitud, s.fechaSolicitud, s.tipoTramite, s.rfcAsegurado, s.nombredelServidor, s.aPaternodelServidor, s.aMaternodelServidor, s.dependencia, s.email, s.fechaFinLaboral,  " + 
-				"s.fechaSolicitudAPV, s.statusSolicitud, s.numeroRegistro, s.TipoPago, s.rfcGEM, s.analistaComercialValida, s.importeSolicitado, s.sueldo, s.fechaPago, s.pagoAnterior FROM calculo_actuaria ca, calculo_actuaria_has_solicitud cahs, solicitud s  " + 
-				"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo  " + 
-				"and cahs.Solicitud_idSolicitud = s.idSolicitud and ca.idCalculoActuaria = ? ";
+		String sql = "";
+		if(categoriaSolicitud.equals("puebla")) {
+			sql="SELECT ca.fechaCreacion, ca.numProceso, s.idSolicitud, s.fechaSolicitud, s.tipoTramite, s.rfcAsegurado, s.nombredelServidor, s.aPaternodelServidor, s.aMaternodelServidor, s.dependencia, s.email, s.fechaFinLaboral,  " + 
+					"s.fechaSolicitudAPV, s.statusSolicitud, s.numeroRegistro, s.TipoPago, s.rfcGEM, s.analistaComercialValida, s.importeSolicitado, s.sueldo, s.fechaPago, s.pagoAnterior FROM calculo_actuaria ca, calculo_actuaria_has_solicitud_puebla cahs, solicitud_puebla s  " + 
+					"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo  " + 
+					"and cahs.Solicitud_idSolicitud = s.idSolicitud and ca.idCalculoActuaria = ? ";
+			
+		}
+		if(categoriaSolicitud.equals("fonacot")) {
+			sql="SELECT ca.fechaCreacion, ca.numProceso, s.idSolicitud, s.fechaSolicitud, s.tipoTramite, s.rfcAsegurado, s.nombredelServidor, s.aPaternodelServidor, s.aMaternodelServidor, s.dependencia, s.email, s.fechaFinLaboral,  " + 
+					"s.fechaSolicitudAPV, s.statusSolicitud, s.numeroRegistro, s.TipoPago, s.rfcGEM, s.analistaComercialValida, s.importeSolicitado, s.sueldo, s.fechaPago, s.pagoAnterior FROM calculo_actuaria ca, calculo_actuaria_has_solicitud_fonacot cahs, solicitud_fonacot s  " + 
+					"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo  " + 
+					"and cahs.Solicitud_idSolicitud = s.idSolicitud and ca.idCalculoActuaria = ? ";
+			
+		}
+		if(categoriaSolicitud.equals("")) {
+			sql="SELECT ca.fechaCreacion, ca.numProceso, s.idSolicitud, s.fechaSolicitud, s.tipoTramite, s.rfcAsegurado, s.nombredelServidor, s.aPaternodelServidor, s.aMaternodelServidor, s.dependencia, s.email, s.fechaFinLaboral,  " + 
+					"s.fechaSolicitudAPV, s.statusSolicitud, s.numeroRegistro, s.TipoPago, s.rfcGEM, s.analistaComercialValida, s.importeSolicitado, s.sueldo, s.fechaPago, s.pagoAnterior FROM calculo_actuaria ca, calculo_actuaria_has_solicitud cahs, solicitud s  " + 
+					"WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo  " + 
+					"and cahs.Solicitud_idSolicitud = s.idSolicitud and ca.idCalculoActuaria = ? ";
+			
+		}
 
 		try {
 			connection = dataSource.getConnection();
@@ -1417,13 +1920,23 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	}
 	
 	@Override
-	public SolicitudAPDTO getStatusSolicitudByFolio(long folio) {
+	public SolicitudAPDTO getStatusSolicitudByFolio(long folio, String categoriaSolicitud) {
 		SolicitudAPDTO solic = null;
 		Connection connection = null;
 		ResultSet rs = null;
 		PreparedStatement pst = null;
-		String sql = "SELECT statusSolicitud FROM solicitud WHERE numeroRegistro = ?";
+		String sql ="";
+		
+		if (categoriaSolicitud.equals("puebla")) {
+			sql= "SELECT statusSolicitud FROM solicitud_puebla WHERE numeroRegistro = ?";
+		}
 
+		if (categoriaSolicitud.equals("fonacot")) {
+			sql= "SELECT statusSolicitud FROM solicitud_fonacot WHERE numeroRegistro = ?";
+		}
+		if (categoriaSolicitud.equals("")) {
+			sql= "SELECT statusSolicitud FROM solicitud WHERE numeroRegistro = ?";
+		}
 		try {
 			connection = dataSource.getConnection();
 			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -1447,10 +1960,27 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	@Transactional(rollbackFor = Exception.class)
 	public boolean updateImportesSolicitudLayout(SolicitudAPDTO solicitud) throws SQLException {
 		
-		String sql = "UPDATE solicitud SET aportacionTotal = ?, quin74M = ?, quincAgoFeb = ?, intereses = ?, importeApagar = ?, montoCalculado = ?, " + 
-				"faltanteAPagar = ?, valorQuincValidar = ?, statusSolicitud = 'Importes validados', sueldo = ?,  pagoAnterior = ?, totalPagado = ?, "
-				+ "fechaPago = ?, observacionesContable = ?, saldoFinal = ?, valRetencion = ?, fechaCalculo = ?, estatus = ?, retiroMaximo = ?, importeContable = ? " + 
-				"WHERE numeroRegistro = ?";
+		String sql = "";
+		
+		
+		if(solicitud.getTipoSolicitud().equals("puebla")) {
+			sql="UPDATE solicitud_puebla SET aportacionTotal = ?, quin74M = ?, quincAgoFeb = ?, intereses = ?, importeApagar = ?, montoCalculado = ?, " + 
+					"faltanteAPagar = ?, valorQuincValidar = ?, statusSolicitud = 'Importes validados', sueldo = ?,  pagoAnterior = ?, totalPagado = ?, "
+					+ "fechaPago = ?, observacionesContable = ?, saldoFinal = ?, valRetencion = ?, fechaCalculo = ?, estatus = ?, retiroMaximo = ?, importeContable = ? " + 
+					"WHERE numeroRegistro = ?";
+		}
+		if(solicitud.getTipoSolicitud().equals("fonacot")) {
+			sql="UPDATE solicitud_fonacot SET aportacionTotal = ?, quin74M = ?, quincAgoFeb = ?, intereses = ?, importeApagar = ?, montoCalculado = ?, " + 
+					"faltanteAPagar = ?, valorQuincValidar = ?, statusSolicitud = 'Importes validados', sueldo = ?,  pagoAnterior = ?, totalPagado = ?, "
+					+ "fechaPago = ?, observacionesContable = ?, saldoFinal = ?, valRetencion = ?, fechaCalculo = ?, estatus = ?, retiroMaximo = ?, importeContable = ? " + 
+					"WHERE numeroRegistro = ?";
+		}
+		if(solicitud.getTipoSolicitud().equals("")) {
+			sql="UPDATE solicitud SET aportacionTotal = ?, quin74M = ?, quincAgoFeb = ?, intereses = ?, importeApagar = ?, montoCalculado = ?, " + 
+					"faltanteAPagar = ?, valorQuincValidar = ?, statusSolicitud = 'Importes validados', sueldo = ?,  pagoAnterior = ?, totalPagado = ?, "
+					+ "fechaPago = ?, observacionesContable = ?, saldoFinal = ?, valRetencion = ?, fechaCalculo = ?, estatus = ?, retiroMaximo = ?, importeContable = ? " + 
+					"WHERE numeroRegistro = ?";
+		}
 		ResultSet rs = null;
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -1595,7 +2125,12 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	        PreparedStatement pst = null;
 	        boolean status = false;
 	        try {
-	            pst = connection.prepareStatement("INSERT INTO evento_has_solicitud (evento_idevento, solicitud_idSolicitud, tipo, RFCAsegurado,RFCEmpleado ) VALUES (?, ?,?,?, ?) ", Statement.RETURN_GENERATED_KEYS);
+	        	if(eventoSolicitud.getClaseSolicitud().equals("puebla"))
+	        		pst = connection.prepareStatement("INSERT INTO solicitud_puebla_has_evento (evento_idevento, solicitud_puebla_idSolicitud, tipo, RFCAsegurado,RFCEmpleado ) VALUES (?, ?,?,?, ?) ", Statement.RETURN_GENERATED_KEYS);
+	        	if(eventoSolicitud.getClaseSolicitud().equals("fonacot"))
+	        		pst = connection.prepareStatement("INSERT INTO evento_has_solicitud_fonacot (evento_idevento, solicitud_fonacot_idSolicitud, tipo, RFCAsegurado,RFCEmpleado ) VALUES (?, ?,?,?, ?) ", Statement.RETURN_GENERATED_KEYS);
+	        	if(eventoSolicitud.getClaseSolicitud().equals("") )
+	        		pst = connection.prepareStatement("INSERT INTO evento_has_solicitud (evento_idevento, solicitud_idSolicitud, tipo, RFCAsegurado,RFCEmpleado ) VALUES (?, ?,?,?, ?) ", Statement.RETURN_GENERATED_KEYS);
 	            pst.setLong(1, eventoSolicitud.getIdEvento());
 	            pst.setLong(2,eventoSolicitud.getIdSolicitud());
 	            pst.setString(3, eventoSolicitud.getTipo());
@@ -1615,13 +2150,24 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 		EventoDTO evento = new EventoDTO();
         EventoSolicitudDTO  eventoSolicitud= new EventoSolicitudDTO();
         boolean status=false;
-		evento.setTipo(eventoString);
+        if(solicitud.getTipoSolicitud().equals("puebla")) {
+        	evento.setTipo("Creación solicitud Puebla");
+        	eventoSolicitud.setClaseSolicitud("puebla");
+        }
+        if(solicitud.getTipoSolicitud().equals("fonacot")) {
+        	evento.setTipo("Creación solicitud fonacot");
+        	eventoSolicitud.setClaseSolicitud("fonacot");
+        }if(solicitud.getTipoSolicitud().equals("") ){
+        	evento.setTipo(eventoString);
+        	eventoSolicitud.setClaseSolicitud("");
+        }
 		evento.setDescripcion(eventoSolicitudString);
 		eventoSolicitud.setIdEvento(daoEvento.crearEvento(evento,connection).getIdEvento());
 		eventoSolicitud.setIdSolicitud(solicitud.getIdSolicitud());
 		eventoSolicitud.setEmpleadoAP(solicitud.getRfcAsegurado());
 		eventoSolicitud.setTipo(eventoString);
 		eventoSolicitud.setEmpleadoSolicitad(solicitud.getEmpleadoAsignacion());
+		
 		if(crearEventoSolicitud(eventoSolicitud, connection))
 			status = true;
 		return status;
@@ -1681,7 +2227,80 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 				+ "  where statusSolicitud='Nueva' "
 				+ "  and sol.usuariosacceso_idusuariosAcceso=usua.idusuariosAcceso "
 				+ "  and usua.rolesAcceso_idrolesAcceso<>2 "
-				+ "  group by usuariosacceso_idusuariosAcceso "
+				+ "  group by usua.idusuariosAcceso  "
+				+ "  order by solic asc) ) as result   order by solic asc limit 1 ";
+		try {
+			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				asignacionRFC=rs.getLong(1);
+			}
+		} catch (Exception e) {
+			SytecsoController.logClassAndMethodWithException(e);
+		} finally {
+			UtileriaSql.closePreparedStatemetAndResultSet( pst, rs);
+		}
+		return asignacionRFC;
+	}
+	
+	private  long getAsignablePuebla(Connection connection) {
+		long asignacionRFC=-1L;
+		ResultSet rs = null;
+		PreparedStatement pst = null;
+		 
+		String sql = " select idusua from ( "
+				+ "(SELECT idusuariosAcceso as idusua,  0 AS solic "
+				+ "FROM usuariosacceso u "
+				+ "WHERE NOT EXISTS ( "
+				+ "    SELECT 1 "
+				+ "    FROM solicitud_puebla s "
+				+ "    WHERE s.usuariosacceso_idusuariosAcceso = u.idusuariosAcceso "
+				+ ") "
+				+ "AND rolesAcceso_idrolesAcceso <> 2 and rolesAcceso_idrolesAcceso <>1) "
+				+ "union "
+				+ "(select usua.idusuariosAcceso as idusua ,count(sol.idSolicitud) as solic  "
+				+ "  from solicitud_puebla sol, usuariosacceso usua "
+				+ "  where statusSolicitud='Nueva' "
+				+ "  and sol.usuariosacceso_idusuariosAcceso=usua.idusuariosAcceso "
+				+ "  and usua.rolesAcceso_idrolesAcceso<>2 "
+				+ "  group by usua.idusuariosAcceso  "
+				+ "  order by solic asc) ) as result   order by solic asc limit 1 ";
+		try {
+			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				asignacionRFC=rs.getLong(1);
+			}
+		} catch (Exception e) {
+			SytecsoController.logClassAndMethodWithException(e);
+		} finally {
+			UtileriaSql.closePreparedStatemetAndResultSet( pst, rs);
+		}
+		return asignacionRFC;
+	}
+	
+	
+	private  long getAsignableFonacot(Connection connection) {
+		long asignacionRFC=-1L;
+		ResultSet rs = null;
+		PreparedStatement pst = null;
+		 
+		String sql = " select idusua from ( "
+				+ "(SELECT idusuariosAcceso as idusua,  0 AS solic "
+				+ "FROM usuariosacceso u "
+				+ "WHERE NOT EXISTS ( "
+				+ "    SELECT 1 "
+				+ "    FROM solicitud_fonacot s "
+				+ "    WHERE s.usuariosacceso_idusuariosAcceso = u.idusuariosAcceso "
+				+ ") "
+				+ "AND rolesAcceso_idrolesAcceso <> 2 and rolesAcceso_idrolesAcceso <>1) "
+				+ "union "
+				+ "(select usua.idusuariosAcceso as idusua ,count(sol.idSolicitud) as solic  "
+				+ "  from solicitud_fonacot sol, usuariosacceso usua "
+				+ "  where statusSolicitud='Nueva' "
+				+ "  and sol.usuariosacceso_idusuariosAcceso=usua.idusuariosAcceso "
+				+ "  and usua.rolesAcceso_idrolesAcceso<>2 "
+				+ "  group by usua.idusuariosAcceso "
 				+ "  order by solic asc) ) as result   order by solic asc limit 1 ";
 		try {
 			pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -1698,8 +2317,10 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 	}
 
 
+
+
 	@Override
-	public boolean updateSOlicitudAsignacion(long idSolicitud, String RFC) throws SQLException {
+	public boolean updateSOlicitudAsignacion(long idSolicitud, String RFC, String categoriaSolicitud) throws SQLException {
 		String sql="";
 		ResultSet rs = null;
 		Connection con = null;
@@ -1711,7 +2332,17 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 			con.setAutoCommit(false);
 			solicitud.setIdAsignacion(usuarioAcceso.getUsuarioByRFC(RFC,con));
 			solicitud.setEmpleadoAsignacion(RFC);
-			sql=sql+ "UPDATE solicitud SET usuariosacceso_idusuariosAcceso = '"+solicitud.getIdAsignacion()+"' WHERE (idSolicitud = '"+idSolicitud+"') ";
+			solicitud.setTipoSolicitud(categoriaSolicitud);
+			if(categoriaSolicitud.equals("puebla")) {
+				solicitud.setTipoSolicitud(categoriaSolicitud);
+				sql= "UPDATE solicitud_puebla SET usuariosacceso_idusuariosAcceso = '"+solicitud.getIdAsignacion()+"' WHERE (idSolicitud = '"+idSolicitud+"') ";
+			}if(categoriaSolicitud.equals("fonacot")) {
+				solicitud.setTipoSolicitud(categoriaSolicitud);
+				sql= "UPDATE solicitud_fonacot SET usuariosacceso_idusuariosAcceso = '"+solicitud.getIdAsignacion()+"' WHERE (idSolicitud = '"+idSolicitud+"') ";
+			}if(categoriaSolicitud.equals("")) {
+				solicitud.setTipoSolicitud(categoriaSolicitud);
+				sql= "UPDATE solicitud SET usuariosacceso_idusuariosAcceso = '"+solicitud.getIdAsignacion()+"' WHERE (idSolicitud = '"+idSolicitud+"') ";
+			}
 			ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			ps.execute();
 			rs = ps.getGeneratedKeys();
@@ -1730,4 +2361,132 @@ public class DAOSolicitudImpl implements DAOSolicitud {
 		}
 		return status;
 	}
+	
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	 public long insertFonacot(Connection con, SolicitudAPDTO solicitud) throws SQLException {
+		
+		String sql = "INSERT INTO `ap`.`camposFonacot` (`idTrabajador`, `idCredito`, `fechaInicio`, `plazo`,"
+				+ " `prima`, `tipoMovimiento`, `apPaterno`, `apMaterno`, `nombre`, `rfc`, `nombreBanco`,"
+				+ " `clabeInterbancaria`, `numIdentificacion`, `fechaLiquidacion`, `certificado`,"
+				+ " `plazoCredito`, `fechaFinCredito`, `factorDevengamiento`, `primaNoDevengada`,"
+				+ " `plazoCredito2`, `diasBordeouxPrimas`, `solicitud_fonacot_idSolicitud`) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+		long idTransaccion = 0L;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		try {
+			con = dataSource.getConnection();
+
+			ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			ps.setLong(1, solicitud.getFonacot().getIdTrabajador());
+			ps.setLong(2, solicitud.getFonacot().getIdCredito());
+			ps.setString(3, solicitud.getFonacot().getFechaInicio());
+			ps.setString(4, solicitud.getFonacot().getPlazo());
+			ps.setString(5, solicitud.getFonacot().getPrima());
+			ps.setString(6, solicitud.getFonacot().getTipoMovimiento());
+			ps.setString(7, solicitud.getFonacot().getApPaterno());
+			ps.setString(8, solicitud.getFonacot().getApMaterno());
+			ps.setString(9,solicitud.getFonacot().getRfc());
+			ps.setString(10, solicitud.getFonacot().getNombreBanco());
+			ps.setString(11, solicitud.getFonacot().getClabeInterbancaria());
+			ps.setString(12, solicitud.getFonacot().getNumIdentificacion());
+			ps.setString(13, solicitud.getFonacot().getFechaLiquidacion());
+			ps.setString(14, solicitud.getFonacot().getCertificado());
+			ps.setString(15, solicitud.getFonacot().getPlazoCredito());
+			ps.setString(16, solicitud.getFonacot().getFechaFinCredito());
+			ps.setString(17, solicitud.getFonacot().getFactorDevengamiento());
+			ps.setString(18, solicitud.getFonacot().getPrimaNoDevengada());
+			ps.setString(19, solicitud.getFonacot().getPlazoCredito2());
+			ps.setString(20, solicitud.getFonacot().getDiasBordeouxPrimas());
+			ps.setLong(21, solicitud.getIdSolicitud());
+			ps.execute();
+			rs = ps.getGeneratedKeys();
+			if (rs.next()) {
+				idTransaccion = rs.getLong(1);
+				if (idTransaccion > 0) {
+					con.commit();
+				}
+				else {
+					con.rollback();
+					 idTransaccion = 0L;
+				}
+				
+			}
+		} catch (Exception e) {
+			SytecsoController.logClassAndMethodWithException(e);
+			con.rollback();
+			 idTransaccion = 0L;
+		} finally {
+			UtileriaSql.closePreparedStatemetAndResultSet(ps, rs); 
+		}
+		return idTransaccion;
+	}
+	
+	public  FonacotDTO getFonacot(SolicitudAPDTO solicitud) {
+		ResultSet rs = null;
+		PreparedStatement pst = null;
+		Connection con=null;
+		String sql = " select idcamposFonacot, "
+				+ "idTrabajador, "
+				+ "idCredito, "
+				+ "fechaInicio, "
+				+ "plazo, "
+				+ "prima, "
+				+ "tipoMovimiento, "
+				+ "apPaterno, "
+				+ "apMaterno, "
+				+ "nombre, "
+				+ "rfc, "
+				+ "nombreBanco, "
+				+ "clabeInterbancaria, "
+				+ "numIdentificacion, "
+				+ "fechaLiquidacion, "
+				+ "certificado, "
+				+ "plazoCredito, "
+				+ "fechaFinCredito, "
+				+ "factorDevengamiento, "
+				+ "primaNoDevengada, "
+				+ "plazoCredito2, "
+				+ "diasBordeouxPrimas from camposfonacot "
+				+ "where solicitud_fonacot_idSolicitud= ? ";
+		try {
+			con = dataSource.getConnection();
+			pst = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pst.setLong(1, solicitud.getIdSolicitud());
+			rs = pst.executeQuery();
+			
+			while (rs.next()) {
+				solicitud.setFonacot(new FonacotDTO());
+				solicitud.getFonacot().setIdTrabajador(rs.getLong(1));
+				solicitud.getFonacot().setIdcamposFonacot(rs.getLong(2));
+				solicitud.getFonacot().setFechaInicio(rs.getString(3));
+				solicitud.getFonacot().setPlazo(rs.getString(4));
+				solicitud.getFonacot().setPrima(rs.getString(5));
+				solicitud.getFonacot().setTipoMovimiento(rs.getString(6));
+				solicitud.getFonacot().setApPaterno(rs.getString(7));
+				solicitud.getFonacot().setApMaterno(rs.getString(8));
+				solicitud.getFonacot().setNombre(rs.getString(9));
+				solicitud.getFonacot().setRfc(rs.getString(10));
+				solicitud.getFonacot().setNombreBanco(rs.getString(11));
+				solicitud.getFonacot().setClabeInterbancaria(rs.getString(12));
+				solicitud.getFonacot().setNumIdentificacion(rs.getString(13));
+				solicitud.getFonacot().setFechaLiquidacion(rs.getString(14));
+				solicitud.getFonacot().setCertificado(rs.getString(15));
+				solicitud.getFonacot().setPlazoCredito(rs.getString(16));
+				solicitud.getFonacot().setFechaFinCredito(rs.getString(17));
+				solicitud.getFonacot().setFactorDevengamiento(rs.getString(18));
+				solicitud.getFonacot().setPrimaNoDevengada(rs.getString(19));
+				solicitud.getFonacot().setPlazoCredito2(rs.getString(20));
+				solicitud.getFonacot().setDiasBordeouxPrimas(rs.getString(21));
+			}
+		} catch (Exception e) {
+			SytecsoController.logClassAndMethodWithException(e);
+		} finally {
+			UtileriaSql.closePreparedStatemetAndResultSet( pst, rs);
+		}
+		return solicitud.getFonacot();
+	}
+	
 }

@@ -42,6 +42,11 @@ import com.sytecso.dto.empleado.EmpleadoAPDTO;
 import com.sytecso.service.batchManaging.HandleBatch;
 import com.sytecso.service.usuario.ServiceUsuarioAcceso;
 import com.sytecso.dto.usuario.UserAp;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class HandleBatchImpl implements HandleBatch {
@@ -73,7 +78,7 @@ public class HandleBatchImpl implements HandleBatch {
 						batchControl.setRegistrosRechazados(batchControl.getBatchInfo().getBatchResumenSinRFC().size());
 					}
 				}else {
-					System.out.println("Comienza el conteo de cifras resumen");
+					System.out.println("Comienza el conteo de cifras Detalle");
 					batchControl.setBatchInfo(getValidosRechazadosDetalle(batchControl.getBatchInfo()));
 					if(batchControl.getBatchInfo().isStatus()) {
 						batchControl.setTipo("Detalle");
@@ -130,12 +135,12 @@ public class HandleBatchImpl implements HandleBatch {
 				if(!reproceso.isError()&&reproceso.isStatus())
 					fileName=reproceso.getFileName();
 				if(fileName.startsWith("resumen_de_movimientos")) {
+					batch=getResumenObject(mpFile);
 					batch.setTipo(true);
-					batch.setBatchResumen(getResumenObject(mpFile));
 				}	
 				else if (fileName.startsWith("detalle_de_movimientos")) {
+						batch=getDetalleObject(mpFile);
 						batch.setTipo(false);
-						batch.setBatchDetalle(getDetalleObject(mpFile));
 					} else {
 						control.setProcessStatus(false);
 						control.setMensaje("El nombre del archivo no coincide con los prefijos de resumen o detalle ");
@@ -244,22 +249,36 @@ public class HandleBatchImpl implements HandleBatch {
 		return fileName;
 	}
 	
-	private List<DTOResumen> getResumenObject(MultipartFile mpFile) throws IOException {
+	private DTOBatchTransform getResumenObject(MultipartFile mpFile) throws IOException {
+		DTOBatchTransform  resumenStructure = new DTOBatchTransform();
+		Set<String> rfcSet = new HashSet<String>();
 		List<DTOResumen> resumenLista = new ArrayList<DTOResumen>();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(mpFile.getInputStream()));
 		while(reader.ready()) {
-		     resumenLista.add(procesaResumenLinea(reader.readLine()));
+			DTOResumen lineaResumen = procesaResumenLinea(reader.readLine());
+			rfcSet.add(lineaResumen.getCriterios().getAsegurado().getRfc().toUpperCase());
+		    resumenLista.add(lineaResumen);
 		}
-		return resumenLista;
+		resumenStructure.setBatchResumen(resumenLista);
+		System.out.println("estos son mis RFC "+resumenLista.size());
+		resumenStructure.setRfcLista(rfcSet);
+		return resumenStructure;
 	}
 
-	private List<DTODetalle> getDetalleObject(MultipartFile mpFile) throws IOException {
-		List<DTODetalle> detalleLIsta = new ArrayList<DTODetalle>();
+	private DTOBatchTransform getDetalleObject(MultipartFile mpFile) throws IOException {
+		DTOBatchTransform detalleStructure = new DTOBatchTransform();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(mpFile.getInputStream()));
+		List<DTODetalle>  detalleLista = new ArrayList<DTODetalle>();
+		Set<String> rfcSet = new HashSet<String>();
 		while(reader.ready()) {
-			detalleLIsta.add(procesaDetalleLinea(reader.readLine()));
+			DTODetalle lineaDetalle =procesaDetalleLinea(reader.readLine());
+			rfcSet.add(lineaDetalle.getCriterio().getAsegurado().getRfc().toUpperCase());
+			detalleLista.add(lineaDetalle);
 		}
-		return detalleLIsta;
+		detalleStructure.setBatchDetalle(detalleLista);
+		detalleStructure.setRfcLista(rfcSet);
+		System.out.println("estos son mis RFC "+detalleStructure.getRfcLista().size());
+		return detalleStructure;
 	}
 	
 	private DTODetalle procesaDetalleLinea(String linea) {
@@ -328,32 +347,107 @@ public class HandleBatchImpl implements HandleBatch {
 	public DTOCargaBatchControl getBatchResumenCarga(long idCarga) {
 		return daoCargasBatch.getResumenInsert(idCarga);
 	}
+	
+	private DTOBatchTransform validateRFC(DTOBatchTransform archivo) throws SQLException {
+		int contadorLimite=0;
+		Iterator<String> rfcTotal= archivo.getRfcLista().iterator();
+		Set<String> conjuntoHashSet= new HashSet<String>(archivo.getRfcLista());
+		Set<String> Filtrados= new HashSet<String>();
+		List<String> cadenas = new ArrayList<String>();
+		String cadena="";
+		
+		while(rfcTotal.hasNext()) {
+			
+			if(contadorLimite==0) {
+				cadena="(";
+			}
+			
+			if(contadorLimite>900) {
+				if(cadena.charAt(cadena.length()-1)==',') {
+					cadena= cadena.substring(0, cadena.length() - 1);
+				}
+				cadena=cadena+") ";
+				contadorLimite=0;
+				cadenas.add(cadena);
+				cadena="";
+			}else {
+				cadena=cadena+"'"+rfcTotal.next()+"',";
+				contadorLimite++;
+			}
+			
+		}
+		if(cadena.charAt(cadena.length()-1)==',') {
+			cadena= cadena.substring(0, cadena.length() - 1);
+		}
+		cadena=cadena+") ";
+		cadenas.add(cadena);
+		
+		archivo.setAsegurados(validateRFCBatch(cadenas));
+		
+		Iterator<DTOAsegurado> it = archivo.getAsegurados().iterator();
+		while(it.hasNext()) {
+			DTOAsegurado asegurado=it.next();
+			Filtrados.add(asegurado.getRfc());
+		}
+		System.out.println("Antes de filtrar"+conjuntoHashSet.toString());
+		System.out.println("RFC totales"+conjuntoHashSet.size());
+		conjuntoHashSet.removeAll(Filtrados);
+		System.out.println("Filtrados "+Filtrados.toString());
+		System.out.println("RFC Filtrados"+Filtrados.size());
+		System.out.println("Estos son los que no pertenecen"+conjuntoHashSet.toString());
+		System.out.println("RFC que no pertenecen"+conjuntoHashSet.size());
+		return archivo;
+		
+	}
+	
+	private Set<DTOAsegurado> validateRFCBatch(List<String> rfcList) throws SQLException {
+		return daoCargasBatch.getRFCValidos(rfcList);
+	}
+
+	
 	private DTOBatchTransform getValidosRechazadosResumen(DTOBatchTransform resumenes) throws SQLException {
 		System.out.println("Comienza la separación de validos e invalidos resumen");
-		Connection con= dataSource.getConnection();
-		Statement sentencia = con.createStatement();
-		int contador=0;
-		List<DTOResumen> aceptados =new ArrayList<DTOResumen>();
-		List<DTOResumen> rechazados =new ArrayList<DTOResumen>();
-		ListIterator<DTOResumen> resumenIterator= resumenes.getBatchResumen().listIterator();
-		try {
-			while(resumenIterator.hasNext()) {
-				DTOResumen resumenTemp=resumenIterator.next();
-				resumenTemp.getCriterios().getAsegurado().setId(validateRFC(resumenTemp.getCriterios().getAsegurado().getRfc(),sentencia));
-				if(resumenTemp.getCriterios().getAsegurado().getId()!=-1L) {
-					aceptados.add(resumenTemp);
-				}else {
-					rechazados.add(resumenTemp);
-				}
-				contador++;
-				if(contador==3000) {
-					sentencia.close();
-					con.close();
-					con=dataSource.getConnection();
-					sentencia = con.createStatement();
-					contador=0;
-				}
-			}
+		
+		try {	
+			Map<String, Long> mapaObjetos = new HashMap<>();
+			Set<DTOAsegurado> rfcValidos = validateRFC(resumenes).getAsegurados();
+
+			 List<DTOResumen> resumenesError= new ArrayList<DTOResumen>();
+			 resumenesError.addAll(resumenes.getBatchResumen()); 
+			 System.out.println("Registros Totales totales "+resumenes.getBatchResumen().size());
+			 resumenes.setBatchResumenSinRFC(resumenesError);
+			 resumenes.getBatchResumenSinRFC().removeIf(objeto -> {
+		            for (DTOAsegurado objetoConValor : rfcValidos) {
+		                if (objetoConValor.getRfc().toUpperCase().equals(objeto.getCriterios().getAsegurado().getRfc().toUpperCase())) {
+		                    return true;
+		                }
+		            }
+		            return false;
+		        });
+			 System.out.println( "Registros inválidos "+resumenes.getBatchResumenSinRFC().size());
+			 resumenes.getBatchResumen().removeIf(objeto -> {
+		            for (DTOAsegurado objetoConValor : rfcValidos) {
+		                if (objetoConValor.getRfc().toUpperCase().equals(objeto.getCriterios().getAsegurado().getRfc().toUpperCase())) {
+		                    return false;
+		                }
+		            }
+		            return true;
+		        });
+			 System.out.println( "Registros válidos "+resumenes.getBatchResumen().size());
+			 
+			 System.out.println("Comienza la validación vs el documento");
+			 System.out.println(resumenes.getBatchResumen().size());
+			 System.out.println("Acabo de separar los válidos");
+			  
+	          for (DTOAsegurado objeto : rfcValidos) {
+	        	  mapaObjetos.put(objeto.getRfc().toUpperCase(), objeto.getId());
+	          }
+	          
+	          for (DTOResumen objeto : resumenes.getBatchResumen()) {
+	              objeto.getCriterios().getAsegurado().setId(mapaObjetos.get(objeto.getCriterios().getAsegurado().getRfc().toUpperCase()));
+	              
+	          }
+
 			System.out.println("Termina la separación de  validos e invalidos resumen");
 			resumenes.setStatus(true);
 		}catch(Exception e) {
@@ -361,39 +455,52 @@ public class HandleBatchImpl implements HandleBatch {
 			System.out.println(e);
 			resumenes.setStatus(false);
 		}
-		resumenes.setBatchResumen(aceptados);
-		resumenes.setBatchResumenSinRFC(rechazados);
-		sentencia.close();
-		con.close();
 		return resumenes;
 	}
 	
 	private DTOBatchTransform getValidosRechazadosDetalle(DTOBatchTransform detalles) throws SQLException {
 		System.out.println("Comienza la separación de  validos e invalidos detalle");
-		Connection con= dataSource.getConnection();
-		Statement sentencia = con.createStatement();
-		List<DTODetalle> aceptados =new ArrayList<DTODetalle>();
-		List<DTODetalle> rechazados =new ArrayList<DTODetalle>();
-		int contador=0;
-		ListIterator<DTODetalle> detalleIterator= detalles.getBatchDetalle().listIterator();
 		try {
-			while(detalleIterator.hasNext()) {
-				DTODetalle detalleTemp=detalleIterator.next();
-				detalleTemp.getCriterio().getAsegurado().setId(validateRFC(detalleTemp.getCriterio().getAsegurado().getRfc(),sentencia));
-				if(detalleTemp.getCriterio().getAsegurado().getId()!=-1L) {
-					aceptados.add(detalleTemp);
-				}else {
-					rechazados.add(detalleTemp);
-				}
-				contador++;
-				if(contador==3000) {
-					sentencia.close();
-					con.close();
-					con=dataSource.getConnection();
-					sentencia = con.createStatement();
-					contador=0;
-				}
-			}
+			
+			System.out.println("Tamaño antes de la separación");
+			 System.out.println(detalles.getBatchDetalle().size());
+			Map<String, Long> mapaObjetos = new HashMap<>();
+			Set<DTOAsegurado> rfcValidos = validateRFC(detalles).getAsegurados();
+			System.out.println(rfcValidos.size()+" RFC válidos   ");
+
+			List<DTODetalle> detallesError = new ArrayList<DTODetalle>();
+			detallesError.addAll(detalles.getBatchDetalle()); 
+			 detalles.setBatchDetalleSinRFC(detallesError); 
+			 detalles.getBatchDetalleSinRFC().removeIf(objeto -> {
+		            for (DTOAsegurado objetoConValor : rfcValidos) {
+		                if (objetoConValor.getRfc().toUpperCase().equals(objeto.getCriterio().getAsegurado().getRfc().toUpperCase())) {
+		                    return true;
+		                }
+		            }
+		            return false;
+		        });
+			 detalles.getBatchDetalle().removeIf(objeto -> {
+		            for (DTOAsegurado objetoConValor : rfcValidos) {
+		                if (objetoConValor.getRfc().toUpperCase().equals(objeto.getCriterio().getAsegurado().getRfc().toUpperCase())) {
+		                    return false;
+		                }
+		            }
+		            return true;
+		        });
+			
+			 
+			 System.out.println("Comienza la validación vs el documento");
+			 System.out.println(detalles.getBatchDetalle().size());
+			 System.out.println("Acabo de separar los válidos");
+			  
+	          for (DTOAsegurado objeto : rfcValidos) {
+	        	  mapaObjetos.put(objeto.getRfc().toUpperCase(), objeto.getId());
+	          }
+	          
+	          for (DTODetalle objeto : detalles.getBatchDetalle()) {
+	              objeto.getCriterio().getAsegurado().setId(mapaObjetos.get(objeto.getCriterio().getAsegurado().getRfc().toUpperCase()));
+	              
+	          }
 			detalles.setStatus(true);
 		}catch(Exception e) {
 			System.out.println("Exception en  carga ");
@@ -401,10 +508,6 @@ public class HandleBatchImpl implements HandleBatch {
 			detalles.setStatus(false);
 		}
 		System.out.println("Termina la separación de  validos e invalidos detalle");
-		detalles.setBatchDetalle(aceptados);
-		detalles.setBatchDetalleSinRFC(rechazados);
-		sentencia.close();
-		con.close();
 		return detalles;
 	}
 

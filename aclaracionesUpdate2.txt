@@ -1,0 +1,103 @@
+-- MySQL Workbench Synchronization
+-- Generated: 2024-03-08 13:33
+-- Model: New Model
+-- Version: 1.0
+-- Project: Name of the project
+-- Author: mafuf
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+ALTER TABLE `ap`.`documentos` 
+DROP FOREIGN KEY `fk_documentos_Aclaracion1`;
+
+ALTER TABLE `ap`.`solicitud` 
+DROP FOREIGN KEY `fk_solicitud_usuariosacceso1`;
+
+ALTER TABLE `ap`.`evento_has_solicitud` 
+DROP FOREIGN KEY `fk_evento_has_solicitud_evento1`,
+DROP FOREIGN KEY `fk_evento_has_solicitud_solicitud1`;
+
+ALTER TABLE `ap`.`Aclaracion` 
+DROP FOREIGN KEY `fk_Aclaracion_CatalogoDocumento1`,
+DROP FOREIGN KEY `fk_Aclaracion_empleado_ap1`,
+DROP FOREIGN KEY `fk_Aclaracion_solicitud1`;
+
+ALTER TABLE `ap`.`Aclaracion_has_evento` 
+DROP FOREIGN KEY `fk_Aclaracion_has_evento_Aclaracion1`,
+DROP FOREIGN KEY `fk_Aclaracion_has_evento_evento1`;
+
+ALTER TABLE `ap`.`evento` 
+CHANGE COLUMN `fecha` `fecha` DATETIME NULL DEFAULT now() ;
+
+ALTER TABLE `ap`.`Aclaracion` 
+ADD COLUMN `fechaReal` DATETIME NULL DEFAULT NULL AFTER `descripcionEmpleado`,
+CHANGE COLUMN `fecha` `fecha` DATETIME NULL DEFAULT now() ;
+
+ALTER TABLE `ap`.`documentos` 
+ADD CONSTRAINT `fk_documentos_Aclaracion1`
+  FOREIGN KEY (`Aclaracion_idAclaracion`)
+  REFERENCES `ap`.`Aclaracion` (`idAclaracion`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `ap`.`solicitud` 
+ADD CONSTRAINT `fk_solicitud_usuariosacceso1`
+  FOREIGN KEY (`usuariosacceso_idusuariosAcceso`)
+  REFERENCES `ap`.`usuariosacceso` (`idusuariosAcceso`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `ap`.`evento_has_solicitud` 
+ADD CONSTRAINT `fk_evento_has_solicitud_evento1`
+  FOREIGN KEY (`evento_idevento`)
+  REFERENCES `ap`.`evento` (`idevento`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_evento_has_solicitud_solicitud1`
+  FOREIGN KEY (`solicitud_idSolicitud`)
+  REFERENCES `ap`.`solicitud` (`idSolicitud`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `ap`.`Aclaracion` 
+DROP FOREIGN KEY `fk_Aclaracion_tipoAclaracion1`;
+
+ALTER TABLE `ap`.`Aclaracion` ADD CONSTRAINT `fk_Aclaracion_tipoAclaracion1`
+  FOREIGN KEY (`tipoAclaracion_idtipoAclaracion`)
+  REFERENCES `ap`.`tipoAclaracion` (`idtipoAclaracion`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_Aclaracion_CatalogoDocumento1`
+  FOREIGN KEY (`CatalogoDocumento_idCatalogoDocumento`)
+  REFERENCES `ap`.`CatalogoDocumento` (`idCatalogoDocumento`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_Aclaracion_empleado_ap1`
+  FOREIGN KEY (`empleado_ap_idEmpleadoAP`)
+  REFERENCES `ap`.`empleado_ap` (`idEmpleadoAP`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_Aclaracion_solicitud1`
+  FOREIGN KEY (`solicitud_idSolicitud`)
+  REFERENCES `ap`.`solicitud` (`idSolicitud`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `ap`.`Aclaracion_has_evento` 
+ADD CONSTRAINT `fk_Aclaracion_has_evento_Aclaracion1`
+  FOREIGN KEY (`Aclaracion_idAclaracion`)
+  REFERENCES `ap`.`Aclaracion` (`idAclaracion`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_Aclaracion_has_evento_evento1`
+  FOREIGN KEY (`evento_idevento`)
+  REFERENCES `ap`.`evento` (`idevento`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

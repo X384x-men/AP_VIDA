@@ -2,32 +2,32 @@
 
   <div class="text-center mb-3 mt-3">
     <div class="row g-3 align-items-center">
-      <div class="col-2">
+      <div class="col-1">
         <label for="inputPassword6" class="col-form-label">Nombre</label>
       </div>
-      <div class="col-10">
+      <div class="col-10 mr-1">
         <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Nombre" [(ngModel)]='solicitud.nombre'>
       </div>
-      <div class="col-2">
+      <div class="col-1">
         <label for="inputPassword6" class="col-form-label">RFC</label>
       </div>
-      <div class="col-10">
+      <div class="col-10 mr-1">
         <input class="form-control" type="text" placeholder="RFC" name="rfc" [(ngModel)]='solicitud.RFC' >
       </div>
-      <div class="col-2">
+      <div class="col-1">
         <label for="inputPassword6" class="col-form-label">Status</label>
       </div>
-      <div class="col-10">
+      <div class="col-10 mr-1">
         <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedoptionsEstatus (click)=onSelectedoptionsEstatus(mySelectedoptionsEstatus.value)>
           <option selected value="" > - Seleccionar un opción  - </option>
           <option  *ngFor="let tipoEstatus of optionsEstatus" [value]="tipoEstatus.name"
           > {{ tipoEstatus.name }} </option>
         </select>
       </div>
-      <div class="col-2">
+      <div class="col-1">
         <label for="inputPassword6" class="col-form-label">Tipo</label>
       </div>
-      <div class="col-10">
+      <div class="col-10 mr-1">
         <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedTipoTramite  (click)=onSelectedTipoTramite(mySelectedTipoTramite.value)>
           <option selected> - Seleccionar un opción -  </option>
           <option *ngFor="let tipoTramite of optionsTipoTramite"[value]="tipoTramite.name">{{tipoTramite.name}}</option>
@@ -38,9 +38,22 @@
 </div>
   <div class="row mt-5">
     <div class="col-3">
-      <div class="export-title2">
+      <!-- <div class="export-title2">
         <div class="containerTabs-title">
-      </div>
+      </div> -->
+        <button class="btn btn-busqueda" disabled>
+          <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
+          Gem
+        </button>
+        <button class="btn btn-busqueda" (click)="back('fonacot')" >
+          <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
+           Fonacot
+         </button>
+         <button class="btn btn-busqueda" (click)="back('puebla')" >
+          <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
+           Puebla
+         </button>
+
     </div>
     <div class="col-9">
       <div class="botones-accion" >

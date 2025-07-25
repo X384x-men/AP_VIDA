@@ -104,7 +104,23 @@ public class SolicitudAPDTO implements Serializable{
 	private String fechaCalculo;
 	private long idAsignacion;
 	private String empleadoAsignacion;
+	private String tipoSolicitud;
+	private FonacotDTO fonacot;
 	
+	
+	
+	public FonacotDTO getFonacot() {
+		return fonacot;
+	}
+	public void setFonacot(FonacotDTO fonacot) {
+		this.fonacot = fonacot;
+	}
+	public String getTipoSolicitud() {
+		return tipoSolicitud;
+	}
+	public void setTipoSolicitud(String tipoSolicitud) {
+		this.tipoSolicitud = tipoSolicitud;
+	}
 	public String getEmpleadoAsignacion() {
 		return empleadoAsignacion;
 	}

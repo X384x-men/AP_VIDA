@@ -121,10 +121,8 @@ export class LoginComponent implements OnInit {
       });
   }
   private params(): any {
-    return AUTH.find(
-      (value) =>
-        this.authenticationService.currentUserValue.authorities.find(
-          (data) => data.authority === value.role
+    return AUTH.find((value) =>  this.authenticationService.currentUserValue.authorities.find((data) =>
+          data.authority === value.role
         ) !== undefined
     );
   }

@@ -45,6 +45,16 @@ export const AUTH: any[] = [
     url: "/angular/dashboard-analista",
   },
   {
+    role: "ROLE_PUEBLA",
+    opt: {},
+    url: "/angular/dashboard-puebla",
+  },
+  {
+    role: "ROLE_FUNACOT",
+    opt: {},
+    url: "/angular/dashboard-fonacot",
+  },
+  {
     role: "ROLE_ASINI",
     opt: {},
     url: "/angular/dashboard-analista",

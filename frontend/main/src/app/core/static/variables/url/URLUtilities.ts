@@ -172,6 +172,19 @@ export class URLUtilities {
   public static listSolicitudes(): string {
     return 'list-solicitudes'
   }
+
+  public static listSolicitudesPuebla(): string {
+    return 'solicitudes-puebla'
+  }
+
+  public static listSolicitudesFonacot(): string {
+    return 'solicitudes-fonacot'
+  }
+
+  public static emailList(): string {
+    return 'email-list'
+  }
+
   public static formSolicitudes(): string {
     return 'form-solicitudes'
   }
@@ -180,8 +193,20 @@ export class URLUtilities {
     return 'form-edit-solicitudes'
   }
 
+  public static formEditAclaraciones(): string {
+    return 'form-edit-aclaraciones'
+  }
+
   public static dashboardSolicitudes(): string {
     return 'dashboard-solicitudes'
+  }
+
+  public static dashboardPuebla(): string {
+    return 'dashboard-puebla'
+  }
+
+  public static dashboardFunacot(): string {
+    return 'dashboard-fonacot'
   }
 
   public static dashboardMySolicitudes(): string {
@@ -194,6 +219,14 @@ export class URLUtilities {
 
   public static mainCharts(): string {
     return 'app-main-chart'
+  }
+
+  public static mainAclaraciones(): string {
+    return 'main-aclaraciones'
+  }
+
+  public static mainFomrAclaraciones(): string {
+    return 'form-aclaraciones'
   }
 }
 

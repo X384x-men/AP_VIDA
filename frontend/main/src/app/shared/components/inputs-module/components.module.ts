@@ -24,7 +24,7 @@ import { FilterCSVComponent } from '../filterCSV/filtercsv.component';
     ChildCommonModule,
     ReactiveFormsModule,
     DirectivesModule,
-    LazyTranslateModule,
+    // LazyTranslateModule,
   ],
   declarations: [
     MenuComponentComponent,

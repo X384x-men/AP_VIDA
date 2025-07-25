@@ -10,8 +10,6 @@ import {
 import { UntypedFormGroup } from "@angular/forms";
 import { validRFC } from "src/app/core/Util/validations";
 import { SubResourceService } from "src/app/core/services/service-crud-operations/sub-resource.service";
-
-import { DependenciesService } from "src/app/shared/services/dependencies.service";
 import { AdminUnitsService } from "src/app/shared/services/admin-units.service";
 
 @Component({
@@ -53,7 +51,6 @@ export class FormUserDataComponent implements OnInit {
       //this.dependenciesOptions = result;
     //})
     if (!this.isAnalista) {
-      console.log('pase');
       this.getDependencies();
       this.getUnidadesAdmin()
     }
@@ -118,6 +115,7 @@ export class FormUserDataComponent implements OnInit {
 
   bankOptions = [
     { data: "BANAMEX", id: 0 },
+    { data: "NU", id: 0 },
     { data: "BANCOMEXT", id: 0 },
     { data: "BANOBRAS", id: 0 },
     { data: "BBVA BANCOMER", id: 0 },
@@ -212,9 +210,11 @@ export class FormUserDataComponent implements OnInit {
   ];
 
   analistOptions = [
-    { data: "Ejecutivo de atención", id: 1 },
-    { data: "Coordinador", id: 2 },
-    { data: "Actuarial", id: 3 },
+    { data: "Ejecutivo de atención (Gem)", id: 1 },
+    { data: "Coordinador (Gem)", id: 2 },
+    { data: "Actuarial (Gem)", id: 3 },
+    { data: "Ejecutivo de atención (Puebla)", id: 4 },
+    { data: "Ejecutivo de atención (Fonacot)", id: 5 },
   ];
 
   // this.user[attr].replace(/[^0-9a-zA-ZñÑáéíóúÁÉÍÓÚ.()/::,@ _-]/g,'');

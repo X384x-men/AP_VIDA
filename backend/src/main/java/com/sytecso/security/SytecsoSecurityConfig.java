@@ -114,6 +114,7 @@ public class SytecsoSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/catalogos/**").permitAll()
 				.antMatchers("/ws/**").permitAll().antMatchers("/login").permitAll()
 				.antMatchers("/register/**").permitAll()
+				.antMatchers("/aclaraciones/**").permitAll()
 				
 				
 

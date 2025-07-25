@@ -3,7 +3,9 @@ package com.sytecso.dao.cargasBatch;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Set;
 
+import com.sytecso.dto.batchmodel.DTOAsegurado;
 import com.sytecso.dto.batchmodel.DTOCargaBatchControl;
 import com.sytecso.dto.batchmodel.DTODetalle;
 import com.sytecso.dto.batchmodel.DTOResumen;
@@ -27,5 +29,6 @@ public interface DAOCargasBatch {
 	public boolean updateMassive(long cargaBatch, String tableName);
 	public boolean updateEmpleadoApBatch(List<UserAp> empleadoApList) throws SQLException;
 	public List<ShortSolicitudAPDTO> getSolicitudesFiltered(String params);
+	public Set<DTOAsegurado> getRFCValidos(List<String> rfcList);
 	
 }

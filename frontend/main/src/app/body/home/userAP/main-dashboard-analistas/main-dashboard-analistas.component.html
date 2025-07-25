@@ -47,16 +47,16 @@
         <div class="col-6">
           <div class="export-title2" >
             <div class="containerTabs-title" >
+              <button class="btn btn-paginador border-bottom-0">
+                <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
+                  <span>Asegurados</span>
+              </button>
               <div *ngIf="isComercial!" >
                 <button class="btn border border-dark border-bottom-0" [class.btn-light]="classRutaBtn === 'dashboard-analista'"  (click)="back('mySolicitud')">
                   <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
                     <span>Mis Solicitudes</span>
                 </button>
               </div>
-              <button class="btn btn-paginador border-bottom-0">
-                <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
-                  <span>Asegurados</span>
-              </button>
               <button class="btn border border-dark border-bottom-0" [class.btn-light]="classRutaBtn === 'dashboard-analista'"  (click)="back('solicitudes')">
                 <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
                   <span>Todas las Solicitudes</span>
@@ -64,6 +64,9 @@
               <button *ngIf="isSiniestros" class="btn border border-dark border-bottom-0" [class.btn-light]="classRutaBtn === 'dashboard-analista'"  (click)="back('analista')">
                 <i class="fa fa-pencil-square me-1" aria-hidden="true"></i>
                   <span>Analistas</span>
+              </button>
+              <button *ngIf="!isContabilidad" class="btn border border-dark border-bottom-0" [class.btn-light]="classRutaBtn === 'dashboard-analista'" (click)="back('aclaraciones')">
+                <span>Aclaraciones</span>
               </button>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { SubResourceService } from 'src/app/core/services/service-crud-operation
 import { SolicitudVariable } from 'src/app/core/static/variables/url/URLImages';
 import { RoutingUtilities } from 'src/app/core/Util/routing/routing-utilities';
 import swal from 'sweetalert2';
+import { AuthenticationService } from 'src/app/core/services/authentication-service/authentication.service';
 
 @Component({
   // Router ['Angular/Form-solicitudes']
@@ -17,6 +18,8 @@ import swal from 'sweetalert2';
 export class MainFormAltaSolicitudComponent implements OnInit {
 
   prueba = 'Pruebaasss'
+  isFonacot : boolean = false;
+  isPuebla : boolean = false;
 
   solicitud: solicitudAP = {
     idSolicitud: 0,
@@ -76,7 +79,8 @@ export class MainFormAltaSolicitudComponent implements OnInit {
     {id: 7, label:'Seleccionar archivo', file: null },
     {id: 8, label:'Seleccionar archivo', file: null },
     {id: 9, label:'Seleccionar archivo', file: null },
-    {id: 10, label:'Seleccionar archivo', file: null }
+    {id: 10, label:'Seleccionar archivo', file: null },
+    {id: 11, label:'Seleccionar archivo', file: null }
   ]
 
   currentUser: any;
@@ -88,31 +92,40 @@ export class MainFormAltaSolicitudComponent implements OnInit {
   isComercial = false;
   isExterno = false;
 
-  constructor(private router: Router, @Inject('ServiceResource') private subResourceService: SubResourceService<any>, private _activatedRoute: ActivatedRoute, private _location: Location ) {
+  constructor(private router: Router, @Inject('ServiceResource') private subResourceService: SubResourceService<any>, private _activatedRoute: ActivatedRoute, private _location: Location, private AuthenticationService: AuthenticationService ) {
     this.opt = Number(RoutingUtilities.getParamsFromUrl(this._activatedRoute, 'opt'));
    }
 
   ngOnInit() {
-    let userExterno = JSON.parse(localStorage.getItem('currentUser'));
-    let com = JSON.parse(localStorage.getItem('currentUserComercial'));
-    let sin = JSON.parse(localStorage.getItem('currentUserSiniestros'));
-    let cont = JSON.parse(localStorage.getItem('currentUserContabilidad'));
-    if(com !== null){
-      this.currentUser = com;
-      this.isComercial = true;
-    }else
-    if(sin !== null){
-      this.currentUser = sin;
-      this.isSiniestros = true;
-    }else
-    if(cont !== null){
-      this.currentUser = cont;
-      this.isContable = true;
-    }else
-    if(userExterno !== null){
-      this.currentUser = userExterno;
-      this.isExterno = true;
-      this.getEmpleado();
+    let allUsuarios = [];
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUser")))
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserComercial")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserSiniestros")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserContabilidad")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserAdmin")));
+    allUsuarios.push(JSON.parse(localStorage.getItem('idCuenta')));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserPuebla")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserFunacot")));
+    this.currentUser = allUsuarios.find( (value) => value !== null );
+    switch (this.currentUser.authorities[0]['authority']) {
+        case 'ROLE_ACOME':
+          this.isComercial = true;
+        break;
+        case 'ROLE_ASINI':
+          this.isSiniestros = true;
+        break;
+        case 'ROLE_ACONT':
+          this.isContable = true;
+        break;
+        case 'ROLE_PUEBLA':
+          this.isPuebla = true;
+        break;
+        case 'ROLE_FUNACOT':
+          this.isFonacot = true;
+        break;
+      default:
+        this.AuthenticationService.validacionUser();
+        break;
     }
 
   }

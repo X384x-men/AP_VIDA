@@ -1,10 +1,12 @@
 import { Component, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, UntypedFormControl, Validators, NgForm } from '@angular/forms';
+import { FormBuilder, UntypedFormControl, NgForm } from '@angular/forms';
+import { RoutingUtilities } from 'src/app/core/Util/routing/routing-utilities';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import moment from 'moment';
 import { solicitudAP } from 'src/app/core/interface/apUser/apUser';
 import { SelectMenu } from 'src/app/core/interface/menu/select-menu';
+import { AuthenticationService } from 'src/app/core/services/authentication-service/authentication.service';
 import { SubResourceService } from 'src/app/core/services/service-crud-operations/sub-resource.service';
 import { SolicitudVariable } from 'src/app/core/static/variables/url/URLImages';
 import { Smartwfm } from 'src/app/core/Util/smartwfm/smartwfm';
@@ -23,14 +25,17 @@ export class FormSolicitudDataComponent {
   maxDate: Date = new Date();
   loading = true;
   llenarForm = false;
+  terminarSolicitud = false;
 
   myDatepickerFechaFinLab: Date = new Date();
   myDatepickerFechaSolic: Date = new Date();
   myDatepickerFechaPago: Date = new Date();
+  myDatepickerFechaRegistro: Date = new Date();
 
   date1 = new UntypedFormControl();
   date2 = new UntypedFormControl();
   date3 = new UntypedFormControl();
+  date4 = new UntypedFormControl();
 
   optionsDep: SelectMenu[];
   currentDep: SelectMenu;
@@ -61,7 +66,17 @@ export class FormSolicitudDataComponent {
 
   // probando
   mostrar = false;
-  dataTramite2 : any;
+
+  dataTramite2 = [
+    {data: 'Retiro por edad y tiempo de servicio', id: 0},
+    {data: 'Cesantía en edad avanzada', id: 0},
+    {data: 'Régimen cuentas individuales' ,id: 0},
+    {data: 'Fallecimiento', id: 0 }
+  ]
+
+  dataTramite3 = [
+    {data: 'Devolución de prima', id: 0}
+  ]
 
   dataBancos = [
     { id: 1	, data:'HSBC'},
@@ -73,25 +88,26 @@ export class FormSolicitudDataComponent {
     { id: 7	, data:'MIFEL'},
     { id: 8	, data:'BANCO MULTIVA SA'},
     { id: 9	, data:'BANCO AUTOFIN MEXICO'},
-    { id: 10, data:'	ACTINVER'},
-    { id: 11, data:'	BANCO DEL BAJIO'},
-    { id: 12, data:'	BANCO NACIONAL DEL EJERCITO'},
-    { id: 13, data:'	BANCO COPPEL'},
-    { id: 14, data:'	Banco Santander (México) S.A.'},
-    { id: 15, data:'	AMEX'},
-    { id: 16, data:'	BANREGIO'},
-    { id: 17, data:'	INBURSA'},
-    { id: 18, data:'	BANK OF AMERICA MEXICO, S.A.'},
-    { id: 19, data:'	BANCO AZTECA'},
-    { id: 20, data:'	BANSEFI'},
-    { id: 21, data:'	CIBANCO'},
-    { id: 22, data:'	BANCO FAMSA'},
-    { id: 23, data:'	LIBERTAD SERVICIOS FINANCIEROS, S.A. DE C.V., SFP'},
-    { id: 24, data:'	BANCO COMPARTAMOS, S.A.'},
-    { id: 25, data:'	BANCO VE POR MAS'},
-    { id: 26, data:'	BANCA AFIRME'},
-    { id: 27, data:'	BANCO MONEX, S.A.'},
-    { id: 58, data:'	GLOBAL BANK CORPORATION'}
+    { id: 10, data:'ACTINVER'},
+    { id: 11, data:'BANCO DEL BAJIO'},
+    { id: 12, data:'BANCO NACIONAL DEL EJERCITO'},
+    { id: 13, data:'BANCO COPPEL'},
+    { id: 14, data:'Banco Santander (México) S.A.'},
+    { id: 15, data:'AMEX'},
+    { id: 16, data:'BANREGIO'},
+    { id: 17, data:'INBURSA'},
+    { id: 18, data:'BANK OF AMERICA MEXICO, S.A.'},
+    { id: 19, data:'BANCO AZTECA'},
+    { id: 20, data:'BANSEFI'},
+    { id: 21, data:'CIBANCO'},
+    { id: 22, data:'BANCO FAMSA'},
+    { id: 23, data:'LIBERTAD SERVICIOS FINANCIEROS, S.A. DE C.V., SFP'},
+    { id: 24, data:'BANCO COMPARTAMOS, S.A.'},
+    { id: 25, data:'BANCO VE POR MAS'},
+    { id: 26, data:'BANCA AFIRME'},
+    { id: 27, data:'BANCO MONEX, S.A.'},
+    { id: 58, data:'GLOBAL BANK CORPORATION'},
+    { id: 59, data:'NU'}
   ]
 
   dataPago = [
@@ -152,7 +168,9 @@ export class FormSolicitudDataComponent {
     analistaComercialValida: '',
     pagoAnterior: '',
     fechaPago: '',
-    empleadoAsignacion: ''
+    empleadoAsignacion: '',
+    tipoSolicitud: '',
+    numOrdenPagoSise: 0
   }
 
   @Input() arrayFiles = [
@@ -166,7 +184,8 @@ export class FormSolicitudDataComponent {
     {id: 8, label:'Seleccionar archivo', file: null },
     {id: 9, label:'Seleccionar archivo', file: null },
     {id: 10, label:'Seleccionar archivo', file: null },
-    {id: 11, label:'Seleccionar archivo', file: null }
+    {id: 11, label:'Seleccionar archivo', file: null },
+    {id: 12, label:'Seleccionar archivo', file: null }
   ]
 
   @Input() arrayPdf = [
@@ -180,7 +199,8 @@ export class FormSolicitudDataComponent {
     {id: 0, tipoDocumento: 8, tipoArchivo: 0 },
     {id: 0, tipoDocumento: 9, tipoArchivo: 0 },
     {id: 0, tipoDocumento: 10, tipoArchivo: 0 },
-    {id: 0, tipoDocumento: 11, tipoArchivo: 0 }
+    {id: 0, tipoDocumento: 11, tipoArchivo: 0 },
+    {id: 0, tipoDocumento: 12, tipoArchivo: 0 }
   ];
 
   @Input() isAnalista: boolean = false;
@@ -208,6 +228,9 @@ export class FormSolicitudDataComponent {
   formFiniquito = 'Seleccionar archivo';
   fileFormFiniquito: File = null;
 
+  expediente = 'Seleccionar archivo';
+  fileExpediente: File = null;
+
 
   observacionesAPVida = ''; // Se cambiara a arreglo de observaciones AP vida
 
@@ -219,26 +242,29 @@ export class FormSolicitudDataComponent {
   isSiniestros = false;
   isComercial = false;
   isExterno = false;
+  isPuebla = false;
+  isFonacot = false;
   observacionDoc: any;
+  categoria : string = null
+  opt : number
 
-  constructor(@Inject('ServiceResource') private subResourceService: SubResourceService<any>, private dependencies_: DependenciesService, private fb:FormBuilder, private _router:Router, private getSolicitudes: SolicitudesServices ) {
+  constructor(@Inject('ServiceResource') private subResourceService: SubResourceService<any>, private dependencies_: DependenciesService, private fb:FormBuilder, private _router:Router, private getSolicitudes: SolicitudesServices, private AuthenticationService : AuthenticationService, private _activatedRoute: ActivatedRoute ) {
 
-
+    this.roles();
+    this.opt = Number(RoutingUtilities.getParamsFromUrl(this._activatedRoute, 'opt'));
+    this.categoria = String(RoutingUtilities.getParamsFromUrl(this._activatedRoute, 'categoria'));
     this.fecha = moment().format('YYYY-MM-DD');
     this.date1 = new UntypedFormControl({ value: '', disabled: true });
-    this.date2 = new UntypedFormControl({ value: this.today, disabled: true });
+    //this.date2 = new UntypedFormControl({ value: this.today, disabled: true });
     this.date3 = new UntypedFormControl({ value: this.today, disabled: true });
-
     this.initOptionsTipoTramite();
     this.initOptionsMonto();
-    this.roles();
     this.initOptionsBanco();
     this.initOptionsTipoPago();
     this.initOptionDependencias();
 
     setTimeout(() => {
     this.getDiasTranscurridos();
-
     if (this.prueba === true) {
       return
     }
@@ -249,10 +275,7 @@ export class FormSolicitudDataComponent {
        .subscribe(data => {
          if(data[0].statusSolicitud !== 'Terminada'){
            swal('Información', 'Actualmente tienes una solicitud en proceso, solo podrás hacer una solicitud de tipo aclaración', 'warning');
-           this.mostrar = true;
-           this.dataTramite2 = [
-             {data: 'Aclaración', id: 0},
-           ]
+           this.end();
          }
        }, error=>{
          console.log({error});
@@ -262,28 +285,35 @@ export class FormSolicitudDataComponent {
   }
 
   roles(){
-    let userExterno = JSON.parse(localStorage.getItem('currentUser'));
-    let com = JSON.parse(localStorage.getItem('currentUserComercial'));
-    let sin = JSON.parse(localStorage.getItem('currentUserSiniestros'));
-    let cont = JSON.parse(localStorage.getItem('currentUserContabilidad'));
-    if(com !== null){
-      this.userApp = com;
-      this.isComercial = true;
-      if(this.optionsRFC == null){
-        this.getRfcExternos();
-      }
-    }else
-    if(sin !== null){
-      this.userApp = sin;
-      this.isSiniestros = true;
-    }else
-    if(cont !== null){
-      this.userApp = cont;
-      this.isContable = true;
-    }else
-    if(userExterno !== null){
-      this.userApp = userExterno;
-      this.isExterno = true;
+    let allUsuarios = [];
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUser")))
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserComercial")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserSiniestros")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserContabilidad")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserAdmin")));
+    allUsuarios.push(JSON.parse(localStorage.getItem('idCuenta')));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserPuebla")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserFunacot")));
+    this.userApp = allUsuarios.find( (value) => value !== null );
+    switch (this.userApp.authorities[0]['authority']) {
+        case 'ROLE_ACOME':
+          this.isComercial = true;
+        break;
+        case 'ROLE_ASINI':
+          this.isSiniestros = true;
+        break;
+        case 'ROLE_ACONT':
+          this.isContable = true;
+        break;
+        case 'ROLE_PUEBLA':
+          this.isPuebla = true;
+        break;
+        case 'ROLE_FUNACOT':
+          this.isFonacot = true;
+        break;
+      default:
+        this.AuthenticationService.validacionUser();
+        break;
     }
   }
 
@@ -349,6 +379,15 @@ export class FormSolicitudDataComponent {
       this.date3 = new UntypedFormControl({ value: moment(this.solicitud.fechaPago).toDate(), disabled: true });
       this.myDatepickerFechaPago = moment(this.solicitud.fechaPago).toDate();
     }
+
+    if(this.solicitud.fechaSolicitud !== ''){
+       if (this.solicitud.idSolicitud === 0) {
+          this.myDatepickerFechaRegistro = moment(this.solicitud.fechaSolicitud).toDate();
+       }else{
+        this.date4 = new UntypedFormControl({ value: moment(this.solicitud.fechaSolicitud).toDate(), disabled: true });
+        this.myDatepickerFechaRegistro = moment(this.solicitud.fechaSolicitud).toDate();
+       }
+    }
   }
 
   initOptionDependencias(){
@@ -372,7 +411,7 @@ export class FormSolicitudDataComponent {
   }
 
   initOptionsTipoTramite(){
-    this.optionsTipoTramite = Smartwfm.createSelectOptions(this.dataTramite, 'data');
+    this.optionsTipoTramite = Smartwfm.createSelectOptions( this.isFonacot || this.categoria === 'fonacot' ? this.dataTramite3 : this.isPuebla || this.categoria === 'puebla' ? this.dataTramite2 : this.dataTramite, 'data');
     if(this.solicitud.tipoTramite != ''){
       this.setOptionTipoTramite();
     }
@@ -382,6 +421,7 @@ export class FormSolicitudDataComponent {
     this.optionsTipoTramite.forEach(item => {
       if(item.extras.data == this.solicitud.tipoTramite){
         this.currentTipoTramite = item;
+        console.log('current',this.currentTipoTramite);
       }
     });
   }
@@ -465,6 +505,11 @@ export class FormSolicitudDataComponent {
     this.solicitud.fechaPago = moment(this.myDatepickerFechaPago).format('YYYY-MM-DD HH:mm:ss');
   }
 
+  getFechaRegistro(type: string, event: MatDatepickerInputEvent<Date>) {
+    this.myDatepickerFechaRegistro = event.value;
+    this.solicitud.fechaSolicitud = moment(this.myDatepickerFechaRegistro).format('YYYY-MM-DD HH:mm:ss');
+  }
+
   validateTipoPago(){
     if(this.solicitud.tipoPago === 'Cheque'){
       return true;
@@ -529,7 +574,11 @@ export class FormSolicitudDataComponent {
         this.arrayFiles[9].file = archivo.item(0);
         this.arrayFiles[9].label = archivo[0].name;
         break;
-
+      case 11:
+        // Expediente PUEBLA
+          this.arrayFiles[10].file = archivo.item(0);
+          this.arrayFiles[10].label = archivo[0].name;
+          break;
       default:
         break;
     }
@@ -553,20 +602,21 @@ export class FormSolicitudDataComponent {
 
   formIncomplet = ( forms : NgForm ) => {
     this.llenarForm = true;
-      Object.values( forms.controls ).forEach( control =>{
+      Object.values( forms.controls ).forEach( (control : any ) =>{
         control.markAsTouched();
       });
 
     this.solicitud.statusSolicitud === 'En proceso' ?
     swal( '¡Atención!', 'Debes guardar el documento de FINIQUITO', 'warning' ) : swal( '¡Atención!', 'Falta información', 'warning' );
+
   }
+
 
   // Formulario template
   guardar = ( forms : NgForm ) => {
-
-
     // Validaciones antes de proceder a guardar
     if( forms.invalid ){
+      console.log('entre');
       this.formIncomplet( forms )
       return;
     }
@@ -582,16 +632,6 @@ export class FormSolicitudDataComponent {
         return;
       }
     }
-    // Validacion de retiro complementario
-    // if( this.solicitud.tipoTramite === 'Retiro Complementario' && this.solicitud.statusSolicitud == 'Nueva' ){
-    //   console.log(this.solicitud.statusSolicitud);
-    //   console.log('2');
-    //   if(this.arrayFiles[0].file === null || this.arrayFiles[6].file === null ){
-    //     this.formIncomplet( forms );
-    //     return;
-    //   }
-    // }
-
 
     // Si todo esta 'OK', proceder a guardar
     this.llenarForm = false;
@@ -613,22 +653,19 @@ export class FormSolicitudDataComponent {
         confirmButtonText: 'Aceptar'
       }).then((result) => {
         if(result.value){
-          this.solicitud.fechaSolicitud = this.solicitud.fechaSolicitudAPV;
           this.solicitud.rfcEmpleado = this.isExterno ? '' : this.userApp.username;
           this.solicitud.analistaComercialValida = this.solicitud.rfcEmpleado;
           this.solicitud.empleadoAsignacion = this.isExterno ? '' : this.userApp.username;
           this.solicitud.tipoTramite == 'Retiro Total'  ? this.solicitud.importeSolicitado = '100%' : this.solicitud.tipoTramite == 'Retiro Complementario' ? this.solicitud.importeSolicitado = '0%' : this.solicitud.tipoTramite == 'Aclaracion' ? this.solicitud.importeSolicitado = '0%' : null;
           this.solicitud.sueldo == '' ? this.solicitud.sueldo = '0' : null;
-          if (this.solicitud.tipoTramite == "Aclaracion") {
-            this.solicitud.diasTranscurridos = "0",
-            this.solicitud.fechaImporteContable = this.solicitud.fechaSolicitud,
-            this.solicitud.fechadeTransferencia = this.solicitud.fechaSolicitud,
-            this.solicitud.numChequeTransf = 0,
-            this.solicitud.pagoAnterior = "100",
-            this.solicitud.tipoPago = "Cheque",
-            this.solicitud.statusSolicitud = "Nueva"
-            this.solicitud.obsSiniestros = "",
-            this.solicitud.estPagRechPen = ""
+          //Validacion Puebla & Fonacot
+          if (this.isPuebla) {
+              this.solicitud.tipoSolicitud = 'puebla';
+          } else if(this.isFonacot){
+              this.solicitud.tipoSolicitud = 'fonacot';
+              this.solicitud.telefono = '0'
+          } else{
+            this.solicitud.tipoSolicitud = '';
           }
           // actualizacion de la solicitud
           if( this.solicitud.statusSolicitud === 'Falta de información' || this.solicitud.statusSolicitud === 'PENDIENTE DE DOCS'  ){
@@ -649,18 +686,17 @@ export class FormSolicitudDataComponent {
             )
             return;
           }
-          if (this.solicitud.statusSolicitud === 'En proceso') {
-            if(this.arrayFiles[9].file === null ){
-              this.formIncomplet( forms );
-              return;
-            }
-            this.uploadDocumentos(this.solicitud.idSolicitud);
-            location.reload();
+          //actualiza documentos
+          if (this.solicitud.statusSolicitud !== 'Nueva') {
+            this.updateAllSolicitudes(forms);
+            return;
+          }else if( this.isPuebla && this.solicitud.idSolicitud > 0 || this.isFonacot && this.solicitud.idSolicitud > 0 ){
+            this.updateAllSolicitudes(forms);
             return;
           }
-          this.subResourceService.create( this.solicitud, SolicitudVariable.CREAR_SOLICITUD)
-            .subscribe(data => {
-
+          //creacion solicitud
+          this.subResourceService.create( this.solicitud, SolicitudVariable.CREAR_SOLICITUD).subscribe(data => {
+              //Error inesperado
               if (data === null || data.fechaSolicitudAPV === null ) {
                 this.loading = true;
                 swal('Error', 'La solicitud ha sido rechazada, verifique los datos registrados', 'error').then(()=>{
@@ -669,14 +705,16 @@ export class FormSolicitudDataComponent {
                 });
                 return;
               }
-
+              //Cuando existe ya una solicitud con ese rfc
               if(data.solicActiva && data.statusSolicitud === 'Nueva' ){
                 swal('Información', 'Ya existe una solicitud con estatus: ' + data.statusSolicitud + ' del RFC GEM: ' + data.rfcGEM + ' con el folio: ' + data.numeroRegistro, 'info').then(()=>{
                   this.end();
                 });
               }
+
               this.uploadDocumentos(data.idSolicitud);
-              swal('Éxito', 'La solicitud ha sido enviada con el folio ' + data.numeroRegistro, 'success').then(()=>{
+              let registro = this.isPuebla ? data.idSolicitud : + this.isFonacot ? data.idSolicitud : + data.numeroRegistro
+              swal('Éxito', 'La solicitud ha sido enviada con el folio ' + registro , 'success').then(()=>{
                 this.end();
               });
             }, error => {
@@ -689,29 +727,53 @@ export class FormSolicitudDataComponent {
     }
   }
 
-  uploadDocumentos(idSolicitud){
-    this.arrayFiles.forEach((item, index) => {
-      if(item.file !== null){
-        let tipo = item.file.type == 'application/pdf' ? '1' : '2';
-        const imgBlob = new Blob([item.file], { type:  item.file.type })
-        let formData: FormData = new FormData();
-        formData.append('documento', imgBlob, item.label);
-        formData.append('fechaCreacion', moment().format('YYYY-MM-DD HH:mm:ss'));
-        formData.append('tipoDocumento', item.id.toString());
-        formData.append('idSolicitud', idSolicitud);
-        formData.append('tipoAccion', '1');
-        formData.append('idDocumento', '0');
-        formData.append('tipoArchivo', tipo);
-        this.subResourceService.readPostMultipart( SolicitudVariable.DOCUMENTO_SOLICITUD, formData)
-        .subscribe((response : any) => {
+  updateAllSolicitudes = async forms => {
+    if(this.arrayFiles[9].file === null ){
+      this.formIncomplet( forms );
+      return;
+    }
+    this.loading = true;
+    await this.uploadDocumentos(this.solicitud.idSolicitud);
+    location.reload();
+  }
 
-        });
-      }
+  async uploadDocumentos(idSolicitud){
+    let promesa = new Promise((resolve, reject) => {
+      this.arrayFiles.forEach( ( item, index) => {
+        if(item.file !== null){
+          let formData: FormData = new FormData();
+          let tipo = item.file.type == 'application/pdf' ? '1' : '2';
+          const imgBlob = new Blob([item.file], { type:  item.file.type })
+          formData.append('documento', imgBlob, item.label);
+          formData.append('fechaCreacion', moment().format('YYYY-MM-DD HH:mm:ss'));
+          formData.append('tipoDocumento', item.id.toString());
+          formData.append('idSolicitud', idSolicitud);
+          formData.append('tipoAccion', '1');
+          formData.append('idDocumento', '0');
+          formData.append('tipoArchivo', tipo);
+          formData.append('categoriaSolicitud', this.solicitud.tipoSolicitud);
+          this.subResourceService.readPostMultipart( SolicitudVariable.DOCUMENTO_SOLICITUD, formData)
+            .subscribe((response : any) => {
+                resolve(true)
+            }, (error : any) => {
+                console.log({error});
+                reject(error)
+            });
+        }
+      });
+
     });
+    await promesa
+    return promesa
+
+  }
+
+  ruta = ( ruta : string ) => {
+    return this._router.navigate([ruta]);
   }
 
   end(){
-    this.isExterno ? this._router.navigate(['/angular/list-solicitudes']) : this._router.navigate(['/angular/dashboard-solicitudes']);
+    this.isExterno ? this.ruta('/angular/list-solicitudes') : this.isPuebla ? this.ruta('/angular/dashboard-puebla') : this.isFonacot ? this.ruta('/angular/dashboard-fonacot') : this.ruta('/angular/dashboard-analista-solicitud');
   }
 
   changeStatusDoc(){

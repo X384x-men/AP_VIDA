@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
+
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sytecso.component.exceptions.SytecsoController;
 import com.sytecso.component.utility.UtileriaSql;
 import com.sytecso.dao.cargasBatch.DAOCargasBatch;
+import com.sytecso.dto.batchmodel.DTOAsegurado;
 import com.sytecso.dto.batchmodel.DTOCargaBatchControl;
 import com.sytecso.dto.batchmodel.DTOCriterios;
 import com.sytecso.dto.batchmodel.DTODetalle;
@@ -23,6 +26,7 @@ import com.sytecso.dto.batchmodel.DTOResumen;
 import com.sytecso.dto.catalogosAP.DTOCatalogoConceptos;
 import com.sytecso.dto.solicitud.ShortSolicitudAPDTO;
 import com.sytecso.dto.usuario.UserAp;
+import java.util.HashSet;
 
 
 @Repository
@@ -324,6 +328,42 @@ public class DAOCargasBatchImpl implements DAOCargasBatch {
 		}
 		return idAsegurado;
 	}
+	
+	
+	@Override
+	public Set<DTOAsegurado> getRFCValidos(List<String> rfcList){
+		Connection con = null;
+		Set<DTOAsegurado> rfcValidos= new HashSet<DTOAsegurado>();
+		try {
+			con = dataSource.getConnection();
+			ListIterator<String> parametros = rfcList.listIterator();
+			while(parametros.hasNext()) {
+				ResultSet rs=null;
+				PreparedStatement pst = null;
+				pst = con.prepareStatement("select idEmpleadoAP, rfc from empleado_ap "
+						+ "           where rfc in  "+parametros.next());
+			//	System.out.println(pst.toString());
+				rs=pst.executeQuery();
+				while (rs.next()) {
+					DTOAsegurado asegurado = new DTOAsegurado();
+					asegurado.setId(rs.getLong(1));
+					asegurado.setRfc(rs.getString(2).toUpperCase());
+					rfcValidos.add(asegurado);
+				}
+				UtileriaSql.closePreparedStatemetAndResultSet(pst, rs);
+			}
+			
+			
+	
+			
+		} catch (Exception e) {
+			SytecsoController.logClassAndMethodWithException(e);
+		} finally {
+			UtileriaSql.closeConnection(con);
+		}
+		return rfcValidos;
+	}
+	
 
 	@Override
 	public int validateFile(String nameFile) {

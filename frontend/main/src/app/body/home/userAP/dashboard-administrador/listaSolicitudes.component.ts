@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { GlobalVariable, SolicitudVariable} from "src/app/core/static/variables/url/URLImages";
 import { SubResourceService } from "src/app/core/services/service-crud-operations/sub-resource.service";
 import { MatPaginator } from "@angular/material/paginator";
@@ -12,13 +12,15 @@ import { MatSort } from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import swal from 'sweetalert2';
 import moment from 'moment';
+import { AuthenticationService } from 'src/app/core/services/authentication-service/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-slista-solicitudes',
   templateUrl: "./lista-solicitudes.component.html",
   styleUrls: ["./lista-solicitudes.component.css"]
 })
-export class ListaSolicitudComponent implements AfterViewInit {
+export class ListaSolicitudComponent implements OnInit, AfterViewInit {
 
   apvidaBackground = GlobalVariable.BACKGROUND_IMG_APVIDA;
   userApp: any;
@@ -83,10 +85,16 @@ export class ListaSolicitudComponent implements AfterViewInit {
     private excelService:ExcelService,
     private modal: ModalService,
     private announcer: LiveAnnouncer,
+    private authencationService: AuthenticationService,
+    private router: Router,
   ) {
     this.getSolicitudes();
     this.initOptionsEstatus();
     this.initOptionsTipoTramite();
+  }
+
+  ngOnInit(): void {
+    this.authencationService.validacionAdmin();
   }
 
   ngAfterViewInit():void {
@@ -125,7 +133,7 @@ export class ListaSolicitudComponent implements AfterViewInit {
   // probando lista de solicitudes
   async getSolicitudes(){
     let infoNew = []
-    this.subResourceService.list(SolicitudVariable.GET_SOLIITUDES_ANALISTAS,'' ,{nombre: '', RFC: '', tramite: '', status: ''})
+    this.subResourceService.list(SolicitudVariable.GET_SOLIITUDES_ANALISTAS,'' ,{nombre: '', RFC: '', tramite: '', status: '', categoriaSolicitud: ''})
       .subscribe(data=>{
         data.forEach(async item => {
           item.isLayout = false;
@@ -172,77 +180,6 @@ export class ListaSolicitudComponent implements AfterViewInit {
     this.excelService.exportAsExcelFile(dataLayout, 'SolicitudesTotales' + this.today);
     this.modal.success('Éxito', 'Se generó correctamente la descarga de solicitudes');
   }
-
-  // filtros anteriores
-
-  // getEstatus(event: string){
-  //   this.estatus = event;
-  //   this.filterRFC();
-  // }
-
-  // getTipoTramite(event:  string ){
-  //   this.tipoTramite = event;
-  //   this.filterRFC();
-  // }
-
-  // filterRFC(){
-  //   if ((this.rfc === '' || this.rfc === null) && (this.folio === '' || this.folio === null)) {
-  //     this.solicitudes = Object.assign([], this.filterCombos());
-  //   } else if((this.rfc !== '' && this.rfc !== null) && (this.folio === '' || this.folio === null)) {
-  //     this.solicitudes = Object.assign([], this.filterCombos());
-  //     this.solicitudes = this.solicitudes.filter((item) => {
-  //       return ( item.rfcAsegurado.toLowerCase().indexOf(this.rfc.toLowerCase()) ) !== -1;
-  //     })
-  //   }else if((this.rfc === '' || this.rfc === null) && (this.folio !== '' && this.folio !== null)) {
-  //     this.solicitudes = Object.assign([], this.filterCombos());
-  //     this.solicitudes = this.solicitudes.filter((item) => {
-  //       return item.numeroRegistro === Number(this.folio) ? item : null;
-  //     })
-  //   }else if((this.rfc !== '' && this.rfc !== null) && (this.folio !== '' && this.folio !== null)) {
-  //     this.solicitudes = Object.assign([], this.filterCombos());
-  //     this.solicitudes = this.solicitudes.filter((item) => {
-  //       return (item.numeroRegistro === Number(this.folio) ? item : null) &&
-  //       (( item.rfcAsegurado.toLowerCase().indexOf(this.rfc.toLowerCase()) ) !== -1);
-  //     })
-  //   }
-  // }
-
-  // filterCombos(){
-  //   let arrayAux = [];
-  //   if(this.estatus !== 'Todos'){
-  //     if(this.tipoTramite == 'Todos'){
-  //       this.solicitudesAux.forEach(item => {
-  //         if(item.statusSolicitud === this.estatus){
-  //           arrayAux.push(item);
-  //         }
-  //       });
-  //       return arrayAux;
-  //     }else{
-  //       this.solicitudesAux.forEach(item => {
-  //         if(item.statusSolicitud === this.estatus && item.tipoTramite === this.tipoTramite){
-  //           arrayAux.push(item);
-  //         }
-  //       });
-  //       return arrayAux;
-  //     }
-  //   }else if(this.estatus == 'Todos'){
-  //     if(this.tipoTramite == 'Todos'){
-  //       return this.solicitudesAux;
-  //     }else{
-  //       this.solicitudesAux.forEach(item => {
-  //         if(item.tipoTramite === this.tipoTramite){
-  //           arrayAux.push(item);
-  //         }
-  //       });
-  //       return arrayAux;
-  //     }
-  //   }
-  // }
-
-  // hasta aca las funciones de filtros anteriores
-
-
-
   // Filtros nuevos de tabla nueva
 
   applyFilter(event: Event) {
@@ -261,8 +198,6 @@ export class ListaSolicitudComponent implements AfterViewInit {
       this.selectedEstatus = value;
     }
   }
-
-
 
   onSelectedTipoTramite(value:string): void {
     if (value === 'Todos' || value === '- Seleccionar un opción  -') {
@@ -283,6 +218,7 @@ export class ListaSolicitudComponent implements AfterViewInit {
         RFC: this.solicitud.RFC,
         tramite: this.solicitud.tramite,
         status: this.solicitud.status,
+        categoriaSolicitud: ''
       }
     ).subscribe( (data) => {
       this.solicitudes = data;
@@ -309,5 +245,17 @@ export class ListaSolicitudComponent implements AfterViewInit {
       swal(error, '', 'error')
       console.log({error});
     });
+  }
+
+  back( ruta ){
+    if (ruta === 'Listsolicitudes') {
+      this.router.navigate(['/angular/dashboard-admin/listas-de-solicitudes']);
+    }
+    else if  (ruta === 'puebla') {
+      this.router.navigate(['/angular/dashboard-admin/solicitudes-puebla']);
+    }
+    else if (ruta === 'fonacot') {
+      this.router.navigate(['/angular/dashboard-admin/solicitudes-fonacot']);
+    }
   }
 }

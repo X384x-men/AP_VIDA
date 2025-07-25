@@ -137,4 +137,14 @@ public class ControllerUsuarioAcceso {
 		return new ResponseEntity<>(empleados, HttpStatus.OK);
 	}
 
+	@GetMapping(value = "/getExistUser")
+	public ResponseEntity<EventMessage> getExistUser(@RequestParam(	name = "rfc") String rfc) throws NotRolesFoundException, SQLException {
+		boolean existe = serviceUsuarioAcceso.getUserExist(rfc);
+		if (existe) {
+			return new ResponseEntity<>(new EventMessage("Existe"), HttpStatus.OK);
+		}else {
+			return new ResponseEntity<>(new EventMessage("No existe"), HttpStatus.BAD_REQUEST);
+		}
+		
+	}
 }

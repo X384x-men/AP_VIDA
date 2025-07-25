@@ -93,7 +93,6 @@ export class ListSolicitudesComponent implements OnInit {
         this.solicitudesAux = Object.assign([],data);
         data.forEach( item => {
           this.solicitudNgIf = item.statusSolicitud;
-          console.log(this.solicitudNgIf);
         } )
       }, error=>{
         console.log({error});
@@ -195,6 +194,10 @@ export class ListSolicitudesComponent implements OnInit {
         return arrayAux;
       }
     }
+  }
+
+  goAclaraciones = () => {
+    this.router.navigate(['/angular/main-aclaraciones'])
   }
 
 }

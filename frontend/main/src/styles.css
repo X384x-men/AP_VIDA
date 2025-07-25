@@ -54,6 +54,10 @@ x .material-icons {
   font-feature-settings: 'liga';
 }
 
+.mdc-text-field--filled:not(.mdc-text-field--disabled){
+  background-color: unset !important;
+}
+
 .spanLink {
   color: #1c46bbfb;
   cursor: pointer;
@@ -125,13 +129,13 @@ table {
   width: 100%;
 }
 
-.mat-paginator {
+.mat-mdc-paginator {
   -webkit-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.14);
   -moz-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.14);
   box-shadow: 0px 6px 15px 0px rgba(0, 0, 0, 0.14);
 }
 
-.mat-paginator-container {
+.mat-mdc-paginator-container {
   margin-top: 25px;
 }
 
@@ -183,11 +187,12 @@ table {
   margin-top: -20px;
 }
 
-.mat-list-base {
+.mat-mdc-list-base {
   padding-top: 0px !important;
 }
 
-.mat-list-item, .mat-list-option {
+/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
+.mat-mdc-list-item, .mat-list-option {
   display: block;
   height: 48px;
   -webkit-tap-highlight-color: transparent;
@@ -196,6 +201,7 @@ table {
   background-color: transparent;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
 .mat-list-item-content a {
   width: 100%;
 }
@@ -233,7 +239,7 @@ table {
   border-bottom: solid 0.8px rgba( 0, 173, 249, 1);
 }
 
-.mat-list-base .mat-list-item {
+.mat-mdc-list-base .mat-mdc-list-item {
   padding-top: 0px !important;
 }
 
@@ -253,7 +259,7 @@ table {
 
 /*start select panel*/
 
-.mat-select-panel {
+.mat-mdc-select-panel {
   margin-top: 35px !important;
 }
 
@@ -261,10 +267,10 @@ table {
 
 /*start modal panel*/
 
-.mat-dialog-container {
+.mat-mdc-dialog-container {
   padding: 0 !important;
 }
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   margin: 0 !important;
 }
 
@@ -286,7 +292,7 @@ table {
 
 /*start styles to input element into forms*/
 
-.mat-form-field {
+.mat-mdc-form-field {
 
 }
 
@@ -359,10 +365,12 @@ table {
   font-weight: 500;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .mat-form-field-label {
   color: rgba( 0, 0, 0, 0.9) !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .mat-form-field-infix {
   margin-bottom: 10px;
   font-weight: 500;
@@ -371,10 +379,11 @@ table {
   min-width: 180px !important;
 }
 
-input.mat-input-element {
+input.mat-mdc-input-element {
   margin-top: 10px;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .mat-form-field-underline {
   background-attachment: rgba( 0, 0, 0, 0.6);
 }
@@ -551,10 +560,10 @@ imagen para selccion de lenguaje
   background: #257aa9;
 }
 
-.mat-raised-button.mat-primary {
+.mat-mdc-raised-button.mat-primary {
   background-color: #257aa9 !important;
 }
 
-.mat-stroked-button.mat-primary {
+.mat-mdc-outlined-button.mat-primary {
   color: #257aa9;
 }

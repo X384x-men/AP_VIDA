@@ -18,12 +18,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sytecso.component.utility.SessionEmail;
 import com.sytecso.component.utility.TemplateEmail;
+import com.sytecso.dao.email.DAOEmail;
 import com.sytecso.dao.solicitud.DAOSolicitud;
 import com.sytecso.dao.usuario.DAOUsuarioAcceso;
 import com.sytecso.dto.EventoSolicitudDTO;
+import com.sytecso.dto.email.EmailDTO;
 import com.sytecso.dto.empleado.EmpleadoAPDTO;
 import com.sytecso.dto.solicitud.CalculoActuariaDTO;
 import com.sytecso.dto.solicitud.CalculoActuariaHasSolicDTO;
+import com.sytecso.dto.solicitud.FonacotDTO;
 import com.sytecso.dto.solicitud.ObservacionDTO;
 import com.sytecso.dto.solicitud.OrdenPagoDTO;
 import com.sytecso.dto.solicitud.OrdenPagoHasSolicitudDTO;
@@ -42,32 +45,67 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 	@Autowired
 	private DAOUsuarioAcceso daoUsuarioAcceso;
 	
+	@Autowired
+	private DAOEmail daoEmail;
+	
 	@Override
 	public SolicitudAPDTO crearSolicitud(SolicitudAPDTO solicitud) throws Exception {
-		boolean status = false;
+		//boolean status = false;
 		if(solicitud.getIdSolicitud() > 0) {
 			return daoSolicitud.actualizarSolicitud(solicitud) ? solicitud : null;
 		}else {
-			solicitud.setIdEmpleado(daoUsuarioAcceso.getEmpleadoAP(solicitud.getRfcAsegurado()).getIdEmpleado());
-			solicitud.setIdSolicitud(daoSolicitud.crearSolicitud(solicitud));
-			solicitud.setNumeroRegistro(getSolicitud(solicitud.getIdSolicitud()).getNumeroRegistro());
-			status = envioCorreoNuevaSolicitud(solicitud);
-			return status ? solicitud : null;			
+			
+				solicitud.setIdEmpleado(daoUsuarioAcceso.getEmpleadoAP(solicitud.getRfcAsegurado()).getIdEmpleado());
+				solicitud.setIdSolicitud(daoSolicitud.crearSolicitud(solicitud));
+				if(solicitud.getTipoSolicitud().equals("fonacot")) {
+					solicitud.setFonacot(daoSolicitud.getFonacot(solicitud));
+				}
+				solicitud.setNumeroRegistro(getSolicitud(solicitud.getIdSolicitud(),solicitud.getTipoSolicitud()).getNumeroRegistro());
+				if(solicitud.getTipoSolicitud().equals("")) {
+					try {
+						envioCorreoNuevaSolicitud(solicitud);
+						EmailDTO email= new EmailDTO();
+			            email.setRfc(solicitud.getRfcAsegurado());
+			            email.setCorreo(solicitud.getEmail());
+			            email.setNombre(solicitud.getNombre());
+			            email.setStatus(true);
+			            email.setNumerosRegistro(Long.toString(solicitud.getNumeroRegistro()));
+			            email.setTipo("Nueva Solicitud");
+			            String currentTimestamp = LocalDateTime.now().format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+			            email.setFechaExito(currentTimestamp);
+			            email.setIdSolicitud(solicitud.getIdSolicitud());
+			            daoEmail.creacionEnvioEmail(email);
+					}catch(Exception e) {
+						System.out.println("Error en el envío de correo ");
+						envioCorreoNuevaSolicitud(solicitud);
+						EmailDTO email= new EmailDTO();
+			            email.setRfc(solicitud.getRfcAsegurado());
+			            email.setCorreo(solicitud.getEmail());
+			            email.setNombre(solicitud.getNombre());
+			            email.setStatus(false);
+			            email.setNumerosRegistro(Long.toString(solicitud.getNumeroRegistro()));
+			            email.setTipo("Nueva Solicitud");
+			            email.setFechaExito("");
+			            email.setIdSolicitud(solicitud.getIdSolicitud());
+			            daoEmail.creacionEnvioEmail(email);
+					}
+				}
+			return solicitud;
 		}
 	}
 	
 	@Override
-	public long subirDocumento(MultipartFile file, String fechaCreacion, int tipoDocumento, long idSolicitud, int tipoAccion, long idDocumento, int tipoArchivo) {
+	public long subirDocumento(MultipartFile file, String fechaCreacion, int tipoDocumento, long idSolicitud, int tipoAccion, long idDocumento, int tipoArchivo, String categoriaDocumento) {
 		long insertDocumento = 0L;
 		try {
 			if(tipoAccion == 1) {
 				insertDocumento = daoSolicitud.subirDocumento(file, fechaCreacion);
 				if(insertDocumento > 0L) {
-					daoSolicitud.crearSolicitudHasDocumento(insertDocumento, idSolicitud, tipoDocumento, tipoArchivo);				
+					daoSolicitud.crearSolicitudHasDocumento(insertDocumento, idSolicitud, tipoDocumento, tipoArchivo, categoriaDocumento);				
 				}				
 			}else {
 				insertDocumento = daoSolicitud.actualizarDocumento(file, idDocumento);
-				daoSolicitud.actualizarSolicitudHasDocumento(insertDocumento, idSolicitud, tipoArchivo);
+				daoSolicitud.actualizarSolicitudHasDocumento(insertDocumento, idSolicitud, tipoArchivo, categoriaDocumento);
 			}
 			
 		} catch (Exception e) {
@@ -77,8 +115,8 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 	}
 	
 	@Override
-	public List<SolicitudAPDTO> getSolicitudesByIdEmpleado(String rfc) throws Exception {
-		return daoSolicitud.getSolicitudesByIdEmpleado(daoUsuarioAcceso.getEmpleadoAP(rfc).getIdEmpleado());
+	public List<SolicitudAPDTO> getSolicitudesByIdEmpleado(String rfc, String categoriaSolicitud) throws Exception {
+		return daoSolicitud.getSolicitudesByIdEmpleado(daoUsuarioAcceso.getEmpleadoAP(rfc).getIdEmpleado(), categoriaSolicitud);
 	}
 	
 	
@@ -88,8 +126,13 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 	}
 	
 	@Override
-	public SolicitudAPDTO getSolicitud(long idSolicitud) throws Exception {
-		return daoSolicitud.getSolicitud(idSolicitud);
+	public SolicitudAPDTO getSolicitud(long idSolicitud, String categoriaSolicitud) throws Exception {
+		
+		SolicitudAPDTO solicitud= daoSolicitud.getSolicitud(idSolicitud,categoriaSolicitud);
+		if(categoriaSolicitud.equals("fonacot")) {
+			solicitud.setFonacot(daoSolicitud.getFonacot(solicitud));
+		}
+		return solicitud;
 	}
 	
 	
@@ -99,7 +142,7 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 	}
 	
 	@Override
-	public List<SolicitudAPDTO> getSolicitudesAnalistas(String rfc,String nombre, String tramite, String status) throws Exception {
+	public List<SolicitudAPDTO> getSolicitudesAnalistas(String rfc,String nombre, String tramite, String status, String fechaIni, String fechaFin,String categoriaSolicitud) throws Exception {
 		String params="";
 		String paramsSol="";
 		boolean isEmpleado=false;
@@ -123,7 +166,18 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 			if(!isEmpleado)
 				paramsSol = paramsSol+" and sol.statusSolicitud='"+status+"' ";
 		}
-		List<SolicitudAPDTO> solic = daoSolicitud.getSolicitudesAnalistas( params, paramsSol,isEmpleado);
+		if((fechaIni!=null)&&(fechaFin!=null)&&(!fechaIni.equals("")&&(!fechaFin.equals("")))) {
+			params = params +"and (sol.fechaSolicitud between '"+fechaIni+"' and '"+fechaFin+"' ) ";
+			if(!isEmpleado)
+				paramsSol = paramsSol +"and (sol.fechaSolicitud between '"+fechaIni+"' and '"+fechaFin+"' ) ";
+		}
+		List<SolicitudAPDTO> solic =null;
+		if(categoriaSolicitud.equals("puebla"))
+			solic =daoSolicitud.getSolicitudesAnalistasPuebla( params, paramsSol,isEmpleado);
+		if(categoriaSolicitud.equals("fonacot"))
+			solic =daoSolicitud.getSolicitudesAnalistasFonacot( params, paramsSol,isEmpleado);
+		if(categoriaSolicitud.equals(""))
+			solic =daoSolicitud.getSolicitudesAnalistas( params, paramsSol,isEmpleado);
 	/*	for(SolicitudAPDTO sol : solic) {
 			EmpleadoAPDTO emp = daoUsuarioAcceso.getEmpleadoAP(sol.getRfcAsegurado());
 			sol.setSexo(emp.getSexo() != null ? emp.getSexo().equals("HOMBRE") ? "M" : "F" : "");
@@ -149,7 +203,7 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 		boolean status=true;
 		status=daoSolicitud.updateEstatusSolicitudAnalistas(solicitud);
 		if(solicitud.getStatusSolicitud().contentEquals("PENDIENTE DE DOCS")&&status && solicitud.getEmail() != null && !solicitud.getEmail().equals("")) {
-			status=envioCorreoPendienteDocs(solicitud);
+			//status=envioCorreoPendienteDocs(solicitud);
 			
 		}
 		
@@ -190,8 +244,7 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
         try {
         	 LocalDateTime myDateObj = LocalDateTime.now();
         	 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-
-        	    String fecha = myDateObj.format(myFormatObj);
+        	String fecha = myDateObj.format(myFormatObj);
         	    
         	String nombre = solicitud.getNombre() + " " + solicitud.getApellidoPaterno() + " " + solicitud.getApellidoMaterno();
             Message message = new MimeMessage(session);
@@ -210,17 +263,17 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 	
 	
 	@Override
-	public long crearObservacion(ObservacionDTO obs) throws Exception {
+	public long crearObservacion(ObservacionDTO obs,String categoriaSolicitud) throws Exception {
 		long idObservacion = daoSolicitud.crearObservacionSolicitud(obs);
 		if(idObservacion > 0L) {
-			daoSolicitud.crearSolicitudHasObservacion(idObservacion, obs.getIdSolicitud());	
+			daoSolicitud.crearSolicitudHasObservacion(idObservacion, obs.getIdSolicitud(),categoriaSolicitud);	
 		}
 		return idObservacion;
 	}
 	
 	
 	@Override
-	public boolean validarImportes(SolicitudAPDTO solicitud) throws Exception {
+	public boolean validarImportes(SolicitudAPDTO solicitud ) throws Exception {
 		return daoSolicitud.validarImportes(solicitud);
 	}
 	
@@ -242,7 +295,7 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 						OrdenPagoHasSolicitudDTO ordenSolic = new OrdenPagoHasSolicitudDTO();
 						ordenSolic.setIdOrdenPago(ordenPago);
 						ordenSolic.setIdSolicitud(solic.getIdSolicitud());
-						long ordenPagoSolic = daoSolicitud.crearOrdenPagoSolicitud(ordenSolic);
+						long ordenPagoSolic = daoSolicitud.crearOrdenPagoSolicitud(ordenSolic, solic.getTipoSolicitud());
 						if(!(ordenPagoSolic > 0)) {
 							status = false;
 						}
@@ -271,14 +324,14 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 	
 	
 	@Override
-	public List<SolicitudAPDTO> getValidarSolicitudRFC(String rfc) throws Exception {
-		return daoSolicitud.getValidarSolicitudRFC(rfc);
+	public List<SolicitudAPDTO> getValidarSolicitudRFC(String rfc, String categoriaSolicitud) throws Exception {
+		return daoSolicitud.getValidarSolicitudRFC(rfc, categoriaSolicitud);
 	}
 	
 	
 	@Override
-	public List<SolicitudAPDTO> getOrdenPagoLayout(long idOrdenPago) throws Exception {
-		List<SolicitudAPDTO> solic = daoSolicitud.getDataReport(idOrdenPago);
+	public List<SolicitudAPDTO> getOrdenPagoLayout(long idOrdenPago, String categoriaSolicitud) throws Exception {
+		List<SolicitudAPDTO> solic = daoSolicitud.getDataReport(idOrdenPago,categoriaSolicitud);
 		for(SolicitudAPDTO sol : solic) {
 			EmpleadoAPDTO emp = daoUsuarioAcceso.getEmpleadoAP(sol.getRfcAsegurado());
 			sol.setSexo(emp.getSexo() != null ? emp.getSexo().equals("HOMBRE") ? "M" : "F" : "");
@@ -286,7 +339,7 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 			
 			EmpleadoAPDTO empGenera = daoUsuarioAcceso.getEmpleadoAPById(sol.getIdEmpleadoGeneraOrden());
 			sol.setNombreEmpleadoGeneraOrden((empGenera.getNombre() != null ? empGenera.getNombre() : "") + " " + (empGenera.getApellidoPaterno() != null ? empGenera.getApellidoPaterno() : "") + " " + (empGenera.getApellidoMaterno() != null ? empGenera.getApellidoMaterno() : ""));
-			OrdenPagoDTO orden = daoSolicitud.getOrdenPago(sol.getIdSolicitud());
+			OrdenPagoDTO orden = daoSolicitud.getOrdenPago(sol.getIdSolicitud(),categoriaSolicitud);
 			if(orden != null) {
 				sol.setIdOrdenPago(orden.getIdOrdenPago());
 			} 
@@ -311,7 +364,7 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 					CalculoActuariaHasSolicDTO cal = new CalculoActuariaHasSolicDTO();
 					cal.setIdCalculoActuaria(idCalculo);
 					cal.setIdSolicitud(sol.getIdSolicitud());
-					daoSolicitud.crearCalculoActuariaSolicitud(cal);
+					daoSolicitud.crearCalculoActuariaSolicitud(cal,sol.getTipoSolicitud());
 				}				
 			}else {
 				status = false;
@@ -324,8 +377,8 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 	
 	
 	@Override
-	public List<SolicitudAPDTO> getDataCalculoActuaria(long idCalculo) throws Exception {
-		List<SolicitudAPDTO> solicitudes = daoSolicitud.getDataCalculoActuaria(idCalculo);
+	public List<SolicitudAPDTO> getDataCalculoActuaria(long idCalculo, String categoriaSolicitud) throws Exception {
+		List<SolicitudAPDTO> solicitudes = daoSolicitud.getDataCalculoActuaria(idCalculo, categoriaSolicitud);
 		return solicitudes;
 	}
 	
@@ -333,9 +386,9 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 	public boolean updateImportesSolicitudActuaria(List<SolicitudAPDTO> solicitudes) throws Exception {
 		boolean status=true;
 		int cont = 0;
-		CalculoActuariaDTO cal = daoSolicitud.getCalculoActuariaByFolioSolicitud(solicitudes.get(0).getNumeroRegistro());
+		CalculoActuariaDTO cal = daoSolicitud.getCalculoActuariaByFolioSolicitud(solicitudes.get(0).getNumeroRegistro(),solicitudes.get(0).getTipoSolicitud());
 		for(SolicitudAPDTO soli : solicitudes) {
-			String statusSoli = daoSolicitud.getStatusSolicitudByFolio(soli.getNumeroRegistro()).getStatusSolicitud();
+			String statusSoli = daoSolicitud.getStatusSolicitudByFolio(soli.getNumeroRegistro(),soli.getTipoSolicitud()).getStatusSolicitud();
 			if(statusSoli.equals("Proceso de revision de pago")) {
 				boolean statusUpdate = daoSolicitud.updateImportesSolicitudLayout(soli);
 				if(statusUpdate) {
@@ -371,9 +424,9 @@ public class ServiceSolicitudImpl implements ServiceSolicitud {
 	}
 
 	@Override
-	public boolean updateSOlicitudAsignacion(long idSolicitud, String RFC) throws SQLException {
+	public boolean updateSOlicitudAsignacion(long idSolicitud, String RFC,String categoriaSolicitud) throws SQLException {
 		// TODO Auto-generated method stub
-		return daoSolicitud.updateSOlicitudAsignacion(idSolicitud,RFC);
+		return daoSolicitud.updateSOlicitudAsignacion(idSolicitud,RFC,  categoriaSolicitud);
 	}
 
 	@Override

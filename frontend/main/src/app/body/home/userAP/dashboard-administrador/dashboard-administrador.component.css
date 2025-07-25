@@ -10,7 +10,6 @@
     justify-content: center;
 }
 
-<<<<<<< HEAD
 .categoriesDiv {
     width:100%;
 }
@@ -26,9 +25,7 @@
     background-color: #2e5fad;
 }
 
-=======
->>>>>>> 495651d12ed049e6eb6e4788e6a2ad4bcf35b32b
-.mat-card{
+.mat-mdc-card{
     width: clamp(400px, 100%, 1440px);
 }
 
@@ -332,7 +329,7 @@ table th {
   font-weight: 800;
   border-bottom: solid 2px #257aa9
 }
-.mat-cell {
+.mat-mdc-cell {
   font-size: 10px;
   padding: 2px;
 }

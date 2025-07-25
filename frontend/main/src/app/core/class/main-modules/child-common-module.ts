@@ -19,7 +19,7 @@ export const PROVIDERS: any = [
 ];
 @NgModule({
   imports: [
-    LazyTranslateModule.forChild(),
+    // LazyTranslateModule.forChild(),
   ],
   providers: PROVIDERS,
   exports: [

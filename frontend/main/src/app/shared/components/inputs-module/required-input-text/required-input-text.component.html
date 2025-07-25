@@ -2,7 +2,7 @@
   <!-- [formGroup]="options" -->
   <mat-form-field [hideRequiredMarker]="options.value.hideRequired" [floatLabel]="options.value.floatLabel"
     [ngStyle]="style">
-    <input (blur)="sendVal($event)" [value]="val" matInput placeholder="{{ data.placeholder | translate }}"
+    <input (blur)="sendVal($event)" [value]="val" matInput placeholder="{{ data.placeholder }}"
       [type]="data.type" [formControl]="validInputFormControl" [errorStateMatcher]="matcher" autocomplete="off" (keyup)="mayus($event)" required>
     <!-- class="form-control" id="addressLine1" formControlName="addressLine1" -->
     <mat-hint>{{data.hint}}</mat-hint>

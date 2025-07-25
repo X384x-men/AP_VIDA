@@ -20,7 +20,7 @@ import { LoginHeadComponent } from './login-head/login-head.component';
     ComponentsModule,
     MaterialModule,
     DivModule,
-    LazyTranslateModule,
+    // LazyTranslateModule,
   ],
   declarations: [
     LoginComponent,

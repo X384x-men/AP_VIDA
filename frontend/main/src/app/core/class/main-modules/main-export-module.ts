@@ -16,7 +16,7 @@ import { FormsTemplatesModule } from '../../../shared/forms-templates/forms-temp
 
 @NgModule({
   imports: [
-    LazyTranslateModule.forChild(),
+    // LazyTranslateModule.forChild(),
   ],
   providers: PROVIDERS,
   exports: [
@@ -26,7 +26,7 @@ import { FormsTemplatesModule } from '../../../shared/forms-templates/forms-temp
     ComponentsModule,
     TemplatesModule,
     MaterialModule,
-    LazyTranslateModule,
+    // LazyTranslateModule,
     ReactiveFormsModule,
     FormsTemplatesModule
   ]

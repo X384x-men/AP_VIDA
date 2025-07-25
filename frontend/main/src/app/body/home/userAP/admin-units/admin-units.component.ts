@@ -12,6 +12,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { AdminUnit } from "src/app/shared/interfaces/admin-unit.interface";
 import swal from "sweetalert2";
+import { AuthenticationService } from "src/app/core/services/authentication-service/authentication.service";
 
 @Component({
   standalone: true,
@@ -30,11 +31,13 @@ import swal from "sweetalert2";
   styleUrls: ["./adminUnitStyles.css"],
 })
 export class AdminUnitComponent implements OnInit {
-
+  userApp : any;
   public dataSource = new MatTableDataSource<AdminUnit>();
-  constructor (private adminUnitsService: AdminUnitsService){}
+  constructor (private adminUnitsService: AdminUnitsService,
+    private authencationService: AuthenticationService){}
 
   ngOnInit(){
+    this.authencationService.validacionAdmin();
     this.getAdminUnitsInfo();
   }
 

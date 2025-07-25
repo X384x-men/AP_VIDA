@@ -1,8 +1,5 @@
 // Angular
 import { NgModule } from '@angular/core';
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
-import { provideStorage, getStorage } from '@angular/fire/storage';
-import { provideDatabase, getDatabase } from '@angular/fire/database';
 //Moduls
 import { HttpClientXsrfModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
@@ -16,7 +13,6 @@ import { AppComponent } from './app.component';
 import { GlobalVariable } from './core/static/variables/url/URLImages';
 import '../polyfills';
 import { ListaSolicitudComponent } from './body/home/userAP/dashboard-administrador/listaSolicitudes.component';
-import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
   declarations: [
@@ -26,10 +22,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
   imports: [
     AppModuleConfig,
     HttpClientXsrfModule.withOptions({ cookieName: GlobalVariable.XSRF_TOKEN }),
-    RouterModule.forRoot([], { relativeLinkResolution: 'legacy' }),
-    provideFirebaseApp( () => initializeApp(environment.firebaseConfig)),
-    provideStorage( () => getStorage()),
-    provideDatabase( () => getDatabase()),
+    RouterModule.forRoot([], {}),
     MainExportModule,
     ReactiveFormsModule,
     LoaderModule,

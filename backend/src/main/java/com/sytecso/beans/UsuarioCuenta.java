@@ -1,8 +1,4 @@
-/**
- * 
- * Created-By: Sytecso
- * Date:       02/01/2018
- */
+
 package com.sytecso.beans;
 
 import java.io.Serializable;

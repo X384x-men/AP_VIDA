@@ -1,0 +1,412 @@
+.custom-background{
+  min-height: calc(100vh - 100px);
+  /*min-height: 640px;*/
+  /* top: -16px; */
+  margin-top: 0px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-color: '#FFF';
+  display: flex;
+  justify-content: center;
+}
+
+.btn-paginador{
+  color: #FFF;
+  background-color: #257aa9;
+  border-color: black;
+}
+
+.btn-busqueda{
+  color: #FFF;
+  background-color: #257aa9;
+  border-radius: 10px !important;
+}
+
+.btn-busqueda:hover{
+  color: #FFF;
+  background-color: #2e5fad;
+}
+
+.body-admin{
+  width: 75%;
+  min-height: 200px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  margin: 30px 0 60px 0px;
+  box-shadow: -1px 0px 8px 2px #ccc;
+  padding: 10px;
+}
+
+.containerForm{
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  font-size: 1rem !important;
+}
+
+.widthTd{
+  margin: 0 10px;
+}
+
+.titleAdmin2{
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.titleAdmin{
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+  border-top: 1px solid #D5D8DC;
+  border-left: 1px solid #D5D8DC;
+  border-right: 1px solid #D5D8DC;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.titleAdmin-selected{
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+  border: 1px solid #257aa9;
+  padding: 5px 10px;
+  color: #FFF;
+  background-color: #257aa9;
+  cursor: pointer;
+}
+
+.button-div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: 100px;
+}
+
+.result-body{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0 0 20px 0;
+  border-top: 1px solid #D5D8DC;
+  border-left: 1px solid #D5D8DC;
+  border-right: 1px solid #D5D8DC;
+}
+
+.header-table{
+  display: flex;
+  margin: 0 10px;
+  min-width: 725px;
+}
+
+.head-td{
+  width: calc((100% - 100px) / 4);
+  display: flex;
+  align-items: flex-end;
+  line-height: 18px;
+  font-weight: 600;
+  margin: 20px 0px 0 0px;
+  border-bottom: 1px solid #257aa9;
+  padding-bottom: 5px;
+  font-size: 12px;
+
+}
+
+.row1{
+  background-color: #D6EAF8;
+}
+.row2{
+  background-color: #FFFFFF;
+}
+
+.body-table{
+  display: flex;
+  margin: 0 10px;
+  min-width: 725px;
+}
+
+.body-td{
+  width: calc((100% - 100px) / 4);
+  display: flex;
+  line-height: 18px;
+  min-height: 30px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.button{
+  width: 150px;
+}
+
+.button i {
+  margin-bottom: 0 !important;
+}
+
+.iconDashboardAp{
+  font-size: 20px;
+  color: #257aa9;
+  cursor: pointer;
+}
+
+.button-export{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 10px;
+  background-color:#257aa9;
+  color: #FFF;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.export-title2{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.iconExport{
+  margin-right: 5px;
+  font-size: 30px;
+  color: #FFF;
+  cursor: pointer;
+}
+
+
+.botones-busqueda{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.containerTabs-title{
+  display: flex;
+}
+
+.container-list-solicitud{
+  width: 75%;
+  min-height: 200px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  margin: 30px 0 60px 0px;
+  box-shadow: -1px 0px 8px 2px #ccc;
+  padding: 10px;
+}
+
+.container-solic{
+  min-height: calc(100vh - 100px);
+  /*min-height: 640px;*/
+  /* top: -16px; */
+  margin-top: 0px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-color: '#FFF';
+  display: flex;
+  justify-content: center;
+}
+
+
+.filters-analistas{
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.titleDashboardSolic{
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 0 5px;
+}
+
+.botones-accion{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;;
+}
+
+
+/*TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.*/
+.mat-checkbox-layout{
+  margin: 0 !important;
+}
+
+
+.checkAll{
+  display: flex;
+  align-items: flex-end;
+}
+
+.downloadReport{
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.donwloadLinkReport{
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  margin: 5px 0;
+}
+
+.iconDonwloadReport{
+  color: #257aa9;
+}
+
+
+.fileinput{
+  display: none;
+}
+
+.targetFile{
+  width: 100%;
+  height: 36px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  background-color: #257aa9;
+  color: #FFF;
+  transition: 0.5s;
+  cursor: pointer;
+  padding: 10px;
+  margin: 0;
+  border-radius: 10px;
+  margin-bottom: -0.5rem;
+}
+
+.targetFile:hover{
+  color: #FFF;
+  background-color: #2e5fad;
+}
+
+.containerFile{
+  display: flex;
+
+}
+
+
+.virtual-scroll{
+  height: calc(100vh - 500px);
+  min-height: 200px;
+  overflow-x:hidden;
+  width: 100%;
+}
+
+
+@media only screen and (max-width: 1900px) {
+  .result-body{
+  }
+  .botones-accion{
+      justify-content: flex-end;
+  }
+  .button-export, .containerFile{
+      margin-left: 5px;
+  }
+}
+@media only screen and (max-width: 1280px) {
+  .result-body{
+      overflow-x: scroll;
+  }
+  .botones-accion{
+      justify-content: flex-end;
+  }
+  .button-export, .containerFile{
+      margin-left: 5px;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .result-body{
+      overflow-x: scroll;
+  }
+  .botones-accion{
+      justify-content: flex-end;
+  }
+  .button-export, .containerFile{
+      margin-left: 5px;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .result-body{
+      overflow-x: scroll;
+  }
+  .titleAdmin, .titleAdmin2, .titleAdmin-selected{
+      font-size: 16px;
+  }
+  .button-export, .containerFile{
+      font-size: 16px;
+  }
+  .botones-accion{
+      justify-content: space-between;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .result-body{
+      overflow-x: scroll;
+  }
+  .titleAdmin, .titleAdmin2, .titleAdmin-selected{
+      font-size: 14px;
+  }
+  .button-export, .containerFile{
+      font-size: 14px;
+      width: 100%;
+      margin-bottom: 5px;
+  }
+  .botones-accion{
+      justify-content: space-between;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .result-body{
+      overflow-x: scroll;
+  }
+  .titleAdmin, .titleAdmin2, .titleAdmin-selected{
+      font-size: 14px;
+  }
+  .button-export, .containerFile{
+      font-size: 14px;
+      width: 100%;
+      margin-bottom: 5px;
+  }
+  .botones-accion{
+      justify-content: space-between;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .result-body{
+      overflow-x: scroll;
+  }
+  .titleAdmin, .titleAdmin2, .titleAdmin-selected{
+      font-size: 14px;
+  }
+  .button-export, .containerFile{
+      font-size: 14px;
+      width: 100%;
+      margin-bottom: 5px;
+  }
+  .botones-accion{
+      justify-content: space-between;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .result-body{
+      overflow-x: scroll;
+  }
+  .titleAdmin, .titleAdmin2, .titleAdmin-selected{
+      font-size: 14px;
+  }
+  .button-export, .containerFile{
+      font-size: 14px;
+      width: 100%;
+      margin-bottom: 5px;
+  }
+  .botones-accion{
+      justify-content: space-between;
+  }
+}

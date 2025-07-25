@@ -54,20 +54,20 @@ import swal from "sweetalert2";
   `,
   styles: [
     `
-    label{
-      margin-bottom: 0rem !important;
-    }
-    .btn-busqueda{
-        color: #FFF;
-        background-color: #257aa9;
-        border-radius: 10px !important;
-    }
-
-    .btn-busqueda:hover{
-        color: #FFF;
-        background-color: #2e5fad;
-    }
-    `,
+         label{
+           margin-bottom: 0rem !important;
+         }
+         .btn-busqueda{
+             color: #FFF;
+             background-color: #257aa9;
+             border-radius: 10px !important;
+         }
+     
+         .btn-busqueda:hover{
+             color: #FFF;
+             background-color: #2e5fad;
+         }
+         `,
   ],
 })
 export class UploadEmployeesButton {

@@ -32,12 +32,23 @@
     </mat-select>
     <mat-error>Favor se seleccionar su sexo.</mat-error>
   </mat-form-field>
+  <div *ngIf="isAnalista" >
+    <mat-form-field [style.width]="'fit-content'" class="pt-2">
+      <mat-label>Analista</mat-label>
+      <mat-select formControlName="tipoAnalista" >
+        <mat-option *ngFor="let analyst of analistOptions" [value]="analyst.id">
+          {{analyst.data}}
+        </mat-option>
+      </mat-select>
+      <mat-error>Seleccione un tipo de analista, por favor.</mat-error>
+    </mat-form-field>
+  </div>
   <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'"
     [style.justify-content]="'space-between'">
     <label class="section-userAP"></label>
   </div>
   <mat-form-field>
-    <input matInput name="rfc" id="rfc" type="text" maxlength="13" minlength="13" formControlName="rfc" placeholder="RFC* (Con homoclave)">
+    <input matInput name="rfc" id="rfc" type="text" maxlength="13" minlength="13" formControlName="rfc" placeholder="RFC* (Con homoclave)" [style.disabled]="'none'">
     <mat-error>Escriba su RFC, por favor.</mat-error>
   </mat-form-field>
   <mat-form-field>
@@ -62,16 +73,7 @@
     </mat-select>
     <mat-error>Seleccione su unidad administrativa</mat-error>
   </mat-form-field>
-  <div *ngIf="isAnalista">
-    <mat-form-field>
-      <mat-select formControlName="tipoAnalista" class="tamano">
-        <mat-option *ngFor="let analyst of analistOptions" [value]="analyst.id">
-          {{analyst.data}}
-        </mat-option>
-      </mat-select>
-      <mat-error>Seleccione un tipo de analista, por favor.</mat-error>
-    </mat-form-field>
-  </div>
+
   <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'"
     [style.justify-content]="'space-between'">
     <label class="section-userAP"></label>

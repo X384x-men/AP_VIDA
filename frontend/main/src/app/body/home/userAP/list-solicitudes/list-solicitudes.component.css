@@ -47,7 +47,9 @@
     border-left: 1px solid #D5D8DC;
     border-right: 1px solid #D5D8DC;
     padding: 5px 10px;
+    background-color: #257aa9;
     cursor: pointer;
+    color: #FFF !important;
 }
 
 .titleAdmin-selected{

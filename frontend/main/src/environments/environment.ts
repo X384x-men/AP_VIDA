@@ -6,16 +6,7 @@ export const environment = {
   production: false,
   api: 'https://adbp-a638e-default-rtdb.firebaseio.com/',
   base: '',
-  url: 'http://localhost:8080/',
-  firebaseConfig: {
-    apiKey: "AIzaSyCN3FhBosMZoRriUwikXBiP81FcunjEBB8",
-    authDomain: "adbp-a638e.firebaseapp.com",
-    databaseURL: "https://adbp-a638e-default-rtdb.firebaseio.com",
-    projectId: "adbp-a638e",
-    storageBucket: "adbp-a638e.appspot.com",
-    messagingSenderId: "210925040031",
-    appId: "1:210925040031:web:1b8bef40fb363744accdaa"
-  }
+  url: 'http://localhost:8080/'
 };
 
 /*

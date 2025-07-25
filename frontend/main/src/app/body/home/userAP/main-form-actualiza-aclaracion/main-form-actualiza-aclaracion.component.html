@@ -1,0 +1,49 @@
+<div class="margin-bottom" >
+
+  <div class="form-user-ap">
+    <div class="divTitle">
+      <label class="titleListTablesSolic">Aclaración Folio: {{aclaracion.idAclaracion}}</label>
+      <label class="titleListTablesSolic titleEstatus" [style.font-size]="'12px'">Estatus: {{aclaracion.status === 0 ? 'Nueva' : aclaracion.status === 1 ? 'En Proceso' : aclaracion.status === 2 ? 'Atendida' : 'Terminada'}}</label>
+    </div>
+
+    <div class="actions-button">
+      <div *ngIf="isSiniestros">
+        <button *ngIf="aclaracion.status === 1" type="button" [attr.data-target]="'#modalObs'" data-toggle="modal" class="btn btn-info button"  [innerText]='"Validar Aclaración"'></button>
+      </div>
+      <div *ngIf="isComercial" >
+        <button *ngIf="aclaracion.status === 0" type="button" class="btn btn-info button"  [innerText]='"Validar Aclaración"' (click)="validarAclaracion(1)"></button>
+        <button *ngIf="aclaracion.status === 2" type="button" class="btn btn-danger button" (click)="validarAclaracion(3)" [innerText]='"Terminar Aclaración"'></button>
+      </div>
+      <button type="button" class="btn btn-danger button" (click)="end()" [innerText]='"Regresar"' [style.margin-left]="'5px'"></button>
+    </div>
+
+  </div>
+
+  <div class="containerForm">
+    <div class="form-user-ap-form">
+      <app-main-form-alta-aclaraciones [aclaracion]="aclaracion" [prueba]=true [isAnalista]="opt == 0 ? false : true"></app-main-form-alta-aclaraciones>
+    </div>
+  </div>
+
+</div>]
+
+  <!-- Modal para respuesta -->
+ <div class="modal fade" id="modalObs" tabindex="-1" role="dialog" aria-labelledby="modalObsTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header" [style.background-color]="'#257aa9'" [style.color]="'#FFF'">
+          <label class="modal-title" id="modalObsTitle">Observación</label>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" [style.color]="'#FFF'">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}">
+          <textarea class="obsDoc" [(ngModel)]="aclaracion.descripcionEmpleado" ></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" [style.height]="'35px'">Cancelar</button>
+          <button type="button" (click)="validarAclaracion(2)" class="btn btn-primary" data-dismiss="modal" [style.height]="'35px'" [style.pointer-events]="aclaracion.descripcionEmpleado != '' ? 'auto' : 'none'">Aceptar</button>
+        </div>
+      </div>
+    </div>
+  </div>

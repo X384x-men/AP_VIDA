@@ -16,6 +16,7 @@ import swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { NgForm } from '@angular/forms';
 import { SolicitudesServices } from '../../../../shared/services/solicitudes.service';
+import { AuthenticationService } from 'src/app/core/services/authentication-service/authentication.service';
 
 @Component({
   selector: 'app-dashboard-analistas',
@@ -33,6 +34,7 @@ export class DashboardAnalistasComponent implements OnInit {
   isContabilidad = false;
   isExterno = false;
   optionsTipoTramite: SelectMenu[];
+  optionsCategoria: SelectMenu[];
   currentTipoTramite: SelectMenu;
   optionsEstatus: SelectMenu[];
   currentEstatus: SelectMenu;
@@ -51,6 +53,7 @@ export class DashboardAnalistasComponent implements OnInit {
   loading = true;
   selectedEstatus = '';
   selectedTramite='';
+  selectedCategoria = '';
   eventoHistorico : any;
   idSolciitudes : number;
   analistas : Array<any> = [];
@@ -94,7 +97,8 @@ export class DashboardAnalistasComponent implements OnInit {
     nombre : "",
     RFC: "",
     tramite: "",
-    status: ""
+    status: "",
+    categoria: null
   };
 
   constructor(
@@ -103,29 +107,35 @@ export class DashboardAnalistasComponent implements OnInit {
     private excelService:ExcelService,
     private modal: ModalService,
     private announcer: LiveAnnouncer,
-    private SolicitudesS : SolicitudesServices
-  ) {}
+    private SolicitudesS : SolicitudesServices,
+    private authencationService: AuthenticationService
+  ) {   }
 
   ngOnInit() {
-    let userExterno = JSON.parse(localStorage.getItem('currentUser'));
-    let com = JSON.parse(localStorage.getItem('currentUserComercial'));
-    let sin = JSON.parse(localStorage.getItem('currentUserSiniestros'));
-    let cont = JSON.parse(localStorage.getItem('currentUserContabilidad'));
-    if(com !== null){
-      this.userApp = com;
-      this.isComercial = true;
-    }else
-    if(sin !== null){
-      this.userApp = sin;
-      this.isSiniestros = true;
-    }else
-    if(cont !== null){
-      this.userApp = cont;
-      this.isContabilidad = true;
-    }else
-    if(userExterno !== null){
-      this.userApp = userExterno;
-      this.isExterno = true;
+    let allUsuarios = [];
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUser")))
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserComercial")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserSiniestros")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserContabilidad")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserAdmin")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserPuebla")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserFunecot")));
+    allUsuarios.push(JSON.parse(localStorage.getItem('idCuenta')));
+    this.userApp = allUsuarios.find( (value) => value !== null );
+    switch (this.userApp.authorities[0]['authority']) {
+        case 'ROLE_ACOME':
+          this.isComercial = true;
+        break;
+        case 'ROLE_ASINI':
+          this.isSiniestros = true;
+        break;
+        case 'ROLE_ACONT':
+          this.isContabilidad = true;
+        break;
+
+      default:
+        this.authencationService.validacionUser();
+        break;
     }
 
     this.refreshList();
@@ -140,7 +150,9 @@ export class DashboardAnalistasComponent implements OnInit {
     this.getSolicitudes();
     this.initOptionsTipoTramite();
     this.initOptionsEstatus();
-    this.filtrarAnalistas()
+    this.initOptionsCategoria();
+    this.filtrarAnalistas();
+    //this.authencationService.validacionUser();
     if(this.isContabilidad){
       this.getListCalculo();
     }
@@ -151,7 +163,10 @@ export class DashboardAnalistasComponent implements OnInit {
   }
 
   verDetalleSolicitud(item){
-    this.router.navigate(['/angular/form-edit-solicitudes'], {queryParams: {solicitud: item.idSolicitud, opt: 1}});
+    if (this.solicitud.categoria === '' ) {
+        this.solicitud.categoria = null
+    }
+    this.router.navigate(['/angular/form-edit-solicitudes'], {queryParams: {solicitud: item.idSolicitud, categoria: this.solicitud.categoria, opt: this.solicitud.categoria !== null ? 2 : 1 }});
   }
 
   cancelSolicitud(item){
@@ -165,13 +180,13 @@ export class DashboardAnalistasComponent implements OnInit {
   }
 
   getSolicitudes(){
-    this.subResourceService.list(SolicitudVariable.GET_SOLIITUDES_ANALISTAS,'' ,{nombre: '', RFC: '', tramite: '', status: ''})
+    this.subResourceService.list(SolicitudVariable.GET_SOLIITUDES_ANALISTAS,'' ,{nombre: '', RFC: '', tramite: '', status: '', categoriaSolicitud: ''})
       .subscribe( data=> {
         data.forEach(item => {
           item.isLayout = false;
           item.isReporteContable = false;
         });
-       this.solicitudes = data;
+       this.solicitudes = data.sort(((a, b) => a.numeroRegistro - b.numeroRegistro));
        this.solicitudesAux = Object.assign([],data);
        this.dataSource.data = this.solicitudes
        setTimeout(() => {
@@ -223,6 +238,16 @@ export class DashboardAnalistasComponent implements OnInit {
     ]
 
     this.optionsEstatus = Smartwfm.createSelectOptions(data, 'data');
+  }
+
+  initOptionsCategoria(){
+    let data = [
+      {data: 'gem', id: 0},
+      {data: 'puebla', id: 0},
+      {data: 'fonacot', id: 0},
+    ]
+
+    this.optionsCategoria = Smartwfm.createSelectOptions(data, 'data');
   }
 
 
@@ -458,8 +483,8 @@ export class DashboardAnalistasComponent implements OnInit {
     if (ruta === 'mySolicitud') {
       this.router.navigate(['/angular/dashboard-analista-solicitud']);
     }
-    else if  (ruta === 'solicitudes') {
-
+    else if  (ruta === 'aclaraciones') {
+      this.router.navigate(['/angular/main-aclaraciones']);
     }
     else if (ruta === 'asegurado') {
       this.router.navigate(['/angular/dashboard-analista']);
@@ -589,14 +614,18 @@ export class DashboardAnalistasComponent implements OnInit {
 
   downloadSolicitudBatch = () => {
     let dataLayout = [];
+    let dataLayout2 = [];
+    let data2 = null
     let optionsBanco = Smartwfm.createSelectOptions(this.dataBancos, 'data');
 
     this.solicitudes.forEach((item, index) => {
       let prueba = optionsBanco.filter(banco => banco.extras.id === item.idBanco ).map( info => {
         return info.extras.data;
       })
+
       let data = {
-        id: item.numeroRegistro,
+        id: item.numeroRegistro ,
+        FechaRegistro: moment(item.fechaSolicitudAPV).format('DD/MM/YYYY'),
         FechaDeSolicitud: moment(item.fechaSolicitud).format('DD/MM/YYYY'),
         Dependencia: item.dependencia,
         Ap_Paterno: item.apellidoPaterno,
@@ -614,9 +643,25 @@ export class DashboardAnalistasComponent implements OnInit {
         Observaciones: item.observaciones,
         sueldo: item.sueldo
       }
+
+      if (this.solicitud.categoria !== '' && this.solicitud.categoria !== null) {
+        data2 = { ...data  }
+        delete data2.Dependencia
+        delete data2.ImporteSolicitado
+        delete data2.sueldo
+        data2.id = item.idSolicitud
+        if (this.solicitud.categoria === 'fonacot') {
+          data2.plazo = item.sueldo
+        }else if(this.solicitud.categoria === 'puebla'){
+          data2.importe = item.sueldo
+        }
+        dataLayout2.push(data2)
+      }
+
       dataLayout.push(data);
     })
-    this.excelService.exportAsExcelFile(dataLayout, 'SolicitudesTotales' + this.today);
+
+    this.excelService.exportAsExcelFile(data2 !== null ? dataLayout2 : dataLayout, 'SolicitudesTotales' + this.today);
     this.modal.success('Éxito', 'Se generó correctamente la descarga de solicitudes');
   }
 
@@ -632,18 +677,26 @@ export class DashboardAnalistasComponent implements OnInit {
   }
 
   onSelectedoptionsEstatus(value:string): void {
-    if (value === 'Todos' || value === '- Seleccionar un opción  -') {
-      this.selectedEstatus = ''
+    if (value !== 'Todos' && value !== '- Seleccionar un opción -') {
+      this.selectedEstatus = value
     }else{
-      this.selectedEstatus = value;
+      this.selectedEstatus = '';
     }
   }
 
   onSelectedTipoTramite(value:string): void {
-    if (value === 'Todos' || value === '- Seleccionar un opción  -') {
-      this.selectedTramite = ''
+    if (value !== 'Todos' && value !== '- Seleccionar un opción -') {
+      this.selectedTramite = value
     }else{
-      this.selectedTramite = value;
+      this.selectedTramite = '';
+    }
+  }
+
+  onSelectedCategoria(value:string): void {
+    if (value !== 'Todos' && value !== '- Seleccionar un opción -' && value !== 'gem') {
+      this.selectedCategoria = value
+    }else{
+      this.selectedCategoria = '';
     }
   }
 
@@ -653,11 +706,13 @@ export class DashboardAnalistasComponent implements OnInit {
     const batchSize = 100;
     this.solicitud.status= this.selectedEstatus;
     this.solicitud.tramite=this.selectedTramite;
+    this.solicitud.categoria = this.selectedCategoria;
     this.subResourceService.read(SolicitudVariable.GET_SOLIITUDES_ANALISTAS, {
         nombre: this.solicitud.nombre,
         RFC: this.solicitud.RFC,
         tramite: this.solicitud.tramite,
         status: this.solicitud.status,
+        categoriaSolicitud: this.solicitud.categoria
       }
     ).subscribe( (data) => {
       this.solicitudes = data;

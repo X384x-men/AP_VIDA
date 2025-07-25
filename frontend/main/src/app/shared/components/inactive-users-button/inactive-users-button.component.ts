@@ -30,12 +30,12 @@ import swal from "sweetalert2";
   `,
   styles: [
     `
-      button label {
-        align-items: center;
-        display: flex;
-        margin: 0;
-      }
-    `,
+           button label {
+             align-items: center;
+             display: flex;
+             margin: 0;
+           }
+         `,
   ],
 })
 export class InactiveUsersButtonComponent {

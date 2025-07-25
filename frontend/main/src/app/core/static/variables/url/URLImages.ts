@@ -127,6 +127,8 @@ const PARENT_URL_EMAIL = 'email';
 export const EmailVariable = Object.freeze({
   SEND_EMAIL: PARENT_URL_EMAIL.concat('/sendEmail'),
   RESET_PASSWORD: PARENT_URL_EMAIL.concat('/reset_password'),
+  LIST_EMAIL: PARENT_URL_EMAIL.concat('/getEmailList'),
+  REENVIAR_EMAIL : PARENT_URL_EMAIL.concat('/reenvioCorreo')
 });
 
 const PARENT_URL_SOLICITUD = 'solicitud';
@@ -152,6 +154,18 @@ export const SolicitudVariable = Object.freeze({
   GET_DATA_CALCULO_ACTUARIA: PARENT_URL_SOLICITUD.concat('/getDataCalculoActuaria'),
   UPDATE_IMPORTES_DATA_LAYOUT: PARENT_URL_SOLICITUD.concat('/updateImportesDataLayout'),
   GET_LIST_CALCULO: PARENT_URL_SOLICITUD.concat('/getListCalculo'),
+});
+
+const PARENT_URL_ACLARACION = 'aclaraciones';
+export const AclaracionVariable = Object.freeze({
+  GET_ACLARACION: PARENT_URL_ACLARACION.concat('/getAclaraciones'),
+  GET_ACLARACION_UNIQUE: PARENT_URL_ACLARACION.concat('/getAclaracion'),
+  GET_TIPO_ACLARACION: PARENT_URL_ACLARACION.concat('/getTipoAclaracion'),
+  GET_CATALOGO_ACLARACION: PARENT_URL_ACLARACION.concat('/getCatalogoDocumento'),
+  UPDATE_STATUS_ACLARACION: PARENT_URL_ACLARACION.concat('/updateAclaracionStatus'),
+  POST_CATALOGO_ACLARACION: PARENT_URL_ACLARACION.concat('/postinsertCatalogoDocumentos'),
+  POST_TIPO_ACLARACION: PARENT_URL_ACLARACION.concat('/postInsertTipoAclaracion'),
+  POST_ACLARACION: PARENT_URL_ACLARACION.concat('/postCrearAclaracion'),
 });
 
 

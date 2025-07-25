@@ -36,6 +36,15 @@
                 <option *ngFor="let tipoTramite of optionsTipoTramite"[value]="tipoTramite.name">{{tipoTramite.name}}</option>
               </select>
             </div>
+            <div class="col-2" *ngIf="isSiniestros">
+              <label for="inputPassword6" class="col-form-label">Categoria Solicitudes</label>
+            </div>
+            <div class="col-10" *ngIf="isSiniestros">
+              <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedCategoria  (click)=onSelectedCategoria(mySelectedCategoria.value)>
+                <option selected> - Seleccionar un opción -  </option>
+                <option *ngFor="let tipoCategoria of optionsCategoria"[value]="tipoCategoria.name">{{tipoCategoria.name | uppercase }}</option>
+              </select>
+            </div>
           </div>
           <button class="btn btn-busqueda mt-3" type="button" (click)="filter()" ><strong class="me-1" >Buscar</strong><i class="fa fa-solid fa-magnifying-glass"></i> </button>
         </div>
@@ -44,6 +53,9 @@
         <div class="col-6">
           <div class="export-title2">
             <div class="containerTabs-title">
+              <button class="btn titleAdmin border-bottom-0" (click)="back('asegurado')">
+                <span>Asegurados</span>
+              </button>
               <div *ngIf="isComercial!" >
                 <button class="btn border border-dark border-bottom-0" (click)="back('mySolicitud')">
                   Mis solicitudes
@@ -52,11 +64,12 @@
               <button class="btn border border-dark border-bottom-0" [ngClass]="showList == 1 ? 'btn-paginador' : 'titleAdmin'" >
                 Todas las solicitudes
              </button>
-              <button class="btn titleAdmin border-bottom-0" (click)="back('asegurado')">
-                <span>Asegurados</span>
-              </button>
+
               <button *ngIf="isSiniestros" class="btn titleAdmin border-bottom-0" (click)="back('analista')">
                 <span>Analistas</span>
+              </button>
+              <button *ngIf="!isContabilidad" class="btn titleAdmin border-bottom-0" (click)="back('aclaraciones')">
+                <span>Aclaraciones</span>
               </button>
             </div>
           </div>
@@ -145,7 +158,7 @@
           </ng-container>
           <ng-container matColumnDef="Folio">
             <th mat-header-cell *matHeaderCellDef>Folio</th>
-            <td mat-cell *matCellDef="let element">{{element.numeroRegistro}} <td>
+            <td mat-cell *matCellDef="let element">{{ solicitud.categoria === null ? element.numeroRegistro : solicitud.categoria === '' ? element.numeroRegistro : element.idSolicitud}} <td>
           </ng-container>
           <ng-container matColumnDef="rfcAsegurado">
             <th mat-header-cell *matHeaderCellDef>RFC</th>
@@ -182,15 +195,21 @@
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #userOptions="matMenu">
-                <i class="material-icons iconDashboardAp mt-1 animate__animated animate__heartBeat" (click)="verDetalleSolicitud(element)" data-toggle="tooltip" data-placement="top" [title]="Detalle" >
-                  launch
-                </i> <span class="mb-5">Ver Solicitud</span> <br>
-                <i class="material-icons iconDashboardAp animate__animated animate__heartBeat animate__delay-1s"
-                data-toggle="tooltip" data-placement="top" (click)="getHistoricos(element.idSolicitud)" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                assignment
-                </i> Historico <br>
-                <i class="fas fa-exchange-alt animate__animated animate__heartBeat animate__delay-2s" style="color: #257aa9;" data-bs-toggle="modal" data-bs-target="#exampleModal1" ></i>
-                Reasignar
+                <div>
+                  <i class="material-icons iconDashboardAp mt-1 animate__animated animate__heartBeat" (click)="verDetalleSolicitud(element)" data-toggle="tooltip" data-placement="top" [title]="Detalle" >
+                    launch
+                  </i> <span class="mb-5">Ver Solicitud</span>
+                </div>
+                <div *ngIf="solicitud.categoria === '' || solicitud.categoria === null">
+                  <i class="material-icons iconDashboardAp animate__animated animate__heartBeat animate__delay-1s"
+                  data-toggle="tooltip" data-placement="top" (click)="getHistoricos(element.idSolicitud)" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  assignment
+                  </i> Historico
+                </div>
+                <div *ngIf="solicitud.categoria === '' || solicitud.categoria === null">
+                  <i class="fas fa-exchange-alt animate__animated animate__heartBeat animate__delay-2s" style="color: #257aa9;" data-bs-toggle="modal" data-bs-target="#exampleModal1" ></i>
+                  Reasignar
+                </div>
               </mat-menu>
             </td>
           </ng-container>
@@ -262,7 +281,7 @@
             </div>
           </form>
         </div>
-        <mat-paginator class="h-50" pageSize="5" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+        <mat-paginator class="h-50" pageSize="20" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
       </div>
       <!-- Tabla Actuarial -->
       <div *ngIf="isContabilidad" >

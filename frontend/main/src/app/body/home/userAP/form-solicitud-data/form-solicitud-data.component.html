@@ -10,380 +10,716 @@
 
   <form (ngSubmit)="guardar( forma )" #forma="ngForm">
 
-    <div class="row g-2">
-
-      <!-- <div class="col-md m-1 mt-2" *ngIf="solicitud.statusSolicitud !== 'Importes validados' && isComercial || solicitud.statusSolicitud !== 'En proceso' && isComercial || solicitud.statusSolicitud !== 'Proceso de revision de pago' && isComercial || solicitud.statusSolicitud !== 'Nueva' && isComercial">
-
-        <div class="widthTd" >
-          <app-select-component-scroll [style.width]="'100%'" [width]="'100%'" class="tamano" [menuName]='"RFC GEM*"' (selectedOption)='getRFC($event)'
-            [currentOption]="currentRFC" [options]='optionsRFC' [search]="true" [valueSearch]="'rfc'">
-          </app-select-component-scroll>
+    <div *ngIf="isFonacot || categoria === 'fonacot'" >
+      <div class="row g-2">
+        <div class="col-md">
+          <div class="form-floating m-1">
+              <select class="form-select" id="floatingInputGridTipoTramite" [class.is-invalid]="tipoTramite.invalid && tipoTramite.touched" [(ngModel)]="solicitud.tipoTramite" name="tipoTramite" #tipoTramite="ngModel" required [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" >
+                <option selected > Seleccionar una opcion </option>
+                <option *ngFor="let optionsTramite of optionsTipoTramite" [value]="optionsTramite.name"> {{ optionsTramite.name }} </option>
+              </select>
+              <label for="floatingInputGridTipoTramite">Tipo de Movimiento</label>
+                <small *ngIf="tipoTramite.invalid && tipoTramite.touched" class="form-text text-danger"> Debe ingresar un movimiento valido</small>
+          </div>
         </div>
-      </div> -->
-
-      <div class="col-md" *ngIf="!mostrar">
-        <div class="form-floating m-1">
-            <select class="form-select" id="floatingInputGridTipoTramite" [class.is-invalid]="tipoTramite.invalid && tipoTramite.touched" [(ngModel)]="solicitud.tipoTramite" name="tipoTramite" #tipoTramite="ngModel" required [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" >
-              <option selected > Seleccionar una opcion </option>
-              <option *ngFor="let optionsTramite of optionsTipoTramite" [value]="optionsTramite.name"> {{ optionsTramite.name }} </option>
-            </select>
-            <label for="floatingInputGridTipoTramite">Tipo de trámite</label>
-              <small *ngIf="tipoTramite.invalid && tipoTramite.touched" class="form-text text-danger"> Debe ingresar un trámite valido</small>
+        <div class="col-md">
+          <div class="form-floating m-1">
+              <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcGEM.invalid && rfcGEM.touched " [(ngModel)]="solicitud.rfcGEM" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" minlength="12" placeholder="RFC" name="rfcGEM" #rfcGEM="ngModel" pattern="[a-zA-Z0-9]{12,13}"  minlength="12" maxlength="13" required >
+              <label for="floatingInputGridRfc">RFC </label>
+               <small *ngIf="rfcGEM.invalid && rfcGEM.touched" class="form-text text-danger"> Debe ingresar un RFC valido</small>
+          </div>
         </div>
+        <div class="col-md" >
+          <div class="form-floating m-1">
+              <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcAsegurado.invalid && rfcAsegurado.touched || solicitud.rfcAsegurado !== solicitud.rfcGEM" [(ngModel)]="solicitud.rfcAsegurado" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" pattern="[a-zA-Z0-9]{12,13}"  minlength="12" maxlength="13" placeholder="RFC" name="rfcAsegurado" #rfcAsegurado="ngModel" required >
+              <label for="floatingInputGridRfc">Confirmar RFC</label>
+               <small *ngIf="rfcAsegurado.invalid && rfcAsegurado.touched || solicitud.rfcAsegurado !== solicitud.rfcGEM" class="form-text text-danger"> Debe confirmar el RFC</small>
+          </div>
+        </div>
+
       </div>
-      <div class="col-md" *ngIf="mostrar">
-        <div class="form-floating m-1">
-            <select class="form-select" id="floatingInputGridTipoTramite" [class.is-invalid]="tipoTramite.invalid && tipoTramite.touched " [(ngModel)]="solicitud.tipoTramite" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="tipoTramite" #tipoTramite="ngModel" required >
-              <option value="Aclaracion"> Aclaración </option>
-            </select>
-            <label for="floatingInputGridTipoTramite">Tipo de trámite</label>
-             <small *ngIf="tipoTramite.invalid && tipoTramite.touched" class="form-text text-danger"> Debe ingresar un trámite valido</small>
+      <div class="row g-2 mt-2">
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridNombre" [class.is-invalid]=" nombre.invalid && nombre.touched " [(ngModel)]="solicitud.nombre" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="nombre"  pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Nombre" #nombre="ngModel" required >
+            <label for="floatingInputGridNombre">Nombre </label>
+             <small *ngIf="nombre.invalid && nombre.touched" class="form-text text-danger"> Debe ingresar un nombre valido</small>
+          </div>
         </div>
-      </div>
-      <div class="col-md" *ngIf="isComercial">
-        <div class="form-floating m-1">
-            <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcGEM.invalid && rfcGEM.touched " [(ngModel)]="solicitud.rfcGEM" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" minlength="12" placeholder="RFC" name="rfcGEM" #rfcGEM="ngModel" pattern="[a-zA-Z0-9]{12,13}"  minlength="12" maxlength="13" required >
-            <label for="floatingInputGridRfc">RFC </label>
-             <small *ngIf="rfcGEM.invalid && rfcGEM.touched" class="form-text text-danger"> Debe ingresar un RFC valido</small>
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridPaterno" [class.is-invalid]=" apellidoPaterno.invalid && apellidoPaterno.touched " [(ngModel)]="solicitud.apellidoPaterno" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="apellidoPaterno"  pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Apellido" #apellidoPaterno="ngModel" required>
+            <label for="floatingInputGridPaterno">Apellido Paterno  </label>
+             <small *ngIf="apellidoPaterno.invalid && apellidoPaterno.touched" class="form-text text-danger"> Debe ingresar un apellido valido</small>
+          </div>
         </div>
-      </div>
-
-    </div>
-    <div class="row g-2 mt-2">
-      <div class="col-md" *ngIf="isComercial" >
-        <div class="form-floating m-1">
-            <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcAsegurado.invalid && rfcAsegurado.touched || solicitud.rfcAsegurado !== solicitud.rfcGEM" [(ngModel)]="solicitud.rfcAsegurado" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" pattern="[a-zA-Z0-9]{12,13}"  minlength="12" maxlength="13" placeholder="RFC" name="rfcAsegurado" #rfcAsegurado="ngModel" required >
-            <label for="floatingInputGridRfc">Confirmar RFC</label>
-             <small *ngIf="rfcAsegurado.invalid && rfcAsegurado.touched || solicitud.rfcAsegurado !== solicitud.rfcGEM" class="form-text text-danger"> Debe confirmar el RFC</small>
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridMaterno" [class.is-invalid]=" apellidoMaterno.invalid && apellidoMaterno.touched " [(ngModel)]="solicitud.apellidoMaterno" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="apellidoMaterno" minlength="1" pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Apellido" #apellidoMaterno="ngModel" required>
+            <label for="floatingInputGridMaterno">Apellido Materno</label>
+             <small *ngIf="apellidoMaterno.invalid && apellidoMaterno.touched" class="form-text text-danger"> Debe ingresar un apellido valido</small>
+          </div>
         </div>
+
+
+
       </div>
-      <div class="col-md" *ngIf="!isComercial" >
-        <div class="form-floating m-1">
-            <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcAsegurado.invalid && rfcAsegurado.touched" [(ngModel)]="solicitud.rfcAsegurado" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" minlength="12" placeholder="RFC" name="rfcAsegurado" #rfcAsegurado="ngModel" required >
-            <label for="floatingInputGridRfc">RFC Asegurado</label>
-             <small *ngIf="rfcAsegurado.invalid && rfcAsegurado.touched" class="form-text text-danger"> Debe confirmar el RFC</small>
+      <div class="row g-2 mt-2">
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" type="email" placeholder="Correo electrónico" [class.is-invalid]=" email.invalid && email.touched" [(ngModel)]="solicitud.email" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required>
+            <label>Correo</label>
+             <small *ngIf="email.invalid && email.touched" class="form-text text-danger"> Debe ingresar un correo valido</small>
+          </div>
         </div>
-      </div>
-      <div class="col-md">
-        <div class="form-floating m-1">
-          <input class="form-control" id="floatingInputGridNombre" [class.is-invalid]=" nombre.invalid && nombre.touched " [(ngModel)]="solicitud.nombre" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="nombre"  pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Nombre" #nombre="ngModel" required >
-          <label for="floatingInputGridNombre">Nombre </label>
-           <small *ngIf="nombre.invalid && nombre.touched" class="form-text text-danger"> Debe ingresar un nombre valido</small>
+
+        <div class="col-md m-1">
+            <div class="widthTd" >
+              <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha Liquidacion</mat-label>
+                  <input matInput [matDatepicker]="picker1" [max]="maxDate" (dateInput)="getFechaFinLab('change', $event)" (dateChange)="getFechaFinLab('change', $event)" [formControl]="date1">
+                  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1 disabled="false" [disabled]="solicitud.idSolicitud !== 0"></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
         </div>
-      </div>
 
-      <div class="col-md">
-        <div class="form-floating m-1">
-          <input class="form-control" id="floatingInputGridPaterno" [class.is-invalid]=" apellidoPaterno.invalid && apellidoPaterno.touched " [(ngModel)]="solicitud.apellidoPaterno" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="apellidoPaterno"  pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Apellido" #apellidoPaterno="ngModel" required>
-          <label for="floatingInputGridPaterno">Apellido Paterno  </label>
-           <small *ngIf="apellidoPaterno.invalid && apellidoPaterno.touched" class="form-text text-danger"> Debe ingresar un apellido valido</small>
-        </div>
-      </div>
-
-
-
-    </div>
-    <div class="row g-2 mt-2">
-
-      <div class="col-md">
-        <div class="form-floating m-1">
-          <input class="form-control" id="floatingInputGridMaterno" [class.is-invalid]=" apellidoMaterno.invalid && apellidoMaterno.touched " [(ngModel)]="solicitud.apellidoMaterno" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="apellidoMaterno" minlength="1" pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Apellido" #apellidoMaterno="ngModel" required>
-          <label for="floatingInputGridMaterno">Apellido Materno</label>
-           <small *ngIf="apellidoMaterno.invalid && apellidoMaterno.touched" class="form-text text-danger"> Debe ingresar un apellido valido</small>
-        </div>
-      </div>
-
-      <div class="col-md">
-        <div class="form-floating m-1">
-          <select class="form-select" [class.is-invalid]=" dependencia.invalid && dependencia.touched " [(ngModel)]="solicitud.dependencia" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="dependencia" #dependencia="ngModel" required>
-            <option selected > Seleccionar una opcion </option>
-            <option *ngFor="let optionsDeps of optionsDep" [value] = 'optionsDeps.extras.descripcionCatalogo' > {{ optionsDeps.extras.descripcionCatalogo }} </option>
-          </select>
-          <label> Dependencia</label>
-           <small *ngIf="dependencia.invalid && dependencia.touched" class="form-text text-danger"> Debe ingresar una Dependencia valida</small>
-        </div>
-      </div>
-
-      <div class="col-md">
-        <div class="form-floating m-1">
-          <input class="form-control" id="floatingInputGridTelefono" [class.is-invalid]=" telefono.invalid && telefono.touched " [(ngModel)]="solicitud.telefono" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="telefono" minlength="10" type="tel" pattern="[0-9]{10,12}" placeholder="Apellido" #telefono="ngModel" required >
-          <label for="floatingInputGridTelefono">telefono</label>
-           <small *ngIf="telefono.invalid && telefono.touched" class="form-text text-danger"> Debe ingresar un telefono valido</small>
-        </div>
-      </div>
-
-
-
-
-    </div>
-    <div class="row g-2 mt-2">
-
-      <div class="col-md">
-        <div class="form-floating m-1">
-          <input class="form-control" type="email" placeholder="Correo electrónico" [class.is-invalid]=" email.invalid && email.touched" [(ngModel)]="solicitud.email" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required>
-          <label>Correo</label>
-           <small *ngIf="email.invalid && email.touched" class="form-text text-danger"> Debe ingresar un correo valido</small>
-        </div>
-      </div>
-
-      <div class="col-md m-1" *ngIf="solicitud.tipoTramite == 'Retiro Total'">
-          <div class="widthTd" >
+        <div class="col-md m-1">
+          <div class="widthTd">
             <div class="dateClass">
-              <span class="label-date">Fecha fin laboral</span>
-              <mat-form-field [style.width]="'100%'">
-                <input matInput [matDatepicker]="picker1" [max]="maxDate" (dateInput)="getFechaFinLab('change', $event)"
-                  (dateChange)="getFechaFinLab('change', $event)" [formControl]="date1">
-                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha Registro</mat-label>
+                  <input matInput [matDatepicker]="picker2" [max]="maxDate" (dateInput)="getFechaSolic('change', $event)"
+                    (dateChange)="getFechaSolic('change', $event)" [formControl]="date2" disabled>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                  <mat-datepicker #picker2 ></mat-datepicker>
+                </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2 mt-2">
+
+        <div class="col-md m-1">
+          <div class="widthTd">
+            <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha solicitud APV*</mat-label>
+                  <input matInput [matDatepicker]="picker4" [max]="maxDate" (dateInput)="getFechaRegistro('change', $event)"
+                    (dateChange)="getFechaRegistro('change', $event)" [formControl]="date4" required>
+                  <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+                  <mat-datepicker #picker4 [disabled]="isExterno"></mat-datepicker>
+                </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridimporteSolicitado" placeholder="Prima" [class.is-invalid]=" importeSolicitado.invalid && importeSolicitado.touched" [(ngModel)]="solicitud.importeSolicitado" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="importeSolicitado" #importeSolicitado="ngModel" type="tel" pattern="[0-9,$.]{2,20}" required >
+            <label for="floatingInputGridimporteSolicitado">Prima</label>
+             <small *ngIf="importeSolicitado.invalid && importeSolicitado.touched" class="form-text text-danger"> Debe ingresar una prima valida</small>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridsueldo" placeholder="Plazo" [class.is-invalid]=" sueldo.invalid && sueldo.touched" [(ngModel)]="solicitud.sueldo" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="sueldo" #sueldo="ngModel" type="tel" pattern="[0-9,$.]{2,20}" required >
+            <label for="floatingInputGridsueldo">Plazo</label>
+             <small *ngIf="sueldo.invalid && sueldo.touched" class="form-text text-danger"> Debe ingresar un plazo valida</small>
+          </div>
+        </div>
+
+      </div>
+      <div class="row g-2 mt-2">
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridpagoAnterior" placeholder="Credito" [(ngModel)]="solicitud.pagoAnterior" [class.is-invalid]="pagoAnterior.invalid && pagoAnterior.touched" [disabled]="solicitud.idSolicitud !== 0" name="pagoAnterior" #pagoAnterior="ngModel" type="tel" pattern="[0-9,$.]{2,20}">
+            <label for="floatingInputGridpagoAnterior">ID Credito</label>
+             <small *ngIf="pagoAnterior.invalid && pagoAnterior.touched" class="form-text text-danger"> Debe ingresar credito valido</small>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2 mt-2" >
+        <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'">
+          <label class="section-userAP">Documentos requeridos</label>
+        </div>
+        <td class="widthTd">
+          <div class="loadDoc">
+            <label >Expediente</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 1)" id="file1" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[0].label}}</span></label>
+              <label class="buttonFile" for="file1"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[0].id > 0 ? donwloadPdf(arrayPdf[0].id, 'RECNOM_RFC', arrayPdf[0].tipoArchivo) : null">{{arrayPdf[0].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[0].id && llenarForm" class="form-text text-danger"> Debe ingresar el expediente</small>
+          </div>
+        </td>
+        <td class="widthTd" *ngIf="solicitud.idSolicitud > 0">
+          <div class="loadDoc">
+            <label >Formato de Finiquito</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[9].id && llenarForm" (change)="getArchivo($event.target.files, 10)" id="file9" accept="application/pdf,image/jpeg,image/png" required>
+              <label class="targetFile" ><span class="elip">{{arrayFiles[9].label}}</span></label>
+              <label class="buttonFile"  for="file9"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[9].id > 0 ? donwloadPdf(arrayPdf[9].id, 'FORMATO_FINIQUITO', arrayPdf[9].tipoArchivo) : null">{{arrayPdf[9].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[9].id && llenarForm" class="form-text text-danger"> Debe ingresar el finiquito</small>
+          </div>
+        </td>
+      </div>
+    </div>
+    <div *ngIf="isPuebla || categoria === 'puebla'" >
+      <div class="row g-2">
+        <div class="col-md">
+          <div class="form-floating m-1">
+              <select class="form-select" id="floatingInputGridTipoTramite" [class.is-invalid]="tipoTramite.invalid && tipoTramite.touched" [(ngModel)]="solicitud.tipoTramite" name="tipoTramite" #tipoTramite="ngModel" required [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" >
+                <option selected > Seleccionar una opcion </option>
+                <option *ngFor="let optionsTramite of optionsTipoTramite" [value]="optionsTramite.name"> {{ optionsTramite.name }} </option>
+              </select>
+              <label for="floatingInputGridTipoTramite">Tipo de trámite</label>
+                <small *ngIf="tipoTramite.invalid && tipoTramite.touched" class="form-text text-danger"> Debe ingresar un trámite valido</small>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="form-floating m-1">
+              <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcGEM.invalid && rfcGEM.touched " [(ngModel)]="solicitud.rfcGEM" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" minlength="12" placeholder="RFC" name="rfcGEM" #rfcGEM="ngModel" pattern="[a-zA-Z0-9]{12,13}"  minlength="12" maxlength="13" required >
+              <label for="floatingInputGridRfc">RFC </label>
+              <small *ngIf="rfcGEM.invalid && rfcGEM.touched" class="form-text text-danger"> Debe ingresar un RFC valido</small>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-md" >
+          <div class="form-floating m-1">
+              <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcAsegurado.invalid && rfcAsegurado.touched || solicitud.rfcAsegurado !== solicitud.rfcGEM" [(ngModel)]="solicitud.rfcAsegurado" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" pattern="[a-zA-Z0-9]{12,13}"  minlength="12" maxlength="13" placeholder="RFC" name="rfcAsegurado" #rfcAsegurado="ngModel" required >
+              <label for="floatingInputGridRfc">Confirmar RFC</label>
+               <small *ngIf="rfcAsegurado.invalid && rfcAsegurado.touched || solicitud.rfcAsegurado !== solicitud.rfcGEM" class="form-text text-danger"> Debe confirmar el RFC</small>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridNombre" [class.is-invalid]=" nombre.invalid && nombre.touched " [(ngModel)]="solicitud.nombre" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="nombre"  pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Nombre" #nombre="ngModel" required >
+            <label for="floatingInputGridNombre">Nombre </label>
+             <small *ngIf="nombre.invalid && nombre.touched" class="form-text text-danger"> Debe ingresar un nombre valido</small>
+          </div>
+        </div>
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridPaterno" [class.is-invalid]=" apellidoPaterno.invalid && apellidoPaterno.touched " [(ngModel)]="solicitud.apellidoPaterno" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="apellidoPaterno"  pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Apellido" #apellidoPaterno="ngModel" required>
+            <label for="floatingInputGridPaterno">Apellido Paterno  </label>
+             <small *ngIf="apellidoPaterno.invalid && apellidoPaterno.touched" class="form-text text-danger"> Debe ingresar un apellido valido</small>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridMaterno" [class.is-invalid]=" apellidoMaterno.invalid && apellidoMaterno.touched " [(ngModel)]="solicitud.apellidoMaterno" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="apellidoMaterno" minlength="1" pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Apellido" #apellidoMaterno="ngModel" required>
+            <label for="floatingInputGridMaterno">Apellido Materno</label>
+             <small *ngIf="apellidoMaterno.invalid && apellidoMaterno.touched" class="form-text text-danger"> Debe ingresar un apellido valido</small>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridTelefono" [class.is-invalid]=" telefono.invalid && telefono.touched " [(ngModel)]="solicitud.telefono" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="telefono" minlength="10" type="tel" pattern="[0-9]{10,12}" placeholder="" #telefono="ngModel" required >
+            <label for="floatingInputGridTelefono">telefono</label>
+             <small *ngIf="telefono.invalid && telefono.touched" class="form-text text-danger"> Debe ingresar un telefono valido</small>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <!-- SE ESTA USANDO SUELDO COMO CAMPO A GUARDAR PERO SE DEBE CAMBIAR ESTE POR EL RESPECTIVO, ESTO SE HACE POR SOLICITUD DE SEBAS PARA NO ESTAR SOLICITANDO CAMBIOS A CADA RATO A RAUL SINO CUANDO YA SEAN VARIOS SOLICITARLO -->
+            <input class="form-control" id="floatingInputGridfaltanteAPagar" [class.is-invalid]=" sueldo.invalid && sueldo.touched " [(ngModel)]="solicitud.sueldo" [disabled]="solicitud.idSolicitud !== 0" name="sueldo" minlength="3" type="text" pattern="[0-9]+,[0-9]+\.[0-9]{2,10}$" placeholder="" #sueldo="ngModel">
+            <label for="floatingInputGridsueldo">Importe a pagar</label>
+             <small *ngIf="sueldo.invalid && sueldo.touched" class="form-text text-danger"> Debe ingresar un importe valido</small>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2 mt-2">
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" type="email" placeholder="Correo electrónico" [class.is-invalid]=" email.invalid && email.touched" [(ngModel)]="solicitud.email" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required>
+            <label>Correo</label>
+             <small *ngIf="email.invalid && email.touched" class="form-text text-danger"> Debe ingresar un correo valido</small>
+          </div>
+        </div>
+
+        <div class="col-md m-1">
+            <div class="widthTd" >
+              <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha fin laboral</mat-label>
+                  <input matInput [matDatepicker]="picker1" [max]="maxDate" (dateInput)="getFechaFinLab('change', $event)" (dateChange)="getFechaFinLab('change', $event)" [formControl]="date1">
+                  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1 [disabled]="solicitud.idSolicitud !== 0" ></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+        </div>
+
+        <div class="col-md m-1">
+          <div class="widthTd">
+            <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha Registro</mat-label>
+                  <input matInput [matDatepicker]="picker2" [max]="maxDate" (dateInput)="getFechaSolic('change', $event)"
+                    (dateChange)="getFechaSolic('change', $event)" [formControl]="date2" disabled>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                  <mat-datepicker #picker2 ></mat-datepicker>
+                </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-md m-1">
+          <div class="widthTd">
+            <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha solicitud APV*</mat-label>
+                  <input matInput [matDatepicker]="picker4" [max]="maxDate" (dateInput)="getFechaRegistro('change', $event)" (dateChange)="getFechaRegistro('change', $event)" [formControl]="date4" required>
+                  <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+                  <mat-datepicker #picker4 [disabled]="solicitud.idSolicitud !== 0"></mat-datepicker>
+                </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="row g-2 mt-2" >
+        <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'">
+          <label class="section-userAP">Documentos requeridos</label>
+        </div>
+        <td class="widthTd">
+          <div class="loadDoc">
+            <label >Expediente</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 1)" id="file1" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[0].label}}</span></label>
+              <label class="buttonFile" for="file1"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[0].id > 0 ? donwloadPdf(arrayPdf[0].id, 'EXPEDIENTE', arrayPdf[0].tipoArchivo) : null">{{arrayPdf[0].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[0].id && llenarForm" class="form-text text-danger"> Debe ingresar el expediente</small>
+          </div>
+        </td>
+        <td class="widthTd" *ngIf="solicitud.idSolicitud > 0">
+          <div class="loadDoc">
+            <label >Formato de Finiquito</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[9].id && llenarForm" (change)="getArchivo($event.target.files, 10)" id="file9" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[9].label}}</span></label>
+              <label class="buttonFile"  for="file9"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[9].id > 0 ? donwloadPdf(arrayPdf[9].id, 'FORMATO_FINIQUITO', arrayPdf[9].tipoArchivo) : null">{{arrayPdf[9].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[9].id && llenarForm" class="form-text text-danger"> Debe ingresar el finiquito</small>
+          </div>
+        </td>
+      </div>
+    </div>
+    <div *ngIf="!isPuebla && !isFonacot && categoria === 'null'" >
+
+
+      <div class="row g-2">
+
+        <!-- <div class="col-md m-1 mt-2" *ngIf="solicitud.statusSolicitud !== 'Importes validados' && isComercial || solicitud.statusSolicitud !== 'En proceso' && isComercial || solicitud.statusSolicitud !== 'Proceso de revision de pago' && isComercial || solicitud.statusSolicitud !== 'Nueva' && isComercial">
+          <div class="widthTd" >
+            <app-select-component-scroll [style.width]="'100%'" [width]="'100%'" class="tamano" [menuName]='"RFC GEM*"' (selectedOption)='getRFC($event)'
+              [currentOption]="currentRFC" [options]='optionsRFC' [search]="true" [valueSearch]="'rfc'">
+            </app-select-component-scroll>
+          </div>
+        </div> -->
+
+        <div class="col-md" *ngIf="!mostrar">
+          <div class="form-floating m-1">
+              <select class="form-select" id="floatingInputGridTipoTramite" [class.is-invalid]="tipoTramite.invalid && tipoTramite.touched" [(ngModel)]="solicitud.tipoTramite" name="tipoTramite" #tipoTramite="ngModel" required [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" >
+                <option selected > Seleccionar una opcion </option>
+                <option *ngFor="let optionsTramite of optionsTipoTramite" [value]="optionsTramite.name"> {{ optionsTramite.name }} </option>
+              </select>
+              <label for="floatingInputGridTipoTramite">Tipo de trámite</label>
+                <small *ngIf="tipoTramite.invalid && tipoTramite.touched" class="form-text text-danger"> Debe ingresar un trámite valido</small>
+          </div>
+        </div>
+        <div class="col-md" *ngIf="mostrar">
+          <div class="form-floating m-1">
+              <select class="form-select" id="floatingInputGridTipoTramite" [class.is-invalid]="tipoTramite.invalid && tipoTramite.touched " [(ngModel)]="solicitud.tipoTramite" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="tipoTramite" #tipoTramite="ngModel" required >
+                <option value="Aclaracion"> Aclaración </option>
+              </select>
+              <label for="floatingInputGridTipoTramite">Tipo de trámite</label>
+               <small *ngIf="tipoTramite.invalid && tipoTramite.touched" class="form-text text-danger"> Debe ingresar un trámite valido</small>
+          </div>
+        </div>
+        <div class="col-md" *ngIf="isComercial">
+          <div class="form-floating m-1">
+              <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcGEM.invalid && rfcGEM.touched " [(ngModel)]="solicitud.rfcGEM" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" minlength="12" placeholder="RFC" name="rfcGEM" #rfcGEM="ngModel" pattern="[a-zA-Z0-9]{12,13}"  minlength="12" maxlength="13" required >
+              <label for="floatingInputGridRfc">RFC </label>
+               <small *ngIf="rfcGEM.invalid && rfcGEM.touched" class="form-text text-danger"> Debe ingresar un RFC valido</small>
+          </div>
+        </div>
+
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-md" *ngIf="isComercial" >
+          <div class="form-floating m-1">
+              <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcAsegurado.invalid && rfcAsegurado.touched || solicitud.rfcAsegurado !== solicitud.rfcGEM" [(ngModel)]="solicitud.rfcAsegurado" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" pattern="[a-zA-Z0-9]{12,13}"  minlength="12" maxlength="13" placeholder="RFC" name="rfcAsegurado" #rfcAsegurado="ngModel" required >
+              <label for="floatingInputGridRfc">Confirmar RFC</label>
+               <small *ngIf="rfcAsegurado.invalid && rfcAsegurado.touched || solicitud.rfcAsegurado !== solicitud.rfcGEM" class="form-text text-danger"> Debe confirmar el RFC</small>
+          </div>
+        </div>
+        <div class="col-md" *ngIf="!isComercial" >
+          <div class="form-floating m-1">
+              <input class="form-control" type="text" id="floatingInputGridRfc" [class.is-invalid]="rfcAsegurado.invalid && rfcAsegurado.touched" [(ngModel)]="solicitud.rfcAsegurado" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" minlength="12" placeholder="RFC" name="rfcAsegurado" #rfcAsegurado="ngModel" required >
+              <label for="floatingInputGridRfc">RFC Asegurado</label>
+               <small *ngIf="rfcAsegurado.invalid && rfcAsegurado.touched" class="form-text text-danger"> Debe confirmar el RFC</small>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridNombre" [class.is-invalid]=" nombre.invalid && nombre.touched " [(ngModel)]="solicitud.nombre" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="nombre"  pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Nombre" #nombre="ngModel" required >
+            <label for="floatingInputGridNombre">Nombre </label>
+             <small *ngIf="nombre.invalid && nombre.touched" class="form-text text-danger"> Debe ingresar un nombre valido</small>
+          </div>
+        </div>
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridPaterno" [class.is-invalid]=" apellidoPaterno.invalid && apellidoPaterno.touched " [(ngModel)]="solicitud.apellidoPaterno" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="apellidoPaterno"  pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Apellido" #apellidoPaterno="ngModel" required>
+            <label for="floatingInputGridPaterno">Apellido Paterno  </label>
+             <small *ngIf="apellidoPaterno.invalid && apellidoPaterno.touched" class="form-text text-danger"> Debe ingresar un apellido valido</small>
+          </div>
+        </div>
+
+
+
+      </div>
+      <div class="row g-2 mt-2">
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridMaterno" [class.is-invalid]=" apellidoMaterno.invalid && apellidoMaterno.touched " [(ngModel)]="solicitud.apellidoMaterno" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="apellidoMaterno" minlength="1" pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]{1,20}" type="text" placeholder="Apellido" #apellidoMaterno="ngModel" required>
+            <label for="floatingInputGridMaterno">Apellido Materno</label>
+             <small *ngIf="apellidoMaterno.invalid && apellidoMaterno.touched" class="form-text text-danger"> Debe ingresar un apellido valido</small>
+          </div>
+        </div>
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <select class="form-select" [class.is-invalid]=" dependencia.invalid && dependencia.touched " [(ngModel)]="solicitud.dependencia" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="dependencia" #dependencia="ngModel" required>
+              <option selected > Seleccionar una opcion </option>
+              <option *ngFor="let optionsDeps of optionsDep" [value] = 'optionsDeps.extras.descripcionCatalogo' > {{ optionsDeps.extras.descripcionCatalogo }} </option>
+            </select>
+            <label> Dependencia</label>
+             <small *ngIf="dependencia.invalid && dependencia.touched" class="form-text text-danger"> Debe ingresar una Dependencia valida</small>
+          </div>
+        </div>
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridTelefono" [class.is-invalid]=" telefono.invalid && telefono.touched " [(ngModel)]="solicitud.telefono" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="telefono" minlength="10" type="tel" pattern="[0-9]{10,12}" placeholder="Apellido" #telefono="ngModel" required >
+            <label for="floatingInputGridTelefono">telefono</label>
+             <small *ngIf="telefono.invalid && telefono.touched" class="form-text text-danger"> Debe ingresar un telefono valido</small>
+          </div>
+        </div>
+
+
+
+
+      </div>
+      <div class="row g-2 mt-2">
+
+        <div class="col-md">
+          <div class="form-floating m-1">
+            <input class="form-control" type="email" placeholder="Correo electrónico" [class.is-invalid]=" email.invalid && email.touched" [(ngModel)]="solicitud.email" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required>
+            <label>Correo</label>
+             <small *ngIf="email.invalid && email.touched" class="form-text text-danger"> Debe ingresar un correo valido</small>
+          </div>
+        </div>
+
+        <div class="col-md m-1" *ngIf="solicitud.tipoTramite == 'Retiro Total'">
+            <div class="widthTd" >
+              <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha fin laboral</mat-label>
+                  <input matInput [matDatepicker]="picker1" [max]="maxDate" (dateInput)="getFechaFinLab('change', $event)"
+                    (dateChange)="getFechaFinLab('change', $event)" [formControl]="date1">
+                  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+        </div>
+
+        <div class="col-md m-1">
+          <div class="widthTd">
+            <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha Registro</mat-label>
+                  <input matInput [matDatepicker]="picker2" [max]="maxDate" (dateInput)="getFechaSolic('change', $event)"
+                    (dateChange)="getFechaSolic('change', $event)" [formControl]="date2" disabled>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                  <mat-datepicker #picker2 ></mat-datepicker>
+                </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-md m-1">
+          <div class="widthTd">
+            <div class="dateClass">
+              <mat-form-field class="input-size">
+                <mat-label class="label-date">Dias Transcurridos</mat-label>
+                <input matInput ngModel name="diasTranscurridos" id="diasTranscurridos" type="text" (blur)="validate()" [(ngModel)]='solicitud.diasTranscurridos' (keyup)="mayus('diasTranscurridos')" disabled>
               </mat-form-field>
             </div>
           </div>
-      </div>
+        </div>
 
-      <div class="col-md m-1">
-        <div class="widthTd">
-          <div class="dateClass">
-            <span class="label-date">Fecha solicitud APV*</span>
-              <mat-form-field [style.width]="'100%'">
-                <input matInput [matDatepicker]="picker2" [max]="maxDate" (dateInput)="getFechaSolic('change', $event)"
-                  (dateChange)="getFechaSolic('change', $event)" [formControl]="date2">
-                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-                <mat-datepicker #picker2 [disabled]="isExterno"></mat-datepicker>
+        <div class="col-md m-1">
+          <div class="widthTd">
+            <div class="dateClass">
+                <mat-form-field [style.width]="'100%'">
+                  <mat-label class="label-date">Fecha solicitud APV*</mat-label>
+                  <input matInput [matDatepicker]="picker4" [max]="maxDate" (dateInput)="getFechaRegistro('change', $event)"
+                    (dateChange)="getFechaRegistro('change', $event)" [formControl]="date4" required>
+                  <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+                  <mat-datepicker #picker4 [disabled]="isExterno"></mat-datepicker>
+                </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md" *ngIf="solicitud.tipoTramite === 'Retiro Parcial'" >
+          <div class="form-floating m-1">
+            <select class="form-select" type="text" id="floatingInputGridmonto" [class.is-invalid]=" importeSolicitado.invalid && importeSolicitado.touched" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" #importeSolicitado="ngModel" name="importeSolicitado" [(ngModel)]="solicitud.importeSolicitado" required>
+              <option selected > Seleccionar un monto </option>
+              <option *ngFor="let optionsMontos of optionsMonto" > {{ optionsMontos.name }} </option>
+            </select>
+            <label for="floatingInputGridmonto">Seleccionar Monto</label>
+             <small *ngIf="importeSolicitado.invalid && importeSolicitado.touched" class="form-text text-danger"> Debe ingresar un Monto valido</small>
+          </div>
+        </div>
+
+        <div class="col-md" *ngIf="!mostrar">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridsueldo" placeholder="Sueldo Actual" [class.is-invalid]=" sueldo.invalid && sueldo.touched" [(ngModel)]="solicitud.sueldo" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="sueldo" #sueldo="ngModel" type="tel" pattern="[0-9,$.]{2,20}" required >
+            <label for="floatingInputGridsueldo">Sueldo</label>
+             <small *ngIf="sueldo.invalid && sueldo.touched" class="form-text text-danger"> Debe ingresar un sueldo valido</small>
+          </div>
+        </div>
+
+      </div>
+      <div class="row g-2 mt-2">
+
+        <div class="col-md" *ngIf="!mostrar">
+          <div class="form-floating m-1">
+            <input class="form-control" id="floatingInputGridpagoAnterior" placeholder="Pago Anterior" [(ngModel)]="solicitud.pagoAnterior" [class.is-invalid]="pagoAnterior.invalid && pagoAnterior.touched" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="pagoAnterior" #pagoAnterior="ngModel" type="tel" pattern="[0-9,$.]{2,20}">
+            <label for="floatingInputGridpagoAnterior">Ultimo Monto Pagado</label>
+             <small *ngIf="pagoAnterior.invalid && pagoAnterior.touched" class="form-text text-danger"> Debe ingresar un Monto valido</small>
+          </div>
+        </div>
+
+        <div class="col-md m-1" *ngIf="!mostrar">
+            <div class="dateClass form-floating">
+              <mat-form-field>
+                <mat-label class="label-date">Fecha Pagado</mat-label>
+                <input matInput [matDatepicker]="picker3" (dateInput)="getFechaPago('change', $event)"
+                  (dateChange)="getFechaPago('change', $event)" [formControl]="date3">
+                <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                <mat-datepicker #picker3 [disabled]="false"></mat-datepicker>
               </mat-form-field>
           </div>
         </div>
-      </div>
+
+        <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'">
+          <label class="section-userAP">Documentos requeridos</label>
+        </div>
+
+        <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite !== 'Siniestro de Vida' || mostrar">
+          <div class="loadDoc">
+            <label >Último recibo de nómina</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 1)" id="file1" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[0].label}}</span></label>
+              <label class="buttonFile" for="file1"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[0].id > 0 ? donwloadPdf(arrayPdf[0].id, 'RECNOM_RFC', arrayPdf[0].tipoArchivo) : null">{{arrayPdf[0].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[0].id && llenarForm" class="form-text text-danger"> Debe ingresar su último recibo de nómina</small>
+          </div>
+
+        </td>
+
+
+
+        <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total'">
+          <div class="loadDoc">
+            <label >FUM de baja</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 2)" id="file2" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[1].label}}</span></label>
+              <label class="buttonFile" for="file2"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[1].id > 0 ? donwloadPdf(arrayPdf[1].id, 'FUM_RFC', arrayPdf[1].tipoArchivo) : null">{{arrayPdf[1].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[1].id && llenarForm" class="form-text text-danger"> Debe ingresar su solicitud de ahorro</small>
+          </div>
+
+        </td>
+
+        <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total' || solicitud.tipoTramite === 'Retiro Parcial'">
+          <div class="loadDoc">
+            <label >Identificación oficial (vigente)</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file"  (change)="getArchivo($event.target.files, 3)" id="file3" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[2].label}}</span></label>
+              <label class="buttonFile" for="file3"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[2].id > 0 ? donwloadPdf(arrayPdf[2].id, 'IDE_RFC', arrayPdf[2].tipoArchivo) : null">{{arrayPdf[2].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[2].id && llenarForm" class="form-text text-danger"> Debe ingresar su identificación oficial</small>
+          </div>
+
+        </td>
+
+         <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Siniestro de Vida'" >
+          <div class="loadDoc">
+            <label >Fallecimiento</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 4)" id="file4" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[3].label}}</span></label>
+              <label class="buttonFile" for="file4"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[3].id > 0 ? donwloadPdf(arrayPdf[3].id, 'FALL_RFC', arrayPdf[3].tipoArchivo) : null">{{arrayPdf[3].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[3].id && llenarForm" class="form-text text-danger"> Debe ingresar acta de fallecimiento</small>
+          </div>
+
+        </td>
+
+        <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Siniestro de Vida'" >
+          <div class="loadDoc">
+            <label >Invalidez total</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 8)" id="file8" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[7].label}}</span></label>
+              <label class="buttonFile" for="file4"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[7].id > 0 ? donwloadPdf(arrayPdf[7].id, 'FALL_RFC', arrayPdf[7].tipoArchivo) : null">{{arrayPdf[7].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[7].id && llenarForm" class="form-text text-danger"> Debe ingresar acta de invalidez total</small>
+          </div>
+
+        </td>
+
+        <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total' || solicitud.tipoTramite === 'Retiro Parcial'">
+          <div class="loadDoc">
+            <label >Comprobante de domicilio (No mayor a tres meses)</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file"  (change)="getArchivo($event.target.files, 5)" id="file5" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[4].label}}</span></label>
+              <label class="buttonFile" for="file5"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[4].id > 0 ? donwloadPdf(arrayPdf[4].id, 'COMDOM_RFC', arrayPdf[4].tipoArchivo) : null">{{arrayPdf[4].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[4].id && llenarForm" class="form-text text-danger"> Debe ingresar su comprobante de domicilio</small>
+          </div>
+
+        </td>
+
+        <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total' || solicitud.tipoTramite === 'Retiro Parcial'">
+          <div class="loadDoc">
+            <label >Estado de cuenta (a nombre del Asegurado titular)</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[5].id && llenarForm" (change)="getArchivo($event.target.files, 6)" id="file6" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[5].label}}</span></label>
+              <label class="buttonFile" for="file6"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[5].id > 0 ? donwloadPdf(arrayPdf[5].id, 'EDO_RFC', arrayPdf[5].tipoArchivo) : null">{{arrayPdf[5].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[5].id && llenarForm" class="form-text text-danger"> Debe ingresar su estado de cuenta</small>
+          </div>
+        </td>
+
+        <td class="widthTd"  *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Complementario' || solicitud.tipoTramite === 'Aclaracion'" >
+          <div class="loadDoc">
+            <label >Sustento en el cual observe la diferencia (Estado de cuenta APVIDA) </label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[6].id && llenarForm" (change)="getArchivo($event.target.files, 7)" id="file7" accept="application/pdf,image/jpeg,image/png">
+              <label class="targetFile" ><span class="elip">{{arrayFiles[6].label}}</span></label>
+              <label class="buttonFile" for="file7"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[6].id > 0 ? donwloadPdf(arrayPdf[6].id, 'SUSTENTO_RFC', arrayPdf[6].tipoArchivo) : null">{{arrayPdf[6].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[6].id && llenarForm" class="form-text text-danger"> Debe ingresar el sustento</small>
+          </div>
+        </td>
+
+        <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total' || solicitud.tipoTramite === 'Retiro Parcial'">
+          <div class="loadDoc">
+            <label >Formato de Solicitud de Pago de la Aseguradora Patrimonial Vida (llenada y firmada) </label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[8].id && llenarForm" (change)="getArchivo($event.target.files, 9)" id="file8" accept="application/pdf,image/jpeg,image/png" required>
+              <label class="targetFile" ><span class="elip">{{arrayFiles[8].label}}</span></label>
+              <label class="buttonFile" for="file8"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[8].id > 0 ? donwloadPdf(arrayPdf[8].id, 'FORMATO_SOLICITUD', arrayPdf[8].tipoArchivo) : null">{{arrayPdf[8].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[8].id && llenarForm" class="form-text text-danger"> Debe ingresar el sustento</small>
+          </div>
+        </td>
+
+        <td class="widthTd" [class.noVisible]=" !isExterno && isComercial && solicitud.statusSolicitud === 'En proceso' ? true : !isExterno && isSiniestros && solicitud.statusSolicitud !== 'Nueva' ? true : false"  *ngIf="!mostrar && !isExterno && solicitud.statusSolicitud === 'En proceso' || solicitud.statusSolicitud === 'Terminada' ? true : !mostrar && isExterno && solicitud.statusSolicitud === 'Terminada' ? true : !mostrar && isSiniestros && solicitud.statusSolicitud !== 'Nueva'">
+          <div class="loadDoc">
+            <label >Formato de Finiquito</label>
+            <div class="cont-inputFile">
+              <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[9].id && llenarForm" (change)="getArchivo($event.target.files, 10)" id="file9" accept="application/pdf,image/jpeg,image/png" required>
+              <label class="targetFile" ><span class="elip">{{arrayFiles[9].label}}</span></label>
+              <label class="buttonFile"  for="file9"><span>...</span></label>
+            </div>
+            <div class="docButton" (click)="arrayPdf[9].id > 0 ? donwloadPdf(arrayPdf[9].id, 'FORMATO_FINIQUITO', arrayPdf[9].tipoArchivo) : null">{{arrayPdf[9].id > 0 ? 'Ver documento' : ''}}</div>
+            <small *ngIf="!arrayPdf[9].id && llenarForm" class="form-text text-danger"> Debe ingresar el finiquito</small>
+          </div>
+        </td>
+
+
 
 
 
     </div>
-    <div class="row g-2 mt-2">
-
-      <div class="col-md m-1">
-        <div class="widthTd">
-          <div class="dateClass">
-            <span class="label-date">Dias Transcurridos</span>
-            <mat-form-field class="input-size">
-              <input matInput ngModel name="diasTranscurridos" id="diasTranscurridos" type="text" (blur)="validate()" [(ngModel)]='solicitud.diasTranscurridos' (keyup)="mayus('diasTranscurridos')" disabled>
-            </mat-form-field>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md" *ngIf="solicitud.tipoTramite === 'Retiro Parcial'" >
-        <div class="form-floating m-1">
-          <select class="form-select" type="text" id="floatingInputGridmonto" [class.is-invalid]=" importeSolicitado.invalid && importeSolicitado.touched" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" #importeSolicitado="ngModel" name="importeSolicitado" [(ngModel)]="solicitud.importeSolicitado" required>
-            <option selected > Seleccionar un monto </option>
-            <option *ngFor="let optionsMontos of optionsMonto" > {{ optionsMontos.name }} </option>
-          </select>
-          <label for="floatingInputGridmonto">Seleccionar Monto</label>
-           <small *ngIf="importeSolicitado.invalid && importeSolicitado.touched" class="form-text text-danger"> Debe ingresar un Monto valido</small>
-        </div>
-      </div>
-
-      <div class="col-md" *ngIf="!mostrar">
-        <div class="form-floating m-1">
-          <input class="form-control" id="floatingInputGridsueldo" placeholder="Sueldo Actual" [class.is-invalid]=" sueldo.invalid && sueldo.touched" [(ngModel)]="solicitud.sueldo" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="sueldo" #sueldo="ngModel" type="tel" pattern="[0-9,$.]{2,20}" required >
-          <label for="floatingInputGridsueldo">Sueldo</label>
-           <small *ngIf="sueldo.invalid && sueldo.touched" class="form-text text-danger"> Debe ingresar un sueldo valido</small>
-        </div>
-      </div>
-
     </div>
     <div class="row g-2 mt-2">
-
-      <div class="col-md" *ngIf="!mostrar">
-        <div class="form-floating m-1">
-          <input class="form-control" id="floatingInputGridpagoAnterior" placeholder="Pago Anterior" [(ngModel)]="solicitud.pagoAnterior" [class.is-invalid]="pagoAnterior.invalid && pagoAnterior.touched" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="pagoAnterior" #pagoAnterior="ngModel" type="tel" pattern="[0-9,$.]{2,20}">
-          <label for="floatingInputGridpagoAnterior">Ultimo Monto Pagado</label>
-           <small *ngIf="pagoAnterior.invalid && pagoAnterior.touched" class="form-text text-danger"> Debe ingresar un Monto valido</small>
-        </div>
-      </div>
-
-      <div class="col-md m-1" *ngIf="!mostrar">
-          <div class="dateClass form-floating">
-            <span class="label-date">Fecha Pagado</span>
-            <mat-form-field>
-              <input matInput [matDatepicker]="picker3" (dateInput)="getFechaPago('change', $event)"
-                (dateChange)="getFechaPago('change', $event)" [formControl]="date3">
-              <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
-              <mat-datepicker #picker3 [disabled]="false"></mat-datepicker>
-            </mat-form-field>
-        </div>
-      </div>
-
-      <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'">
-        <label class="section-userAP">Documentos requeridos</label>
-      </div>
-
-      <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite !== 'Siniestro de Vida' || mostrar">
-        <div class="loadDoc">
-          <label >Último recibo de nómina</label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 1)" id="file1" accept="application/pdf,image/jpeg,image/png">
-            <label class="targetFile" ><span class="elip">{{arrayFiles[0].label}}</span></label>
-            <label class="buttonFile" for="file1"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[0].id > 0 ? donwloadPdf(arrayPdf[0].id, 'RECNOM_RFC', arrayPdf[0].tipoArchivo) : null">{{arrayPdf[0].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[0].id && llenarForm" class="form-text text-danger"> Debe ingresar su último recibo de nómina</small>
-        </div>
-
-      </td>
-
-      <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total'">
-        <div class="loadDoc">
-          <label >FUM de baja</label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 2)" id="file2" accept="application/pdf,image/jpeg,image/png">
-            <label class="targetFile" ><span class="elip">{{arrayFiles[1].label}}</span></label>
-            <label class="buttonFile" for="file2"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[1].id > 0 ? donwloadPdf(arrayPdf[1].id, 'FUM_RFC', arrayPdf[1].tipoArchivo) : null">{{arrayPdf[1].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[1].id && llenarForm" class="form-text text-danger"> Debe ingresar su solicitud de ahorro</small>
-        </div>
-
-      </td>
-
-      <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total' || solicitud.tipoTramite === 'Retiro Parcial'">
-        <div class="loadDoc">
-          <label >Identificación oficial (vigente)</label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file"  (change)="getArchivo($event.target.files, 3)" id="file3" accept="application/pdf,image/jpeg,image/png">
-            <label class="targetFile" ><span class="elip">{{arrayFiles[2].label}}</span></label>
-            <label class="buttonFile" for="file3"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[2].id > 0 ? donwloadPdf(arrayPdf[2].id, 'IDE_RFC', arrayPdf[2].tipoArchivo) : null">{{arrayPdf[2].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[2].id && llenarForm" class="form-text text-danger"> Debe ingresar su identificación oficial</small>
-        </div>
-
-      </td>
-
-       <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Siniestro de Vida'" >
-        <div class="loadDoc">
-          <label >Fallecimiento</label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 4)" id="file4" accept="application/pdf,image/jpeg,image/png">
-            <label class="targetFile" ><span class="elip">{{arrayFiles[3].label}}</span></label>
-            <label class="buttonFile" for="file4"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[3].id > 0 ? donwloadPdf(arrayPdf[3].id, 'FALL_RFC', arrayPdf[3].tipoArchivo) : null">{{arrayPdf[3].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[3].id && llenarForm" class="form-text text-danger"> Debe ingresar acta de fallecimiento</small>
-        </div>
-
-      </td>
-
-      <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Siniestro de Vida'" >
-        <div class="loadDoc">
-          <label >Invalidez total</label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file" (change)="getArchivo($event.target.files, 8)" id="file8" accept="application/pdf,image/jpeg,image/png">
-            <label class="targetFile" ><span class="elip">{{arrayFiles[7].label}}</span></label>
-            <label class="buttonFile" for="file4"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[7].id > 0 ? donwloadPdf(arrayPdf[7].id, 'FALL_RFC', arrayPdf[7].tipoArchivo) : null">{{arrayPdf[7].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[7].id && llenarForm" class="form-text text-danger"> Debe ingresar acta de invalidez total</small>
-        </div>
-
-      </td>
-
-      <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total' || solicitud.tipoTramite === 'Retiro Parcial'">
-        <div class="loadDoc">
-          <label >Comprobante de domicilio (No mayor a tres meses)</label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file"  (change)="getArchivo($event.target.files, 5)" id="file5" accept="application/pdf,image/jpeg,image/png">
-            <label class="targetFile" ><span class="elip">{{arrayFiles[4].label}}</span></label>
-            <label class="buttonFile" for="file5"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[4].id > 0 ? donwloadPdf(arrayPdf[4].id, 'COMDOM_RFC', arrayPdf[4].tipoArchivo) : null">{{arrayPdf[4].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[4].id && llenarForm" class="form-text text-danger"> Debe ingresar su comprobante de domicilio</small>
-        </div>
-
-      </td>
-
-      <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total' || solicitud.tipoTramite === 'Retiro Parcial'">
-        <div class="loadDoc">
-          <label >Estado de cuenta (a nombre del Asegurado titular)</label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[5].id && llenarForm" (change)="getArchivo($event.target.files, 6)" id="file6" accept="application/pdf,image/jpeg,image/png">
-            <label class="targetFile" ><span class="elip">{{arrayFiles[5].label}}</span></label>
-            <label class="buttonFile" for="file6"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[5].id > 0 ? donwloadPdf(arrayPdf[5].id, 'EDO_RFC', arrayPdf[5].tipoArchivo) : null">{{arrayPdf[5].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[5].id && llenarForm" class="form-text text-danger"> Debe ingresar su estado de cuenta</small>
-        </div>
-      </td>
-
-      <td class="widthTd"  *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Complementario' || solicitud.tipoTramite === 'Aclaracion'" >
-        <div class="loadDoc">
-          <label >Sustento en el cual observe la diferencia (Estado de cuenta APVIDA) </label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[6].id && llenarForm" (change)="getArchivo($event.target.files, 7)" id="file7" accept="application/pdf,image/jpeg,image/png">
-            <label class="targetFile" ><span class="elip">{{arrayFiles[6].label}}</span></label>
-            <label class="buttonFile" for="file7"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[6].id > 0 ? donwloadPdf(arrayPdf[6].id, 'SUSTENTO_RFC', arrayPdf[6].tipoArchivo) : null">{{arrayPdf[6].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[6].id && llenarForm" class="form-text text-danger"> Debe ingresar el sustento</small>
-        </div>
-      </td>
-
-      <td class="widthTd" *ngIf="!mostrar && solicitud.tipoTramite === 'Retiro Total' || solicitud.tipoTramite === 'Retiro Parcial'">
-        <div class="loadDoc">
-          <label >Formato de Solicitud de Pago de la Aseguradora Patrimonial Vida (llenada y firmada) </label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[8].id && llenarForm" (change)="getArchivo($event.target.files, 9)" id="file8" accept="application/pdf,image/jpeg,image/png" required>
-            <label class="targetFile" ><span class="elip">{{arrayFiles[8].label}}</span></label>
-            <label class="buttonFile" for="file8"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[8].id > 0 ? donwloadPdf(arrayPdf[8].id, 'FORMATO_SOLICITUD', arrayPdf[8].tipoArchivo) : null">{{arrayPdf[8].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[8].id && llenarForm" class="form-text text-danger"> Debe ingresar el sustento</small>
-        </div>
-      </td>
-
-      <td class="widthTd" [class.noVisible]=" !isExterno && isComercial && solicitud.statusSolicitud === 'En proceso' ? true : !isExterno && isSiniestros && solicitud.statusSolicitud === 'En proceso' ? true : false"  *ngIf="!mostrar && !isExterno && solicitud.statusSolicitud === 'En proceso' || solicitud.statusSolicitud === 'Terminada' ? true : !mostrar && isExterno && solicitud.statusSolicitud === 'Terminada'">
-        <div class="loadDoc">
-          <label >Formato de Finiquito</label>
-          <div class="cont-inputFile">
-            <input class="fileinput" type="file" [class.is-invalid]="!arrayPdf[9].id && llenarForm" (change)="getArchivo($event.target.files, 10)" id="file9" accept="application/pdf,image/jpeg,image/png" required>
-            <label class="targetFile" ><span class="elip">{{arrayFiles[9].label}}</span></label>
-            <label class="buttonFile"  for="file9"><span>...</span></label>
-          </div>
-          <div class="docButton" (click)="arrayPdf[9].id > 0 ? donwloadPdf(arrayPdf[9].id, 'FORMATO_FINIQUITO', arrayPdf[9].tipoArchivo) : null">{{arrayPdf[9].id > 0 ? 'Ver documento' : ''}}</div>
-          <small *ngIf="!arrayPdf[9].id && llenarForm" class="form-text text-danger"> Debe ingresar el finiquito</small>
-        </div>
-      </td>
-
       <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'">
       </div>
 
       <div class="row g-2" *ngIf="!mostrar">
-        <div class="col-md">
-            <div class="form-floating m-1">
-              <select class="form-select" [class.is-invalid]="tipoPago.invalid && tipoPago.touched" [(ngModel)]="solicitud.tipoPago" name="tipoPago" #tipoPago="ngModel" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" required>
-                <option selected > Seleccionar un tipo </option>
-                <option *ngFor="let optionsTipoPagos of optionsTipoPago" [value]="optionsTipoPagos.name" > {{ optionsTipoPagos.name }} </option>
-              </select>
-              <label>Tipo de pago</label>
-               <small *ngIf="tipoPago.invalid && tipoPago.touched" class="form-text text-danger"> Debe ingresar un pago valido</small>
-            </div>
-        </div>
-        <div class="col-md" *ngIf="solicitud.tipoPago === 'Transferencia bancaria'" >
-            <div class="form-floating m-1">
-                <select class="form-select" [class.is-invalid]="idBanco.invalid && idBanco.touched" [(ngModel)]="solicitud.idBanco" name="idBanco" #idBanco="ngModel" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" required>
+          <div class="col-md">
+              <div class="form-floating m-1">
+                <select class="form-select" [class.is-invalid]="tipoPago.invalid && tipoPago.touched" [(ngModel)]="solicitud.tipoPago" name="tipoPago" #tipoPago="ngModel" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" required>
                   <option selected > Seleccionar un tipo </option>
-                  <option *ngFor="let optionsBancos of optionsBanco" [value]="optionsBancos.extras.id" > {{ optionsBancos.name }} </option>
+                  <option *ngFor="let optionsTipoPagos of optionsTipoPago" [value]="optionsTipoPagos.name" > {{ optionsTipoPagos.name }} </option>
                 </select>
-                <label> Banco </label>
-                <small *ngIf="idBanco.invalid && idBanco.touched" class="form-text text-danger"> Debe ingresar un banco valido</small>
-            </div>
-        </div>
-
-        <div class="col-md"  *ngIf="solicitud.tipoPago === 'Transferencia bancaria'">
-          <div class="form-floating m-1">
-            <input class="form-control" type="text" id="floatingInputGridClabe" [class.is-invalid]=" clabe.invalid && clabe.touched " [(ngModel)]="solicitud.clabe" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="clabe" #clabe="ngModel" pattern="[0-9]{18,18}"  minlength="18" maxlength="18" required >
-            <label for="floatingInputGridClabe">CLABE</label>
-             <small *ngIf="clabe.invalid && clabe.touched" class="form-text text-danger"> Debe ingresar una clabe valida</small>
+                <label>Tipo de pago</label>
+                <small *ngIf="tipoPago.invalid && tipoPago.touched" class="form-text text-danger"> Debe ingresar un pago valido</small>
+              </div>
           </div>
-        </div>
+          <div class="col-md" *ngIf="solicitud.tipoPago === 'Transferencia bancaria'" >
+              <div class="form-floating m-1">
+                  <select class="form-select" [class.is-invalid]="idBanco.invalid && idBanco.touched" [(ngModel)]="solicitud.idBanco" name="idBanco" #idBanco="ngModel" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" required>
+                    <option selected > Seleccionar un tipo </option>
+                    <option *ngFor="let optionsBancos of optionsBanco" [value]="optionsBancos.extras.id" > {{ optionsBancos.name }} </option>
+                  </select>
+                  <label> Banco </label>
+                  <small *ngIf="idBanco.invalid && idBanco.touched" class="form-text text-danger"> Debe ingresar un banco valido</small>
+              </div>
+          </div>
+
+          <div class="col-md"  *ngIf="solicitud.tipoPago === 'Transferencia bancaria'">
+              <div class="form-floating m-1">
+                <input class="form-control" type="text" id="floatingInputGridClabe" [class.is-invalid]=" clabe.invalid && clabe.touched " [(ngModel)]="solicitud.clabe" [disabled]="solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' && solicitud.idSolicitud !== 0 && solicitud.statusSolicitud !== 'Falta de información'" name="clabe" #clabe="ngModel" pattern="[0-9]{18,18}"  minlength="18" maxlength="18" required >
+                <label for="floatingInputGridClabe">CLABE</label>
+                <small *ngIf="clabe.invalid && clabe.touched" class="form-text text-danger"> Debe ingresar una clabe valida</small>
+              </div>
+          </div>
       </div>
 
       <div class=" obsText">
@@ -416,10 +752,11 @@
           <label >{{solicitud.statusSolicitud === '' || solicitud.statusSolicitud == undefined  ? 'Nueva' : solicitud.statusSolicitud }}</label>
         </div>
       </div>
-        <div class="form-floating" *ngFor="let item of solicitud.listObs | reverse; let i = index">
-          <textarea class="form-control text-center" id="floatingTextarea" disabled> {{ item.observacion }} </textarea>
-          <label for="floatingTextarea" > <strong> {{item.fechaCreacion}} - Observaciones del Analista </strong> </label>
-      </div>
+    </div>
+
+    <div class="form-floating" *ngFor="let item of solicitud.listObs | reverse; let i = index">
+        <textarea class="form-control text-center" id="floatingTextarea" disabled> {{ item.observacion }} </textarea>
+        <label for="floatingTextarea" > <strong> {{item.fechaCreacion}} - Observaciones del Analista </strong> </label>
     </div>
 
     <div class="d-grid gap-2 d-md-block text-center" *ngIf="solicitud.idSolicitud === 0" >
@@ -435,16 +772,21 @@
         </button> -->
        <small *ngIf="llenarForm && forma.invalid" class="form-text text-danger"> Debe completar el registro</small>
     </div>
-    <div class="d-grid gap-2 d-md-block text-center" *ngIf="solicitud.statusSolicitud === 'PENDIENTE DE DOCS' || solicitud.statusSolicitud === 'Falta de información'">
+    <div class="d-grid gap-2 d-md-block text-center mb-5 mt-5" *ngIf="solicitud.statusSolicitud === 'PENDIENTE DE DOCS' || solicitud.statusSolicitud === 'Falta de información'">
         <button  type="submit" class="btn btn-primary button rounded p-2 m-2">
           Actualizar solicitud
         </button>
     </div>
-    <div class="d-grid gap-2 d-md-block text-center" [class.noVisible]=" !isExterno && isComercial && solicitud.statusSolicitud === 'En proceso' ? true : !isExterno && isSiniestros && solicitud.statusSolicitud === 'En proceso' ? true : false" *ngIf="!arrayPdf[9].id && !isExterno && solicitud.statusSolicitud === 'En proceso'">
+    <div class="d-grid gap-2 d-md-block text-center" [class.noVisible]=" !isExterno && isComercial && solicitud.statusSolicitud === 'En proceso' ? true : false" *ngIf="!arrayPdf[9].id && isComercial && solicitud.statusSolicitud === 'En proceso' || !arrayPdf[9].id && solicitud.idSolicitud > 0 && isPuebla || !arrayPdf[9].id && solicitud.idSolicitud > 0 && isFonacot">
       <button  type="submit" class="btn btn-primary button rounded p-2 m-2">
         Guardar Documento
       </button>
-  </div>
+    </div>
+    <div class="d-grid gap-2 d-md-block text-center" [class.noVisible]="isSiniestros ? true : false" *ngIf="!arrayPdf[9].id && isSiniestros && solicitud.statusSolicitud !== 'Terminada' && solicitud.statusSolicitud !== 'Nueva' && solicitud.statusSolicitud !== 'Falta de información' && solicitud.statusSolicitud !== 'Rechazada' && solicitud.statusSolicitud !== 'PENDIENTE DE DOCS'" >
+      <button  type="submit" class="btn btn-primary button rounded p-2 m-2">
+        Guardar Documento
+      </button>
+    </div>
 </form>
 
 </div>

@@ -44,6 +44,9 @@
       <div class="col-6">
         <div class="export-title2">
           <div class="containerTabs-title">
+            <button class="btn titleAdmin border-bottom-0" (click)="back('asegurado')" >
+              <span>Asegurados</span>
+            </button>
             <div *ngIf="isComercial!" >
               <button class="btn titleAdmin border-bottom-0" [ngClass]="showList == 1 ? 'btn-paginador' : 'titleAdmin'" >
                  Mis solicitudes
@@ -52,9 +55,9 @@
             <button class="btn titleAdmin border-bottom-0" (click)="back('solicitudes')" >
               Todas las solicitudes
            </button>
-            <button class="btn titleAdmin border-bottom-0" (click)="back('asegurado')" >
-              <span>Asegurados</span>
-            </button>
+           <button *ngIf="!isContabilidad" class="btn border border-dark border-bottom-0" [class.btn-light]="classRutaBtn === 'dashboard-analista'" (click)="back('aclaraciones')">
+            <span>Aclaraciones</span>
+          </button>
             <!-- <button class="btn border-bottom-0" [ngClass]="showList == 2 ? 'btn-paginador' : 'titleAdmin'" (click)="showLists(2)" *ngIf="isContabilidad">Archivos Descargados</button> -->
           </div>
         </div>

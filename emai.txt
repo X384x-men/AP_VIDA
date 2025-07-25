@@ -1,0 +1,49 @@
+CREATE TABLE IF NOT EXISTS `ap`.`email` (
+  `idemail` BIGINT(20) NOT NULL,
+  `rfc` VARCHAR(45) NULL DEFAULT NULL,
+  `correo` VARCHAR(45) NULL DEFAULT NULL,
+  `nombre` VARCHAR(45) NULL DEFAULT NULL,
+  `estatus` BINARY(1) NULL DEFAULT NULL,
+  `fechaCorreo` DATETIME NULL DEFAULT now(),
+  `numeroResgistro` VARCHAR(45) NULL DEFAULT NULL,
+  `evento_idevento` BIGINT(20) NULL DEFAULT NULL,
+  `Aclaracion_idAclaracion` BIGINT(20) NULL DEFAULT NULL,
+  `solicitud_idSolicitud` BIGINT(20) NULL DEFAULT NULL,
+  PRIMARY KEY (`idemail`),
+  INDEX `fk_email_evento1_idx` (`evento_idevento` ASC),
+  INDEX `fk_email_Aclaracion1_idx` (`Aclaracion_idAclaracion` ASC),
+  INDEX `fk_email_solicitud1_idx` (`solicitud_idSolicitud` ASC),
+  CONSTRAINT `fk_email_evento1`
+    FOREIGN KEY (`evento_idevento`)
+    REFERENCES `ap`.`evento` (`idevento`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_email_Aclaracion1`
+    FOREIGN KEY (`Aclaracion_idAclaracion`)
+    REFERENCES `ap`.`Aclaracion` (`idAclaracion`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_email_solicitud1`
+    FOREIGN KEY (`solicitud_idSolicitud`)
+    REFERENCES `ap`.`solicitud` (`idSolicitud`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_general_ci
+
+
+ALTER TABLE `ap`.`email` 
+CHANGE COLUMN `idemail` `idemail` BIGINT(20) NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `fechaCorreo` `fechaCorreo` DATETIME NULL DEFAULT now() ;
+
+ALTER TABLE `ap`.`email` 
+DROP COLUMN `numeroResgistro`,
+ADD COLUMN `numeroRegistro` VARCHAR(45) NULL DEFAULT NULL AFTER `fechaCorreo`,
+CHANGE COLUMN `fechaCorreo` `fechaCorreo` DATETIME NULL DEFAULT now() ;
+
+ALTER TABLE `ap`.`email` 
+ADD COLUMN `tipo` VARCHAR(45) NULL DEFAULT NULL AFTER `solicitud_idSolicitud`;
+
+ALTER TABLE `ap`.`email` 
+ADD COLUMN `fechaSucess` DATETIME NULL DEFAULT NULL AFTER `tipo`;

@@ -1,0 +1,112 @@
+<div class="main-ap custom-background" [style.background-image]="'url('+apvidaBackground+')'">
+    <div class="body-admin">
+      <label class="titleDashboardSolic">{{ isPuebla ? 'Ejecutivo de atención' : ''}} <b>FONACOT</b></label>
+
+      <div class="container">
+        <div class="text-center mb-3 mt-3">
+          <div class="row g-3 align-items-center">
+            <div class="col-2">
+              <label for="inputPassword6" class="col-form-label">Nombre</label>
+            </div>
+            <div class="col-10">
+              <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Nombre" [(ngModel)]='solicitud.nombre'>
+            </div>
+            <div class="col-2">
+              <label for="inputPassword6" class="col-form-label">RFC</label>
+            </div>
+            <div class="col-10">
+              <input class="form-control" type="text" placeholder="RFC" name="rfc" [(ngModel)]='solicitud.RFC' >
+            </div>
+            <div class="col-2">
+              <label for="inputPassword6" class="col-form-label">Tipo</label>
+            </div>
+            <div class="col-10">
+              <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedTipoTramite  (click)=onSelectedTipoTramite(mySelectedTipoTramite.value)>
+                <option selected> - Seleccionar un opción -  </option>
+                <option *ngFor="let tipoTramite of optionsTipoTramite"[value]="tipoTramite.name">{{tipoTramite.name}}</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-busqueda mt-3" type="button" (click)="filter()" ><strong class="me-1" >Buscar</strong><i class="fa fa-solid fa-magnifying-glass"></i> </button>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-6">
+          <div class="export-title2">
+            <div class="containerTabs-title">
+              <!-- Vacio para usar a futuro -->
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="botones-accion" >
+            <button class="btn btn-busqueda" (click)="downloadSolicitudBatch()" [disabled]="solicitudes.length < 1" >
+              <i class="fa fa-download" aria-hidden="true"></i>
+               Descargar solicitudes
+             </button>
+            <button class="btn btn-busqueda" (click)="addSolicitud()">
+              <i class="fas fa-sticky-note"></i>
+              Nueva solicitud
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="solicitudes.length < 1" class=" text-center animate__animated animate__flash animate__infinite	infinite animate__slow">
+        <i  class="fa fa-spinner fa-spin fa-4x mt-5 " aria-hidden="true"></i>
+      </div>
+
+    <!-- Tabla con paginación y filtro nueva -->
+    <div class="result-body">
+        <mat-form-field>
+          <mat-label> <strong>*Filtrar busqueda</strong> </mat-label>
+          <input class="w-12" matInput (keyup)="applyFilter($event)" #input>
+        </mat-form-field>
+      <!-- Tabla Ejecutivo -->
+      <div *ngIf="isPuebla">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort >
+          <tr mat-header-row *matHeaderRowDef="['Folio','rfcAsegurado', 'nombre','Fecha de alta', 'Estatus', 'Tipo Solicitud', 'Solicitud']"></tr>
+          <tr mat-row *matRowDef="let row; columns:['Folio','rfcAsegurado', 'nombre','Fecha de alta', 'Estatus', 'Tipo Solicitud', 'Solicitud'];"  ></tr>
+          <ng-container matColumnDef="Folio">
+            <th mat-header-cell *matHeaderCellDef>Folio</th>
+            <td mat-cell *matCellDef="let element">{{element.idSolicitud}} <td>
+          </ng-container>
+          <ng-container matColumnDef="rfcAsegurado">
+            <th mat-header-cell *matHeaderCellDef>RFC</th>
+            <td mat-cell *matCellDef="let element">{{element.rfcAsegurado}} </td>
+          </ng-container>
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef >Nombre</th>
+            <td mat-cell *matCellDef="let element">{{element.nombre}} {{ element.apellidoPaterno }} </td>
+          </ng-container>
+          <ng-container matColumnDef="Fecha de alta">
+            <th mat-header-cell *matHeaderCellDef >Fecha alta</th>
+            <td mat-cell *matCellDef="let element">{{element.fechaSolicitud}}</td>
+          </ng-container>
+          <ng-container matColumnDef="Estatus">
+            <th mat-header-cell *matHeaderCellDef>Estatus de Solicitud</th>
+            <td mat-cell *matCellDef="let element">{{element.statusSolicitud}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Tipo Solicitud">
+            <th mat-header-cell *matHeaderCellDef >Tipo de Solicitud</th>
+            <td mat-cell *matCellDef="let element">{{element.tipoTramite}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Solicitud">
+            <th mat-header-cell *matHeaderCellDef>Opción</th>
+            <td mat-cell *matCellDef="let element">
+              <i class="material-icons iconDashboardAp"
+              data-toggle="tooltip" data-placement="top" [title]="'Detalle'" (click)="verDetalleSolicitud(element)" >
+              launch
+              </i> Ver solicitud
+            </td>
+          </ng-container>
+        </table>
+        <mat-paginator class="h-50" pageSize="5" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+      </div>
+      <section style="display: flex; flex-direction: column; align-items: center; opacity: 0.7; padding: 16px;" *ngIf="!solicitudes">
+        <h2>Aquí serán mostradas las solicitudes </h2>
+        <p>Cargando...</p>
+      </section>
+    </div>
+   </div>
+  </div>

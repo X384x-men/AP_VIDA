@@ -68,6 +68,7 @@ export class MainFormActualizaSolicitudComponent implements OnInit {
     fechaImporteContable: moment().format('YYYY-MM-DD HH:mm:ss'),
     estPagRechPen: '',
     numChequeTransf: 0,
+    numOrdenPagoSise:0,
     obsSiniestros: '',
     faltanteAPagar: '',
     valorQuincValidar: '',
@@ -118,12 +119,15 @@ export class MainFormActualizaSolicitudComponent implements OnInit {
   isSiniestros = false;
   isContabilidad = false;
   isExterno = false;
-
+  waitCategoria : string;
   observacionDoc = '';
+  isPuebla: boolean;
+  isFonacot: boolean;
 
   constructor(private router: Router, @Inject('ServiceResource') private subResourceService: SubResourceService<any>, private _activatedRoute: ActivatedRoute, private _location: Location) {
     this.idSolicitud = Number(RoutingUtilities.getParamsFromUrl(this._activatedRoute, 'solicitud'));
     this.opt = Number(RoutingUtilities.getParamsFromUrl(this._activatedRoute, 'opt'));
+    this.waitCategoria = String (RoutingUtilities.getParamsFromUrl(this._activatedRoute, 'categoria'));
 
   }
 
@@ -131,25 +135,35 @@ export class MainFormActualizaSolicitudComponent implements OnInit {
     this.date1 = new UntypedFormControl({ value: this.today, disabled: true });
     this.date2 = new UntypedFormControl({ value: this.today, disabled: true });
 
-    let userExterno = JSON.parse(localStorage.getItem('currentUser'));
-    let com = JSON.parse(localStorage.getItem('currentUserComercial'));
-    let sin = JSON.parse(localStorage.getItem('currentUserSiniestros'));
-    let cont = JSON.parse(localStorage.getItem('currentUserContabilidad'));
-    if(com !== null){
-      this.currentUser = com;
-      this.isComercial = true;
-    }else
-    if(sin !== null){
-      this.currentUser = sin;
-      this.isSiniestros = true;
-    }else
-    if(cont !== null){
-      this.currentUser = cont;
-      this.isContabilidad = true;
-    }else
-    if(userExterno !== null){
-      this.currentUser = userExterno;
-      this.isExterno = true;
+    let allUsuarios = [];
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUser")))
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserComercial")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserSiniestros")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserContabilidad")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserAdmin")));
+    allUsuarios.push(JSON.parse(localStorage.getItem('idCuenta')));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserPuebla")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserFunacot")));
+    this.currentUser = allUsuarios.find( (value) => value !== null );
+    switch (this.currentUser.authorities[0]['authority']) {
+        case 'ROLE_ACOME':
+          this.isComercial = true;
+        break;
+        case 'ROLE_ASINI':
+          this.isSiniestros = true;
+        break;
+        case 'ROLE_ACONT':
+          this.isContabilidad = true;
+        break;
+        case 'ROLE_PUEBLA':
+          this.isPuebla = true;
+        break;
+        case 'ROLE_FUNACOT':
+          this.isFonacot = true;
+        break;
+      default:
+        //this.AuthenticationService.validacionUser();
+        break;
     }
 
     this.optionsTipoTramite = Smartwfm.createSelectOptions(this.dataEstatus, 'data');
@@ -159,9 +173,10 @@ export class MainFormActualizaSolicitudComponent implements OnInit {
 
 
   getSolicitud(){
-    this.subResourceService.read(SolicitudVariable.GET_SOLICITUD, {idSolicitud: this.idSolicitud})
+    this.subResourceService.read(SolicitudVariable.GET_SOLICITUD, {idSolicitud: this.idSolicitud, categoriaSolicitud: this.opt > 1 ? this.waitCategoria : this.isPuebla ? 'puebla' : this.isFonacot ? 'fonacot' : ''})
       .subscribe(data=>{
         this.solicitud = data;
+        this.solicitud.tipoSolicitud = this.waitCategoria === 'null' ? '' : this.waitCategoria;
         this.buildArrayPdf(data.documentos);
       }, error=>{
         console.log(error);
@@ -193,6 +208,7 @@ export class MainFormActualizaSolicitudComponent implements OnInit {
         formData.append('tipoAccion', this.arrayPdf[index].id > 0 ? '2': '1');
         formData.append('idDocumento', this.arrayPdf[index].id.toString());
         formData.append('tipoArchivo', tipo);
+        formData.append('categoriaSolicitud', this.solicitud.tipoSolicitud);
         this.subResourceService.readPostMultipart( SolicitudVariable.DOCUMENTO_SOLICITUD, formData)
         .subscribe((response : any) => {
 
@@ -270,38 +286,21 @@ export class MainFormActualizaSolicitudComponent implements OnInit {
       let obs = {
         fechaCreacion: moment().format('YYYY-MM-DD HH:mm:ss'),
         observacion: this.observacionDoc,
-        idSolicitud: this. solicitud.idSolicitud
+        idSolicitud: this. solicitud.idSolicitud,
+        categoriaSolicitud: this.solicitud.tipoSolicitud
       };
-      this.crearObservacion(obs, status);
+      let params = this.solicitud.tipoSolicitud;
+      this.crearObservacion(obs, status, params);
   }
 
-  crearObservacion(obs, status : string){
-    this.subResourceService.create(obs, SolicitudVariable.CREAR_OBSERVACION)
+  crearObservacion(obs, status : string, params: string){
+    this.subResourceService.create(obs, SolicitudVariable.CREAR_OBSERVACION, {categoriaSolicitud: params})
       .subscribe(data=>{
         this.changeStatusDoc(status);
       }, error=>{
         console.log({error});
       });
   }
-
-  // La api esta mala, ya que da error de respuesta 'Comentado por fernando'
-  // cancelSolicitud(){
-  //   this.question('¿Estas seguro que quieres cancelar la solicitud?').then(data=>{
-  //     if(data){
-  //       this.solicitud.statusSolicitud = 'Cancelada';
-  //       console.log(this.solicitud);
-  //       this.subResourceService.create(this.solicitud, SolicitudVariable.UPDATE_STATUS_SOLICITUD)
-  //       .subscribe(data=>{
-  //         console.log('pase la actualizacion');
-  //         swal('Éxito', data.message, 'success')
-  //         this.end();
-  //       }, error=>{
-  //         console.log({error});
-  //       });
-  //     }
-  //   });
-  // }
-
 
   changeStatusProcesoPago(){
     // this.solicitud.isValid --> solicitdaba esta informacion, que no llega aca
@@ -397,10 +396,11 @@ export class MainFormActualizaSolicitudComponent implements OnInit {
       //   swal('Información', 'Debe llenar todos los campos, solo las observaciones y el número de cheque no son obligatorios', 'info');
       // }
 
-      if ( !this.arrayPdf[9].id ) {
+      if( status !== 'Rechazada' && !this.arrayPdf[9].id){
         swal( '¡Atención!', 'Debes guardar el documento de FINIQUITO', 'warning' );
         return;
       }
+
 
       this.question('¿Estas seguro que quieres poner en estatus ' + status + ' la solicitud?. ¡NO SE PODRA SEGUIR ANALIZANDO!').then(data=>{
           if(data){

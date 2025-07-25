@@ -13,6 +13,8 @@ import { EmpleadoVariable, GlobalVariable, UsuarioAcceso} from "src/app/core/sta
 import { downloadCSV } from "src/app/core/Util/download-file";
 import { Smartwfm } from "src/app/core/Util/smartwfm/smartwfm";
 import { DependenciesService } from "src/app/shared/services/dependencies.service";
+import { AuthenticationService } from "src/app/core/services/authentication-service/authentication.service";
+import { ExcelService } from "src/app/core/services/excel-service/excel-service.service";
 
 @Component({
   selector: "app-main-dashboard-analistas",
@@ -111,7 +113,9 @@ export class MainDashboardAnalistasComponent implements OnInit, AfterViewInit {
     private subResourceService: SubResourceService<any>,
     private dependencies_: DependenciesService,
     private announcer: LiveAnnouncer,
-    private _activateddRoute : ActivatedRoute
+    private _activateddRoute : ActivatedRoute,
+    private AuthenticationService : AuthenticationService,
+    private excelService: ExcelService
   ) {
     this.classRutaBtn = this._activateddRoute.snapshot.url[0].path ;
   }
@@ -122,26 +126,33 @@ export class MainDashboardAnalistasComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.userApp = JSON.parse(localStorage.getItem("currentUserAdmin"));
-
     this.initOptionDependencias();
 
-    let userExterno = JSON.parse(localStorage.getItem("currentUser"));
-    let com = JSON.parse(localStorage.getItem("currentUserComercial"));
-    let sin = JSON.parse(localStorage.getItem("currentUserSiniestros"));
-    let cont = JSON.parse(localStorage.getItem("currentUserContabilidad"));
-    if (com !== null) {
-      this.currentUser = com;
-      this.isComercial = true;
-    } else if (sin !== null) {
-      this.currentUser = sin;
-      this.isSiniestros = true;
-    } else if (cont !== null) {
-      this.currentUser = cont;
-      this.isContabilidad = true;
-    } else if (userExterno !== null) {
-      this.currentUser = userExterno;
-      this.isExterno = true;
+    let allUsuarios = [];
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUser")))
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserComercial")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserSiniestros")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserContabilidad")));
+    allUsuarios.push(JSON.parse(localStorage.getItem("currentUserAdmin")));
+    allUsuarios.push(JSON.parse(localStorage.getItem('idCuenta')));
+    this.userApp = allUsuarios.find( (value) => value !== null );
+    switch (this.userApp.authorities[0]['authority']) {
+        case 'ROLE_ACOME':
+          this.currentUser = this.userApp;
+          this.isComercial = true;
+        break;
+        case 'ROLE_ASINI':
+          this.currentUser = this.userApp;
+          this.isSiniestros = true;
+        break;
+        case 'ROLE_ACONT':
+          this.currentUser = this.userApp;
+          this.isContabilidad = true;
+        break;
+
+      default:
+        this.AuthenticationService.validacionUser();
+        break;
     }
   }
 
@@ -280,21 +291,22 @@ export class MainDashboardAnalistasComponent implements OnInit, AfterViewInit {
     let arrayReporte = [];
     this.empleados.forEach((item, index) => {
       let data = {
-        Nombre:
-          item.nombre + " " + item.apellidoPaterno + " " + item.apellidoMaterno,
+        Nombre: item.nombre + " " + item.apellidoPaterno + " " + item.apellidoMaterno,
         RFC: item.rfc,
-        "E-mail": item.mail,
-        "Numero de Empleado": item.noEmpleado,
+        Email: item.mail,
+        Status: item.estatus === 1 ? "Activo" : "Inactivo",
+        NumeroDeEmpleado: item.noEmpleado,
         Dependencia: item.dependenciaCatalogo,
-        "Unidad Administrativa": item.unidadCatalogo,
-        Sexo: item.sexo,
+        UnidadAdministrativa: item.unidadCatalogo,
+        FechaDeNacimiento: item.fechaNacimiento ? moment(item.fechaNacimiento).format('DD/MM/YYYY') : '',
+        Sexo: item.sexo !== "1" ? item.sexo : item.sexo !== "0" ? item.sexo : item.sexo === "1" ? "" : item.sexo === "0" ? "" : "",
+        FechaDeAlta: item.fechaCreacion ? moment(item.fechaCreacion).format('DD/MM/YYYY') : '',
       };
       arrayReporte.push(data);
     });
-    downloadCSV("Reporte_Empleados_" + moment().format("YYYY-MM-DD"), arrayReporte);
+    this.excelService.exportAsExcelFile(arrayReporte, "Reporte_Empleados_" + moment().format("YYYY-MM-DD"));
+    swal('Éxito', 'Se generó correctamente la descarga de empleados', 'success');
   }
-
-
 
   changeEstatus(item, estatus) {
     item.fechaCambioEstatus = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -326,6 +338,8 @@ export class MainDashboardAnalistasComponent implements OnInit, AfterViewInit {
       this.router.navigate(['/angular/dashboard-analista']);
     }else if( ruta === 'analista' ){
       this.router.navigate(['/angular/dashboard-all-analista']);
+    }else if( ruta === 'aclaraciones' ){
+      this.router.navigate(['/angular/main-aclaraciones']);
     }
   }
 }

@@ -35,7 +35,6 @@ export class AuthInterceptorService implements HttpInterceptor {
         retry(1),
         catchError((error: HttpErrorResponse) => {
           let errorMessage = '';
-          console.log(error);
           if (error.error instanceof ErrorEvent) {
             // Front error
             errorMessage = `Error: ${error.error.message}`;
@@ -46,16 +45,16 @@ export class AuthInterceptorService implements HttpInterceptor {
           }
           else if (error.url.search('logout') > 0) {
             this.modal.danger('Error', 'Debes iniciar sesion')
-            this.authenticationService.logout(this.router, this.activatedRouter);
+            this.authenticationService.logout(this.router, this.activatedRouter, false);
             return throwError(errorMessage);
           } else if (error.error.sucessMessage && error.error.sucessMessage.length > 0) {
             errorMessage = error.error.sucessMessage;
           } else if (UNAUTHORIZED_VIEW === error.status || UNAUTHORIZED_SECTION === error.status) {
-            this.authenticationService.logout(this.router, this.activatedRouter);
+            this.authenticationService.logout(this.router, this.activatedRouter, false);
             const message = this.getMessageError(error);
             errorMessage = !message || message === null ? 'Operacion no autorizada' : message;
           } else if (SESSION_EXPIRED === error.status || error.status === 0){
-            this.authenticationService.logout(this.router, this.activatedRouter);
+            this.authenticationService.logout(this.router, this.activatedRouter, false);
             errorMessage = 'La sesión ha caducado, por favor vuelva a introducir su usuario y contraseña';
           } else {
             // server-side error

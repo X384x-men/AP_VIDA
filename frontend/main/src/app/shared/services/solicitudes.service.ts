@@ -1,20 +1,15 @@
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { Injectable,Inject } from "@angular/core";
-import { Observable } from "rxjs";
-import { Dependency } from "../interfaces/dependency.interface";
-import { GlobalVariable, ObtencionCatalogos } from "src/app/core/static/variables/url/URLImages";
- import { SubResourceService } from "src/app/core/services/service-crud-operations/sub-resource.service";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { GlobalVariable } from "src/app/core/static/variables/url/URLImages";
 
 @Injectable({ providedIn: "root" })
 export class SolicitudesServices {
   private url = GlobalVariable.URL_SERVICES + '/solicitud';
 
-  constructor(private httpClient: HttpClient,
-    @Inject("ServiceResource")
-    private subResourceService: SubResourceService<any>) { }
+  constructor(private httpClient: HttpClient) { }
 
     reAsignarSolicitud(idSolicitud : number, rfc : string) {
-      const parametross = new HttpParams().set( 'idSolicitud', idSolicitud ).set('RFCEmpleado', rfc);
+      const parametross = new HttpParams().set( 'idSolicitud', idSolicitud ).set('RFCEmpleado', rfc).set( 'tipoSolictud', '' );
         return this.httpClient.post(`${this.url}/asignaSolicitud`, parametross);
     }
 

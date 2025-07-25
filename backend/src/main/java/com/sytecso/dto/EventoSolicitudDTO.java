@@ -14,6 +14,15 @@ public class EventoSolicitudDTO implements Serializable {
 	private String tipo;
 	private String fecha;
 	private String descripcion;
+	private String claseSolicitud;
+	
+	
+	public String getClaseSolicitud() {
+		return claseSolicitud;
+	}
+	public void setClaseSolicitud(String claseSolicitud) {
+		this.claseSolicitud = claseSolicitud;
+	}
 	public String getFecha() {
 		return fecha;
 	}

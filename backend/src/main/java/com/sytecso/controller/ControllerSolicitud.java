@@ -1,6 +1,7 @@
 package com.sytecso.controller;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Base64;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -38,14 +39,14 @@ public class ControllerSolicitud {
 	@PostMapping(value = "/crearSolicitud")
 	public ResponseEntity<SolicitudAPDTO> crearSolicitud(@RequestBody SolicitudAPDTO solicitud)
 			throws Exception {
-		List<SolicitudAPDTO> solicitudes = serviceSolicitud.getValidarSolicitudRFC(solicitud.getRfcGEM());
+		List<SolicitudAPDTO> solicitudes = serviceSolicitud.getValidarSolicitudRFC(solicitud.getRfcGEM(),solicitud.getTipoSolicitud());
 		if(solicitudes.size() > 0) {
 			return new ResponseEntity<>(solicitudes.get(0), HttpStatus.OK);
 		}else {
 			solicitud = serviceSolicitud.crearSolicitud(solicitud);
 			solicitud.setSolicActiva(false);
 			if (solicitud != null && solicitud.getIdSolicitud() > 0L) {
-				solicitud.setNumeroRegistro(serviceSolicitud.getSolicitud(solicitud.getIdSolicitud()).getNumeroRegistro());
+				solicitud.setNumeroRegistro(serviceSolicitud.getSolicitud(solicitud.getIdSolicitud(),solicitud.getTipoSolicitud()).getNumeroRegistro());
 				return new ResponseEntity<>(solicitud, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(solicitud,
@@ -57,8 +58,8 @@ public class ControllerSolicitud {
 	
 	@PostMapping(path = "/documentoSolicitud")
 	public ResponseEntity<Long> documentoSolicitud(@RequestParam("documento") MultipartFile file,
-			 String fechaCreacion, int tipoDocumento, long idSolicitud, int tipoAccion, long idDocumento, int tipoArchivo) {
-		long id = serviceSolicitud.subirDocumento(file, fechaCreacion, tipoDocumento, idSolicitud, tipoAccion, idDocumento, tipoArchivo);
+			 String fechaCreacion, int tipoDocumento, long idSolicitud, int tipoAccion, long idDocumento, int tipoArchivo, @RequestParam(name= "categoriaSolicitud") String categoriaSolicitud) {
+		long id = serviceSolicitud.subirDocumento(file, fechaCreacion, tipoDocumento, idSolicitud, tipoAccion, idDocumento, tipoArchivo, categoriaSolicitud);
 		if (id > 0L) {
 			return new ResponseEntity<Long>(id, HttpStatus.OK);
 		} else {
@@ -69,8 +70,8 @@ public class ControllerSolicitud {
 	
 	@GetMapping(value = "/getSolicitud")
 	public ResponseEntity<SolicitudAPDTO> getSolicitud(@RequestParam(
-			name = "idSolicitud") long idSolicitud) throws Exception {
-		SolicitudAPDTO solicitud = serviceSolicitud.getSolicitud(idSolicitud);
+			name = "idSolicitud") long idSolicitud, @RequestParam(name ="categoriaSolicitud") String categoriaSolicitud) throws Exception {
+		SolicitudAPDTO solicitud = serviceSolicitud.getSolicitud(idSolicitud, categoriaSolicitud);
 		if (solicitud == null) {
 			throw new RolAccesoException.NotRolesFoundException("No existen resultados");
 		}
@@ -80,8 +81,8 @@ public class ControllerSolicitud {
 	
 	@GetMapping(value = "/getSolicitudesByEmpleado")
 	public ResponseEntity<List<SolicitudAPDTO>> getSolicitudesByEmpleado(@RequestParam(
-			name = "rfc") String rfc) throws Exception {
-		List<SolicitudAPDTO> solicitudes = serviceSolicitud.getSolicitudesByIdEmpleado(rfc);
+			name = "rfc") String rfc, @RequestParam(name ="categoriaSolicitud") String categoriaSolicitud) throws Exception {
+		List<SolicitudAPDTO> solicitudes = serviceSolicitud.getSolicitudesByIdEmpleado(rfc, categoriaSolicitud);
 		if (solicitudes.size() == 0) {
 			throw new RolAccesoException.NotRolesFoundException("No existen resultados");
 		}
@@ -117,9 +118,13 @@ public class ControllerSolicitud {
 	
 	@GetMapping(value = "/getSolicitudesAnalistas")
 	public ResponseEntity<List<SolicitudAPDTO>> getSolicitudesAnalistas(@RequestParam(name = "RFC", required = false)String rfc, @RequestParam(name = "nombre", required = false) String nombre,
-			@RequestParam(name = "tramite", required = false)String tramite, @RequestParam(name = "status", required = false)String status ) throws Exception {
-		List<SolicitudAPDTO> solicitudes = serviceSolicitud.getSolicitudesAnalistas(rfc,nombre,tramite,status);
-		if (solicitudes.size() == 0) {
+			@RequestParam(name = "tramite", required = false)String tramite, @RequestParam(name = "status", required = false)String status, 
+			@RequestParam( name ="fechaIni", required = false) String fechaIni, @RequestParam( name ="fechaFin", required = false) String fechaFin,
+			@RequestParam(name ="categoriaSolicitud") String categoriaSolicitud) throws Exception {
+		List<SolicitudAPDTO> solicitudes = new ArrayList<SolicitudAPDTO>();
+		solicitudes=serviceSolicitud.getSolicitudesAnalistas(rfc,nombre,tramite,status,fechaIni, fechaFin,categoriaSolicitud);
+		
+		if ((solicitudes==null)||(solicitudes.size() == 0)) {
 			throw new RolAccesoException.NotRolesFoundException("No existen resultados");
 		} 
 		return new ResponseEntity<>(solicitudes, HttpStatus.OK);
@@ -138,9 +143,9 @@ public class ControllerSolicitud {
 	}
 	
 	@PostMapping(value = "/crearObservacion")
-	public ResponseEntity<ObservacionDTO> crearObservacion(@RequestBody ObservacionDTO observacion)
+	public ResponseEntity<ObservacionDTO> crearObservacion(@RequestBody ObservacionDTO observacion, @RequestParam(name ="categoriaSolicitud") String categoriaSolicitud)
 			throws Exception {
-		observacion.setIdObservacion(serviceSolicitud.crearObservacion(observacion));
+		observacion.setIdObservacion(serviceSolicitud.crearObservacion(observacion, categoriaSolicitud));
 		if (observacion.getIdObservacion() > 0L) {
 			return new ResponseEntity<>(observacion, HttpStatus.OK);
 		} else {
@@ -201,8 +206,8 @@ public class ControllerSolicitud {
 	
 	
 	@GetMapping(value = "/getOrdenPagoLayout")
-	public ResponseEntity<List<SolicitudAPDTO>> getOrdenPagoLayout(long idOrdenPago) throws Exception {
-		List<SolicitudAPDTO> solicitudes = serviceSolicitud.getOrdenPagoLayout(idOrdenPago);
+	public ResponseEntity<List<SolicitudAPDTO>> getOrdenPagoLayout(long idOrdenPago,  @RequestParam(name ="categoriaSolicitud") String categoriaSolicitud) throws Exception {
+		List<SolicitudAPDTO> solicitudes = serviceSolicitud.getOrdenPagoLayout(idOrdenPago, categoriaSolicitud);
 		if (solicitudes.size() == 0) {
 			throw new RolAccesoException.NotRolesFoundException("No existen resultados");
 		}
@@ -225,8 +230,8 @@ public class ControllerSolicitud {
 	
 	@GetMapping(value = "/getDataCalculoActuaria")
 	public ResponseEntity<List<SolicitudAPDTO>> getDataCalculoActuaria(@RequestParam(
-			name = "idCalculo") long idCalculo) throws Exception {
-		List<SolicitudAPDTO> solicitudes = serviceSolicitud.getDataCalculoActuaria(idCalculo);
+			name = "idCalculo") long idCalculo,   @RequestParam(name ="categoriaSolicitud") String categoriaSolicitud) throws Exception {
+		List<SolicitudAPDTO> solicitudes = serviceSolicitud.getDataCalculoActuaria(idCalculo, categoriaSolicitud);
 		if (solicitudes.size() == 0) {
 			throw new RolAccesoException.NotRolesFoundException("No existen resultados");
 		}
@@ -264,9 +269,9 @@ public class ControllerSolicitud {
 	}
 	
 	@PostMapping(value = "/asignaSolicitud")
-	public ResponseEntity<EventMessage> updateEstatusSolicitud(@RequestParam(name = "idSolicitud") long idSolicitud, @RequestParam(name = "RFCEmpleado") String RFCEmpleado)
+	public ResponseEntity<EventMessage> updateEstatusSolicitud(@RequestParam(name = "idSolicitud") long idSolicitud, @RequestParam(name = "RFCEmpleado") String RFCEmpleado, @RequestParam(name="tipoSolictud") String categoriaSolicitud)
 			throws Exception {
-		if (serviceSolicitud.updateSOlicitudAsignacion(idSolicitud, RFCEmpleado)) {
+		if (serviceSolicitud.updateSOlicitudAsignacion(idSolicitud, RFCEmpleado, categoriaSolicitud)) {
 			return new ResponseEntity<>(new EventMessage("Se ha realizado la asigación satisfactoriamente"), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(new EventMessage("No se han podido realizar los cambios"),

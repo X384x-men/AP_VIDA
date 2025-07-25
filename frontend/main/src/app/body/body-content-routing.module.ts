@@ -27,6 +27,14 @@ import { ListaSolicitudComponent } from "./home/userAP/dashboard-administrador/l
 import { MainChartComponent } from "./home/userAP/main-chart/main-chart.component";
 import { DashboardAnalistaSolicitudComponent } from "./home/dashboard-analista-solicitud/dashboard-analista-solicitud.component";
 import { DashboardAllAnalistasComponent } from "./home/userAP/dashboard-all-analistas/dashboard-all-analistas.component";
+import { MainAclaracionesComponent } from "./home/userAP/main-aclaraciones/main-aclaraciones.component";
+import { MainFormAltaAclaracionesComponent } from "./home/userAP/main-form-alta-aclaraciones/main-form-alta-aclaraciones.component";
+import { MainFormActualizaAclaracionComponent } from "./home/userAP/main-form-actualiza-aclaracion/main-form-actualiza-aclaracion.component";
+import { EmailListComponent } from "./home/userAP/email-list/email-list.component";
+import { MainDashboardPueblaComponent } from "./home/userAP/main-dashboard-puebla/main-dashboard-puebla.component";
+import { MainDashboardFunacotComponent } from "./home/userAP/main-dashboard-funacot/main-dashboard-funacot.component";
+import { SolicitudesPueblaComponent } from "./home/userAP/dashboard-administrador/solicitudes-puebla/solicitudes-puebla.component";
+import { SolicitudesFonacotComponent } from "./home/userAP/dashboard-administrador/solicitudes-fonacot/solicitudes-fonacot.component";
 
 const routes: Routes = [
   { path: "", redirectTo: URLUtilities.getMainUrl(), pathMatch: "full" },
@@ -71,6 +79,9 @@ const routes: Routes = [
           { path: "unidades-administrativas", component: AdminUnitComponent },
           { path: "catalogo-de-conceptos", component: ConceptsComponent },
           { path: "listas-de-solicitudes", component: ListaSolicitudComponent },
+          { path: "solicitudes-fonacot", component: SolicitudesFonacotComponent },
+          { path: "solicitudes-puebla", component: SolicitudesPueblaComponent },
+          { path: "email-list", component: EmailListComponent },
           { path: "graficas", component: MainChartComponent },
           { path: "", redirectTo: "asegurados", pathMatch: "full" },
           { path: "**", redirectTo: "asegurados", pathMatch: "full" },
@@ -106,6 +117,16 @@ const routes: Routes = [
         canActivate: [AuthGuardService],
       },
       {
+        path: URLUtilities.dashboardPuebla(),
+        component: MainDashboardPueblaComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: URLUtilities.dashboardFunacot(),
+        component: MainDashboardFunacotComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
         path: URLUtilities.dashboardMySolicitudes(),
         component: DashboardAnalistaSolicitudComponent,
         canActivate: [AuthGuardService],
@@ -124,7 +145,23 @@ const routes: Routes = [
         path: URLUtilities.formEditSolicitudes(),
         component: MainFormActualizaSolicitudComponent,
         canActivate: [AuthGuardService],
+      },
+      {
+        path: URLUtilities.formEditAclaraciones(),
+        component: MainFormActualizaAclaracionComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: URLUtilities.mainAclaraciones(),
+        component: MainAclaracionesComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: URLUtilities.mainFomrAclaraciones(),
+        component: MainFormAltaAclaracionesComponent,
+        canActivate: [AuthGuardService],
       }
+
     ],
   },
 ];
