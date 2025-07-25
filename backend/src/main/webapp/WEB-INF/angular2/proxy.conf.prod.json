@@ -1,8 +1,0 @@
-{
-    "name": "SYTECSO",
-    "/api": {
-    "target": "https://54.215.98.76/",
-    "secure": false,
-    "timeout": 3600000000
-  }
-}

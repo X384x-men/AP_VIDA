@@ -1,8 +1,0 @@
-{
-    "name": "SYTECSO",
-    "/api": {
-    "target": "http://localhost:8080/",
-    "secure": false,
-    "timeout": 3600000000
-  }
-}
