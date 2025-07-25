@@ -1,0 +1,42 @@
+-- MySQL Workbench Synchronization
+-- Generated: 2024-01-02 23:54
+-- Model: New Model
+-- Version: 1.0
+-- Project: Name of the project
+-- Author: mafuf
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+ALTER TABLE `ap`.`solicitud` 
+ADD COLUMN `usuariosacceso_idusuariosAcceso` BIGINT(20) NULL DEFAULT NULL AFTER `fechaCalculo`,
+ADD INDEX `fk_solicitud_usuariosacceso1_idx` (`usuariosacceso_idusuariosAcceso` ASC) VISIBLE;
+;
+
+ALTER TABLE `ap`.`evento` 
+CHANGE COLUMN `fecha` `fecha` DATETIME NULL DEFAULT now() ;
+
+ALTER TABLE `ap`.`solicitud` 
+ADD CONSTRAINT `fk_solicitud_usuariosacceso1`
+  FOREIGN KEY (`usuariosacceso_idusuariosAcceso`)
+  REFERENCES `ap`.`usuariosacceso` (`idusuariosAcceso`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `ap`.`evento_has_solicitud` 
+ADD CONSTRAINT `fk_evento_has_solicitud_evento1`
+  FOREIGN KEY (`evento_idevento`)
+  REFERENCES `ap`.`evento` (`idevento`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_evento_has_solicitud_solicitud1`
+  FOREIGN KEY (`solicitud_idSolicitud`)
+  REFERENCES `ap`.`solicitud` (`idSolicitud`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

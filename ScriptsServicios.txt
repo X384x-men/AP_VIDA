@@ -1,0 +1,119 @@
+ALTER TABLE `ap`.`catalogoconceptos` 
+ADD COLUMN `status` BINARY NULL DEFAULT 1 AFTER `descripcion`;
+
+ALTER TABLE `ap`.`catalogodependencias` 
+ADD COLUMN `status` BINARY NULL DEFAULT 1 AFTER `descripcion`;
+
+ALTER TABLE `ap`.`catalogounidadadministrativa` 
+ADD COLUMN `status` BINARY NULL DEFAULT 1 AFTER `descripcion`;
+
+// sentencias para añadir columnas en  estructura de empleado_ap
+ALTER TABLE empleado_ap
+ADD unidad_fk int,
+add dependencia_fk int;
+          
+//Sentencia para añadir las llaves foraneas sobre los catálogos          
+ALTER TABLE  empleado_ap
+ADD CONSTRAINT unidad_fk FOREIGN KEY (unidad_fk) REFERENCES  catalogoUnidadAdministrativa (idCatalogoUnidadAdministrativa)  ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT dependencia_fk  FOREIGN KEY (dependencia_fk) REFERENCES catalogoDependencias  (idCatalogoDependencias) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+// sentencia para hacer match de aquellas dependencias que tienen un indice correcto en el catálogo  dependencias
+UPDATE empleado_ap AS U1, catalogoDependencias AS U2 
+SET U1.dependencia_fk = U2.idCatalogoDependencias
+WHERE U1.dependencia = U2.descripcion;
+
+// sentencia para hacer match de aquellas unidades administrativas que tienen un indice correcto en el catálogo de unidades administrativas
+UPDATE empleado_ap AS U1, catalogoUnidadAdministrativa AS U2 
+SET U1.unidad_fk = U2.idCatalogoUnidadAdministrativa
+WHERE U1.unidadadministrativa = U2.descripcion;
+
+// Script de creación de vista para  simplificar la búsqueda de empleados en la db
+create view empleados as(
+ select * from (
+select e.nombre, e.apellidoP,e.apellidoM,e.sexo,e.rfc, e.numeroEmpleado,e.email,e.fechanacimiento, 
+e.fechaCreacion, e.estatus, e.fechaCambioEstatus, e.idEmpleadoAP, e.tipoAnalista,
+ unidad.idCatalogoUnidadAdministrativa as idUnidad,unidad.descripcion as descUni, dependenci.idCatalogoDependencias as idDependencia, dependenci.descripcion as descDepen
+from empleado_ap e, usuariosacceso u, catalogoUnidadAdministrativa  unidad,   catalogoDependencias dependenci  
+where e.UsuarioAcceso_idUsuarioAcceso=u.idusuariosAcceso 
+and  e.unidad_fk = unidad.idCatalogoUnidadAdministrativa
+and  e.dependencia_fk = dependenci.idCatalogoDependencias
+union
+select e.nombre, e.apellidoP,e.apellidoM,e.sexo,e.rfc, e.numeroEmpleado,e.email,e.fechanacimiento, 
+e.fechaCreacion, e.estatus, e.fechaCambioEstatus, e.idEmpleadoAP, e.tipoAnalista,
+ e.unidad_fk as idUnidad,'' as descUni, dependenci.idCatalogoDependencias as idDependencia, dependenci.descripcion as descDepen
+from empleado_ap e, usuariosacceso u, catalogoUnidadAdministrativa  unidad,   catalogoDependencias dependenci  
+where e.UsuarioAcceso_idUsuarioAcceso=u.idusuariosAcceso 
+and  e.unidad_fk  is null 
+and  e.dependencia_fk = dependenci.idCatalogoDependencias
+union
+select e.nombre, e.apellidoP,e.apellidoM,e.sexo,e.rfc, e.numeroEmpleado,e.email,e.fechanacimiento, 
+e.fechaCreacion, e.estatus, e.fechaCambioEstatus, e.idEmpleadoAP, e.tipoAnalista,
+ unidad.idCatalogoUnidadAdministrativa as idUnidad,unidad.descripcion as descUni, e.dependencia_fk as idDependencia, '' as descDepen
+from empleado_ap e, usuariosacceso u, catalogoUnidadAdministrativa  unidad
+where e.UsuarioAcceso_idUsuarioAcceso=u.idusuariosAcceso 
+and  e.unidad_fk = unidad.idCatalogoUnidadAdministrativa
+and  e.dependencia_fk is null
+union
+select e.nombre, e.apellidoP,e.apellidoM,e.sexo,e.rfc, e.numeroEmpleado,e.email,e.fechanacimiento, 
+e.fechaCreacion, e.estatus, e.fechaCambioEstatus, e.idEmpleadoAP, e.tipoAnalista,
+e.unidad_fk as idUnidad,"" as descUni, e.dependencia_fk as idDependencia, "" as descDepen
+from empleado_ap e, usuariosacceso u, catalogoUnidadAdministrativa  unidad,   catalogoDependencias dependenci  
+where e.UsuarioAcceso_idUsuarioAcceso=u.idusuariosAcceso 
+and  e.unidad_fk is null
+and  e.dependencia_fk  is null 
+) as analistas
+
+ );
+ 
+ // Variable para hacer funcionar declaraciones de funciones en local  ejecutar en workbench
+ SET GLOBAL log_bin_trust_function_creators = 1;
+
+// variable pata hacer funcionare declaraciones de funciones en QA y en prod declarar el mysql.ini
+log_bin_trust_function_creators = 1;
+
+
+DELIMITER //
+
+CREATE FUNCTION `EmpleadoRegistra` (rfcEmp VARCHAR(15))
+RETURNS VARCHAR(256) 
+BEGIN
+DECLARE rfcResult VARCHAR(256);
+SELECT CONCAT(nombre,' ',apellidoP,' ',apellidoM) INTO rfcResult
+FROM empleado_Ap
+WHERE rfc = rfcEmp;
+RETURN rfcResult;
+END;
+//
+
+DELIMITER //
+
+CREATE FUNCTION `getOrdenesPago` (idSolicitud INT)
+RETURNS INT
+BEGIN
+DECLARE idOrden INT;
+SELECT op.idOrdenesPago INTO idOrden
+FROM ordenes_pago op, ordenes_pago_has_solicitud ophs
+WHERE op.idOrdenesPago = ophs.OrdenesPago_idOrdenPago
+AND ophs.Solicitud_idSolicitud = idSolicitud;
+RETURN idOrden;
+END;
+//
+
+DELIMITER ;
+
+
+DELIMITER //
+CREATE FUNCTION `getCalculoActuaria` (idSolicitud INT)
+RETURNS INT
+BEGIN
+DECLARE idCalculo INT;
+SELECT ca.idCalculoActuaria into idCalculo  
+FROM calculo_actuaria ca, calculo_actuaria_has_solicitud cahs
+WHERE ca.idCalculoActuaria = cahs.CalculoActuaria_idCalculo 
+and cahs.Solicitud_idSolicitud  = idSolicitud;
+RETURN idCalculo;
+END;
+//
+
+DELIMITER ;
