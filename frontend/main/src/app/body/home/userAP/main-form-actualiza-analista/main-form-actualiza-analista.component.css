@@ -1,0 +1,235 @@
+.form-user-ap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.nota-ap{
+    font-size: 16px;
+    padding: 10px;
+    text-align: center;
+}
+
+.button-ap{
+    display: flex;
+    justify-content: center;
+}
+
+
+.button{
+    margin-top: 30px;
+    width: 250px;
+    font-weight: 600;
+}
+
+.welcome-mesaage{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title1-welcome{
+    font-size: 32px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.title12-welcome{
+    font-size: 30px;
+    text-align: center;
+}
+
+.title2-welcome{
+    font-size: 22px;
+    text-align: center;
+}
+
+.margin-bottom{
+    margin-bottom: 60px !important;
+}
+
+.instruction{
+    width: 50%;
+    text-align: center;
+    padding:10px;
+}
+
+.containerForm{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.form-user-ap-form{
+    display: flex;
+    width: 70%;
+}
+
+
+
+@media only screen and (max-width: 1900px) { 
+    .instruction{
+        width: 50%;
+        text-align: center;
+        padding:10px;
+    }
+    .button-ap{
+        display: flex;
+        justify-content: center;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .instruction{
+        width: 100%;
+        text-align: center;
+        padding:10px;
+    }
+    .button-ap{
+        display: flex;
+        justify-content: center;
+        margin-bottom: 100px;
+    }
+}
+@media only screen and (max-width: 1024px) { 
+    .instruction{
+        width: 100%;
+        text-align: center;
+        padding:10px;
+    }
+    .button-ap{
+        display: flex;
+        justify-content: center;
+        margin-bottom: 100px;
+    }
+}
+
+@media only screen and (max-width: 900px) { 
+    .instruction{
+        width: 100%;
+        text-align: center;
+        padding:10px;
+    }
+    .button-ap{
+        display: flex;
+        justify-content: center;
+        margin-bottom: 100px;
+    }
+    .form-user-ap-form{
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 768px) { 
+    .instruction{
+        width: 100%;
+        text-align: center;
+        padding:10px;
+    }
+    .button-ap{
+        display: flex;
+        justify-content: center;
+        margin-bottom: 150px;
+    }
+    .form-user-ap-form{
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 600px) { 
+    .instruction{
+        width: 100%;
+        text-align: center;
+        padding:10px;
+    }
+    .button-ap{
+        display: flex;
+        justify-content: center;
+        margin-bottom: 150px;
+    }
+    .title1-welcome{
+        font-size: 24px;
+        font-weight: 500;
+        text-align: center;
+    }
+    
+    .title12-welcome{
+        font-size: 20px;
+        text-align: center;
+    }
+    
+    .title2-welcome{
+        font-size: 14px;
+        text-align: center;
+    }
+    .form-user-ap-form{
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 480px) { 
+    .instruction{
+        width: 100%;
+        text-align: center;
+        padding:10px;
+    }
+    .button-ap{
+        display: flex;
+        justify-content: center;
+        margin-bottom: 150px;
+    }
+    .title1-welcome{
+        font-size: 22px;
+        font-weight: 500;
+        text-align: center;
+    }
+    
+    .title12-welcome{
+        font-size: 18px;
+        text-align: center;
+    }
+    
+    .title2-welcome{
+        font-size: 12px;
+        text-align: center;
+    }
+    .form-user-ap-form{
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 320px) { 
+    .instruction{
+        width: 100%;
+        text-align: center;
+        padding:10px;
+    }
+    .button-ap{
+        display: flex;
+        justify-content: center;
+        margin-bottom: 150px;
+    }
+    .title1-welcome{
+        font-size: 22px;
+        font-weight: 500;
+        text-align: center;
+    }
+    
+    .title12-welcome{
+        font-size: 18px;
+        text-align: center;
+    }
+    
+    .title2-welcome{
+        font-size: 12px;
+        text-align: center;
+    }
+    .form-user-ap-form{
+        width: 100%;
+    }
+}
+
+
+
+
+
+

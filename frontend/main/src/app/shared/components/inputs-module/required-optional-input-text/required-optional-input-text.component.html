@@ -1,0 +1,8 @@
+<ng-container *appHideShow="requiredInput">
+  <app-required-input-text [isRFC]="isRFC" [data]="inputProps" (value)="sendVal($event)" [val]="val" [style]='style'>
+  </app-required-input-text>
+</ng-container>
+<ng-template *appHideShow="!requiredInput">
+  <app-optional-input-text [val]="val" [data]="inputProps" (value)="sendVal($event)" [style]='style'>
+  </app-optional-input-text>
+</ng-template>

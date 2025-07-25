@@ -1,0 +1,261 @@
+<div class="main-ap custom-background" [style.background-image]="'url('+apvidaBackground+')'">
+  <div class="body-admin">
+    <label class="titleDashboardSolic">{{ isComercial ? 'Ejecutivo de atención' : isSiniestros ? 'Coordinador' : isContabilidad ? 'Actuaría' : ''}}</label>
+
+    <div class="container">
+      <div class="text-center mb-3 mt-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-2">
+            <label for="inputPassword6" class="col-form-label">Nombre</label>
+          </div>
+          <div class="col-10">
+            <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Nombre" [(ngModel)]='solicitud.nombre'>
+          </div>
+          <div class="col-2">
+            <label for="inputPassword6" class="col-form-label">RFC</label>
+          </div>
+          <div class="col-10">
+            <input class="form-control" type="text" placeholder="RFC" name="rfc" [(ngModel)]='solicitud.RFC' >
+          </div>
+          <div class="col-2">
+            <label for="inputPassword6" class="col-form-label">Status</label>
+          </div>
+          <div class="col-10">
+            <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedoptionsEstatus (click)=onSelectedoptionsEstatus(mySelectedoptionsEstatus.value)>
+              <option selected value="" > - Seleccionar un opción  - </option>
+              <option  *ngFor="let tipoEstatus of optionsEstatus" [value]="tipoEstatus.name"
+              > {{ tipoEstatus.name }} </option>
+            </select>
+          </div>
+          <div class="col-2">
+            <label for="inputPassword6" class="col-form-label">Tipo</label>
+          </div>
+          <div class="col-10">
+            <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedTipoTramite  (click)=onSelectedTipoTramite(mySelectedTipoTramite.value)>
+              <option selected> - Seleccionar un opción -  </option>
+              <option *ngFor="let tipoTramite of optionsTipoTramite"[value]="tipoTramite.name">{{tipoTramite.name}}</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-busqueda mt-3" type="button" (click)="filter()" ><strong class="me-1" >Buscar</strong><i class="fa fa-solid fa-magnifying-glass"></i> </button>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-6">
+        <div class="export-title2">
+          <div class="containerTabs-title">
+            <div *ngIf="isComercial!" >
+              <button class="btn titleAdmin border-bottom-0" [ngClass]="showList == 1 ? 'btn-paginador' : 'titleAdmin'" >
+                 Mis solicitudes
+              </button>
+            </div>
+            <button class="btn titleAdmin border-bottom-0" (click)="back('solicitudes')" >
+              Todas las solicitudes
+           </button>
+            <button class="btn titleAdmin border-bottom-0" (click)="back('asegurado')" >
+              <span>Asegurados</span>
+            </button>
+            <!-- <button class="btn border-bottom-0" [ngClass]="showList == 2 ? 'btn-paginador' : 'titleAdmin'" (click)="showLists(2)" *ngIf="isContabilidad">Archivos Descargados</button> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="botones-accion" >
+          <button class="btn btn-busqueda" (click)="exportAsXLSX()" *ngIf="isSiniestros">
+            <i class="fas fa-file-download"></i>
+            Generar ordenes de pago
+          </button>
+          <button class="btn btn-busqueda" *ngIf="isComercial || isSiniestros" (click)="downloadSolicitudBatch()" [disabled]="solicitudes.length < 1" >
+            <i class="fa fa-download" aria-hidden="true"></i>
+             Descargar solicitudes
+           </button>
+          <button class="btn btn-busqueda" (click)="exportAsXLSXActuaria()" *ngIf="isContabilidad">
+            <i class="fas fa-file-download"></i>
+            Generar archivo cálculo actuaria
+          </button>
+          <div class="containerFile rounded" *ngIf="isContabilidad">
+            <input class="fileinput " type="file"  (change)="subirExcel($event)" id="file1" accept="application/vnd.ms-excel" multiple>
+            <label class="targetFile" for="file1"> <i class="fas fa-upload"></i>{{fileNameExcel}}</label>
+          </div>
+          <button class="btn btn-busqueda" (click)="addSolicitud()" *ngIf="isComercial">
+            <i class="fas fa-sticky-note"></i>
+            Nueva solicitud
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class=" text-center animate__animated animate__flash animate__infinite	infinite animate__slow	2s">
+      <i  class="fa fa-spinner fa-spin fa-4x mt-5 " aria-hidden="true"></i>
+    </div>
+
+  <!-- Tabla con paginación y filtro nueva -->
+  <div class="result-body">
+      <mat-form-field>
+        <mat-label> <strong>*Filtrar busqueda</strong> </mat-label>
+        <input class="w-12" matInput (keyup)="applyFilter($event)" #input>
+      </mat-form-field>
+    <!-- Tabla Ejecutivo -->
+    <div *ngIf="isComercial === true">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort >
+        <tr mat-header-row *matHeaderRowDef="['Folio','rfcAsegurado', 'nombre','Fecha de alta','Tipo Solicitud','Estatus', 'Solicitud']"></tr>
+        <tr mat-row *matRowDef="let row; columns:['Folio','rfcAsegurado', 'nombre','Fecha de alta','Tipo Solicitud','Estatus', 'Solicitud'];"  ></tr>
+        <ng-container matColumnDef="Folio">
+          <th mat-header-cell *matHeaderCellDef>Folio</th>
+          <td mat-cell *matCellDef="let element">{{element.numeroRegistro}} <td>
+        </ng-container>
+        <ng-container matColumnDef="rfcAsegurado">
+          <th mat-header-cell *matHeaderCellDef>RFC</th>
+          <td mat-cell *matCellDef="let element">{{element.rfcAsegurado}} </td>
+        </ng-container>
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef >Nombre</th>
+          <td mat-cell *matCellDef="let element">{{element.nombre}} {{ element.apellidoPaterno }} </td>
+        </ng-container>
+        <ng-container matColumnDef="Fecha de alta">
+          <th mat-header-cell *matHeaderCellDef >Fecha alta</th>
+          <td mat-cell *matCellDef="let element">{{element.fechaSolicitud}}</td>
+        </ng-container>
+        <ng-container matColumnDef="Tipo Solicitud">
+          <th mat-header-cell *matHeaderCellDef >Tipo de Solicitud</th>
+          <td mat-cell *matCellDef="let element">{{element.tipoTramite}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Estatus">
+          <th mat-header-cell *matHeaderCellDef>Estatus de Solicitud</th>
+          <td mat-cell *matCellDef="let element">{{element.statusSolicitud}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Solicitud">
+          <th mat-header-cell *matHeaderCellDef>Opción</th>
+          <td mat-cell *matCellDef="let element">
+            <i class="material-icons iconDashboardAp"
+            data-toggle="tooltip" data-placement="top" [title]="'Detalle'" (click)="verDetalleSolicitud(element)" >
+            launch
+            </i> Ver solicitud
+          </td>
+        </ng-container>
+      </table>
+      <mat-paginator class="h-50" pageSize="5" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+    </div>
+    <!-- Tabla Coordinador -->
+    <div *ngIf="isSiniestros === true" >
+
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort >
+        <tr mat-header-row *matHeaderRowDef="['Seleccionar','Folio','rfcAsegurado', 'nombre','Fecha de alta','Tipo Solicitud','Estatus', 'Fecha orden de pago', 'Solicitud', 'Acciones']"></tr>
+        <tr mat-row *matRowDef="let row; columns:['Seleccionar','Folio','rfcAsegurado', 'nombre','Fecha de alta','Tipo Solicitud','Estatus', 'Fecha orden de pago', 'Solicitud', 'Acciones'];"  ></tr>
+        <ng-container matColumnDef="Seleccionar" >
+          <th mat-header-cell *matHeaderCellDef>Seleccionar</th>
+          <td mat-cell *matCellDef="let element" > <mat-checkbox *ngIf="element.statusSolicitud === 'Importes validados' && element.fechaOrdenPago == null" [color]="'primary'" [(ngModel)]="element.isLayout"></mat-checkbox> <td>
+        </ng-container>
+        <ng-container matColumnDef="Folio">
+          <th mat-header-cell *matHeaderCellDef>Folio</th>
+          <td mat-cell *matCellDef="let element">{{element.numeroRegistro}} <td>
+        </ng-container>
+        <ng-container matColumnDef="rfcAsegurado">
+          <th mat-header-cell *matHeaderCellDef>RFC</th>
+          <td mat-cell *matCellDef="let element">{{element.rfcAsegurado}} </td>
+        </ng-container>
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef >Nombre</th>
+          <td mat-cell *matCellDef="let element">{{element.nombre}} {{ element.apellidoPaterno }} </td>
+        </ng-container>
+        <ng-container matColumnDef="Fecha de alta">
+          <th mat-header-cell *matHeaderCellDef >Fecha alta</th>
+          <td mat-cell *matCellDef="let element">{{element.fechaSolicitud}}</td>
+        </ng-container>
+        <ng-container matColumnDef="Tipo Solicitud">
+          <th mat-header-cell *matHeaderCellDef >Tipo de Solicitud</th>
+          <td mat-cell *matCellDef="let element">{{element.tipoTramite}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Estatus">
+          <th mat-header-cell *matHeaderCellDef>Estatus de Solicitud</th>
+          <td mat-cell *matCellDef="let element">{{element.statusSolicitud}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Fecha orden de pago">
+          <th mat-header-cell *matHeaderCellDef>Fecha orden de pago</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.fechaOrdenPago !== null ? element.fechaOrdenPago + ' - ' + element.nombreEmpleadoGeneraOrden : ''}}<span class="donwloadLinkReport" *ngIf="element.idOrdenPago > 0" (click)="donwloadReport(element.idOrdenPago)"><i class="material-icons iconDonwloadReport">
+              file_download
+            </i>Descargar</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Acciones">
+          <th mat-header-cell *matHeaderCellDef >Acciones</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-button [matMenuTriggerFor]="userOptions">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #userOptions="matMenu">
+              <i class="material-icons iconDashboardAp mt-1 animate__animated animate__heartBeat" (click)="changeEstatus(element, (element.estatus === 1 ? 0 : 1))" data-toggle="tooltip" data-placement="top" [title]="element.estatus === 1 ? 'Deshabilitar usuario' : 'Habilitar usuario'" >
+                {{element.estatus === 1 ? 'person' : 'person_off'}}
+              </i> <span class="mb-5">Cambiar Status</span> <br>
+              <i class="material-icons iconDashboardAp animate__animated animate__heartBeat animate__delay-1s" (click)="goToDashboard(element.rfc)"
+              data-toggle="tooltip" data-placement="top" [title]="'Estados de cuenta'" *ngIf="!isAnalista">
+              assignment
+              </i> Verificar RFC
+            </mat-menu>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Solicitud">
+          <th mat-header-cell *matHeaderCellDef>Opción</th>
+          <td mat-cell *matCellDef="let element">
+            <i class="material-icons iconDashboardAp"
+            data-toggle="tooltip" data-placement="top" [title]="'Detalle'" (click)="verDetalleSolicitud(element)" >
+            launch
+            </i> Ver solicitud
+          </td>
+        </ng-container>
+      </table>
+      <mat-paginator class="h-50" pageSize="5" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+    </div>
+    <!-- Tabla Actuarial -->
+    <div *ngIf="isContabilidad === true" >
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort >
+        <tr mat-header-row *matHeaderRowDef="['Seleccionar','Folio','rfcAsegurado', 'nombre','Fecha de alta','Tipo Solicitud','Estatus', 'Solicitud']"></tr>
+        <tr mat-row *matRowDef="let row; columns:['Seleccionar','Folio','rfcAsegurado', 'nombre','Fecha de alta','Tipo Solicitud','Estatus', 'Solicitud'];"  ></tr>
+        <ng-container matColumnDef="Seleccionar" >
+          <th mat-header-cell *matHeaderCellDef>Seleccionar</th>
+          <td mat-cell *matCellDef="let element" ><mat-checkbox *ngIf="element.statusSolicitud === 'Proceso de revision de pago' && element.idCalculoActuaria == 0 " [color]="'primary'" [(ngModel)]="element.isReporteContable"></mat-checkbox> <td>
+        </ng-container>
+        <ng-container matColumnDef="Folio">
+          <th mat-header-cell *matHeaderCellDef>Folio</th>
+          <td mat-cell *matCellDef="let element">{{element.numeroRegistro}} <td>
+        </ng-container>
+        <ng-container matColumnDef="rfcAsegurado">
+          <th mat-header-cell *matHeaderCellDef>RFC</th>
+          <td mat-cell *matCellDef="let element">{{element.rfcAsegurado}} </td>
+        </ng-container>
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef >Nombre</th>
+          <td mat-cell *matCellDef="let element">{{element.nombre}} {{ element.apellidoPaterno }} </td>
+        </ng-container>
+        <ng-container matColumnDef="Fecha de alta">
+          <th mat-header-cell *matHeaderCellDef >Fecha alta</th>
+          <td mat-cell *matCellDef="let element">{{element.fechaSolicitud}}</td>
+        </ng-container>
+        <ng-container matColumnDef="Tipo Solicitud">
+          <th mat-header-cell *matHeaderCellDef >Tipo de Solicitud</th>
+          <td mat-cell *matCellDef="let element">{{element.tipoTramite}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Estatus">
+          <th mat-header-cell *matHeaderCellDef>Estatus de Solicitud</th>
+          <td mat-cell *matCellDef="let element">{{element.statusSolicitud}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Solicitud">
+          <th mat-header-cell *matHeaderCellDef>Opción</th>
+          <td mat-cell *matCellDef="let element">
+            <i class="material-icons iconDashboardAp"
+            data-toggle="tooltip" data-placement="top" [title]="'Detalle'" (click)="verDetalleSolicitud(element)" >
+            launch
+            </i> Ver solicitud
+          </td>
+        </ng-container>
+      </table>
+      <mat-paginator class="h-50" pageSize="5" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+    </div>
+    <section style="display: flex; flex-direction: column; align-items: center; opacity: 0.7; padding: 16px;" *ngIf="!solicitudes">
+      <h2>Aquí serán mostradas las solicitudes </h2>
+      <p>Cargando...</p>
+    </section>
+  </div>
+ </div>
+</div>

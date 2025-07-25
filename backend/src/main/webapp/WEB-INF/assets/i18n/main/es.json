@@ -1,0 +1,16 @@
+{
+  "login": {
+    "title": "Acceso",
+    "btn": {
+      "usuario": "Usuario",
+      "password": "Contraseña"
+    }
+  },
+  "cargasBatch": {
+    "title": "Cargas Batch"
+  },
+  "button": {
+    "save": "Guardar",
+    "back": "Regresar"
+  }
+}

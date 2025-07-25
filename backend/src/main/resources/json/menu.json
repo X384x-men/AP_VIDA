@@ -1,0 +1,1062 @@
+{
+	"modulos": [
+		{
+			"index": 1,
+			"menuTitle": "Administracion Cuentas",
+			"enabled": 1,
+			"icon": "assignment_ind",
+			"url": "",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "Modificar Cuentas",
+					"icon": "autorenew",
+					"enabled": 1,
+					"url": "organizaciones/modificar-cuentas",
+					"pantallas": [
+						{
+							"index": 0,
+							"name": "Lista Organizaciones",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "organizaciones?opt=1",
+							"servicios": "organizacion/listOrganizaciones,organizaciones/cuentas?org"
+						},
+						{
+							"index": 1,
+							"name": "Lista de Cuentas",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "organizaciones/modificar-cuentas",
+							"servicios": "cuenta-cliente/cuentasbyOrganizacion?idOrganizacion,cuenta?numCuenta"
+						},
+						{
+							"index": 2,
+							"name": "Cuenta",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "cuenta",
+							"servicios": "cuenta-cliente/allCuentaClientebyNumCuenta?numCuenta,cuenta/modificar-cuenta?numCuenta,cuenta/datos-fiscales?numCuenta,cuenta/direccion?numCuenta,cuenta/contactos?numCuenta,cuenta/proyectos?numCuenta,cuenta/almacenes?numCuenta,organizaciones/cuentas?org"
+						},
+						{
+							"index": 3,
+							"name": "Modificar Cuentas",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "cuenta/modificar-cuenta",
+							"servicios": "cuenta-cliente/allCuentaClientebyNumCuenta?numCuenta,cuenta-cliente/updateCliente,adminProyecto/getRamas?idProyecto,adminProyecto/getRamasSinAlmacen?idProyecto,adminProyecto/getProyectosCta?idCuenta"
+						},
+						{
+							"index": 4,
+							"name": "Datos fiscales",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "cuenta/datos-fiscales",
+							"servicios": "cuenta-cliente/allCuentaClientebyNumCuenta?numCuenta,cuenta-cliente/resumenCuentabynumCuenta?numCuenta,datosFiscal/updateDatoFiscalCliente"
+						},
+						{
+							"index": 5,
+							"name": "Direcciones",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "cuenta/direccion",
+							"servicios": "cuenta-cliente/allCuentaClientebyNumCuenta?numCuenta,cuenta-cliente/resumenCuentabynumCuenta?numCuenta,direccionFiscal/updateDireccionFiscalCliente"
+						},
+						{
+							"index": 6,
+							"name": "Proyectos",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "cuenta/proyectos?numCuenta",
+							"servicios": "cuenta-cliente/resumenCuentabynumCuenta?numCuenta,cuenta-cliente/allCuentaClientebyNumCuenta?numCuenta,cuenta/alta-proyecto?numCuenta,cuenta/modificar-proyectos?proyecto,dashboard/actividadesProyecto?proyecto"
+						},
+						{
+							"index": 7,
+							"name": "Alta proyectos",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "cuenta/alta-proyecto?numCuenta",
+							"servicios": "proyectos/insertProyectoCliente,cuenta/proyectos?numCuenta,proyectos/listGerentes?idOrganizacion"
+						},
+						{
+							"index": 8,
+							"name": "Modificar proyectos",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "cuenta/modificar-proyectos?numCuenta",
+							"servicios": "proyectos/proyectobyId?idProyecto,proyectos/updateProyectoCliente,cuenta/proyectos?numCuenta,cuenta-cliente/resumenCuentabyIdProyecto?idProyecto,almacenes/list-almacen?proyecto,proyectos/proyectobyId?idProyecto,almacenes/crear-almacen?proyecto&almacen,almacen/list-almacen-proyecto?idProyecto,almacen/list-bodega-almacen,almacen/create-almacenes?idProyecto&idBodega&idRama,adminProyecto/getRamas?idProyecto,adminProyecto/getPersonalAsignadobyProyecto?idProyecto,adminProyecto/getPersonalNoProyecto"
+						},
+						{
+							"index": 9,
+							"name": "Contactos",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "cuenta/contactos",
+							"servicios": "telefono/updateTelefonoCliente,cuenta-cliente/resumenCuentabynumCuenta?numCuenta,cuenta-cliente/allCuentaClientebyNumCuenta?numCuenta"
+						},
+						{
+							"index": 10,
+							"name": "Cuenta alta almacen",
+							"icon": "",
+							"enabled": 1,
+							"url": "cuenta/bodega/alta?proyecto",
+							"servicios": "proyectos/proyectobyId?idProyecto"
+						}
+					]
+				},
+				{
+					"index": 2,
+					"name": "Alta Cuentas",
+					"icon": "group_add",
+					"enabled": 1,
+					"url": "cuenta/alta-cuenta",
+					"pantallas": [
+						{
+							"index": 0,
+							"name": "Lista Organizaciones",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "organizaciones?opt=2",
+							"servicios": "organizacion/listOrganizaciones,organizaciones/cuentas?org"
+						},
+						{
+							"index": 1,
+							"name": "Alta Cuentas",
+							"icon": "list_alt",
+							"enabled": 1,
+							"url": "cuenta/alta-cuenta",
+							"servicios": "cuenta-cliente/allCuentaClientebyNumCuenta?numCuenta,organizacion/organizacionbyId?idOrganizacion,proyectos/listGerentes?idOrganizacion"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 0,
+			"menuTitle": "Home-PM",
+			"enabled": 1,
+			"icon": "dashboard",
+			"url": "dashboard?opt=1",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "dashboard-1",
+					"icon": "",
+					"enabled": 0,
+					"url": "dashboard?opt=1",
+					"pantallas": [
+						{
+							"index": 0,
+							"name": "dashboard?opt=1",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=1",
+							"servicios": "dashboard/actividadesProyecto?proyecto&opt,dashboard/cuadrillasAsignadas?proyecto,dashboard/checkin?proyecto,dashboard/solicitudes?proyecto,dashboard/incidencias?proyecto,dashboard/microactividad?actividad&nombre,dashboard/materialesConsumidos?proyecto,dashboard/agregarCuadrillas?proyecto,dashboard/asistenciaCuadrillas?cuadrillas,dashboard/agregarActividad?tarea&proyecto,dashboard/agregarRama?proyecto,dashboard/agregarTarea?rama&proyecto,dashboard/detalleVehiculo?vehiculo,dashboard/personalAsignadoProyecto?proyecto,dashboard/agregarPersonalAsig?proyecto,dashboard/agregarEspecialidad?cuadrilla&proyecto,dashboard/agregarIncidencia?proyecto,dashboard/detalleIncidencia?numero,adminProyecto/proyectos,adminProyecto/getRamas?idProyecto,adminProyecto/getActividadesbyTarea?idTarea,cuadrilla/listCuadrillasAsiganadasProyecto?idProyecto,adminProyecto/getAsistenciaDetalle,cuadrilla/listCuadrillasAsiganadasProyecto&idProyecto,cuadrilla/listCuadrillasSinProyecto,adminProyecto/getPersonalAsignadobyProyecto?idProyecto,solicitud/find-by-proyecto?id,adminProyecto/getResumenProyectoAvance?idProyecto,timeline/getActividadesbyTarea?idTarea,timeline/getDetalleActividadbyIdActividad?idActividad,timeline/getMensajeDetalle?idComentario,timeline/getAsistenciaDetalle?idTomaAsistencia&idCuadrilla,timeline/getIncidenciaDetalle?idIncidencia,timeline/getSolicitudDeInventarioDetalle?idSolicitudes,dashboard/agregarEmpleadoCuadrilla?idCuadrilla&cuadrilla,cuadrilla/getCuadrillaDetalle?idCuadrilla,cuadrilla/getInstaladoresNoCuadrilla,cuadrilla/getInstaladoresCuadrilla?idCuadrilla,cuadrilla/updateQuitarAsignacionCuadrilla?idInstalador,cuadrilla/updatePrincipalCuadrilla?idCuadrilla&idInstalador,cuadrilla/updatAsignarCuadrillaInstalador?idCuadrilla&idInstalador,cuadrilla/insertCuadrilla,adminProyecto/getPersonalNoProyecto,adminProyecto/asigna-proyecto,cuadrilla/find-cuadrilla?cuadrilla,materialesConsumidos/getRamasAlmacenbyProyecto?idProyecto,materialesConsumidos/getBodegasbyRama?idRama,materialesConsumidos/getMaterialbyAlmacenProyecto?idProyecto,materialesConsumidos/getMaterialRama?idRama,materialesConsumidos/getMaterialRamasbyProyecto?idProyecto,materialesConsumidos/asignaMaterialProyecto,cuadrilla/getAsistenciaDetalleCuadrilla?idCuadrilla&fecha,cuadrilla/getEvidenciaAsistenciaDetalleInstalador?idtransaccion,adminProyecto/getDetalleTarea?idTarea,adminProyecto/asignarActividadActualResponsable,adminProyecto/getDetalleMicroActividades,adminProyecto/getSolicitudDeInventarioDetalle,adminProyecto/getIncidenciaDetalle,materialesConsumidos/getPorcentajesMaterialesProyecto?idProyecto,solicitud/update-estatus,proyectos/proyectobyId?idProyecto,almacen/list-catalogo-tarea?numCuenta"
+						},
+						{
+							"index": 1,
+							"name": "ASIGNA SUPEVISOR A CUADRILLA",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/agregarSupervisor?cuadrilla&proyecto",
+							"servicios": "almacen/list-supervisor-cuadrilla,almacen/update-supervisor-cuadrilla,almacen/list-supervisor-asignado"
+						},
+						{
+							"index": 2,
+							"name": "GEOLOCALIZACION DE CUADRILLAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/geocerca?proyecto&cuadrilla",
+							"servicios": "cuadrilla/lastPosition?proyecto,cuadrilla/getCuadrillaDetalleByIdCuadrilla?proyecto&cuadrilla,proyectos/proyectobyId?idProyecto"
+						},
+						{
+							"index": 3,
+							"name": "REPORTE DE ASISTENCIAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/reporteAsistencia?proyecto",
+							"servicios": ""
+						}
+						,
+						{
+							"index": 4,
+							"name": "INCIDENCIAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/incidencias?proyecto",
+							"servicios": "incidencias/list-incidencias-proyecto?proyecto&fechaInicio&fechaFin,incidencias/update-status-incidencia,incidencias/update-usuario-atiende,incidencias/getUsrActual?usr,incidencias/ubicacion-incidencias?proyecto"
+						}
+						,
+						{
+							"index": 5,
+							"name": "SOLICITUDES",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/solicitudes?proyecto",
+							"servicios": "solicitud/find-solicitud-origen?id,solicitud/escalar"
+						}
+						,
+						{
+							"index": 6,
+							"name": "Cuadrillas asignadas",
+							"icon": "",
+							"enabled": 0,
+							"url": "cuadrilla/listCuadrillasAsiganadasProyecto?proyecto",
+							"servicios": "solicitud/find-solicitud-origen?id,solicitud/escalar"
+						},
+						{
+							"index": 6,
+							"name": "MATERIALES ASIGNADOS",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard/materialesConsumidos?proyecto",
+							"servicios": "almacen/asignar-material-rama,materialesConsumidos/getMaterialesUtilizados?idProyecto&idAlmacen&opt"
+						},
+						{
+							"index": 7,
+							"name": "GANTT ACTIVIDADES PROYECTO",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard/gantt-ramas?proyecto",
+							"servicios": "adminProyecto/getTareasRama?idRama,adminProyecto/getRamas?idProyecto,proyectos/proyectobyId?idProyecto,timeline/getActividadesbyTarea?idTarea"
+						},
+						{
+							"index": 8,
+							"name": "GANTT ACTIVIDADES CUADRILLA",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard/gantt-cuadrillas?proyecto",
+							"servicios": "proyectos/proyectobyId?idProyecto,cuadrilla/listCuadrillasAsiganadasProyecto?idProyecto,adminProyecto/getActividadesbyCuadrilla?idCuadrilla,adminProyecto/getActividadActualCuadrilla?idProyecto"
+						},
+						{
+							"index": 9,
+							"name": "SUPERVISOR",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard/getSupervisores?proyecto",
+							"servicios":"almacen/list-supervisor-proyecto?proyecto,almacen/get-almacen-supervisor?supervisor,cuadrilla/listCatalogoActividadesSupervisor?proyecto&supervisor,cuadrilla/listSupervisorEspecialidad?supervisor,cuadrilla/especializarSupervisor?supervisor&catalogoActividad,cuadrilla/eliminarEspecialidadSupervisor?supervisor&catalogoActividad,cuadrilla/listCuadrillasSupervisorAsig?supervisor,almacen/update-supervisor-cuadrilla,cuadrilla/listRamasAtiendeSupervisor?supervisor,cuadrilla/listActividadesSupervisorAtiende?rama&supervisor&opt,cuadrilla/lastPositionSup?proyecto&supervisor"
+						},
+						{
+							"index": 10,
+							"name": "GEOLOCALIZACION DE ACTIVIDADES",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=1",
+							"servicios":"adminProyecto/getUbicacionesActividades?idProyecto"
+						},
+						{
+							"index": 10,
+							"name": "GEOLOCALIZACION DE ASISTENCIAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=1",
+							"servicios":"cuadrilla/ubicacion-asistencia?idProyecto&fecha&opt,cuadrilla/list-instaladores-transaccion?transaccion&opt"
+						},
+						{
+							"index": 11,
+							"name": "TIMELINE",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=1",
+							"servicios":"timeline/getEmpleado?usr,ws/postComentario,ws/updateStatus,almacen/list-catalogo-incidencias,timeline/getEmpleado?usr,timeline/getEmpleadoAdmin?rol&org,ws/postIncidenciaDetalle"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 5,
+			"menuTitle": "Home-Almacenista",
+			"enabled": 1,
+			"icon": "dashboard",
+			"url": "dashboard?opt=3",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "dashboard-3",
+					"icon": "",
+					"enabled": 0,
+					"url": "dashboard?opt=3",
+					"pantallas": [
+						{
+							"index": 0,
+							"name": "dashboard?opt=3",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=3",
+							"servicios": ""
+						},
+						{
+							"index": 0,
+							"name": "INGRESDO DE MATERIAL",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=3",
+							"servicios": "bodega/alta-inventario?numero&almacen,solicitud/list-info,solicitud/get-bodega,almacen/create-embarque-lote,almacen/inventario-almacen,almacen/get-almacen?almacen"
+						},
+						
+						{
+							"index": 0,
+							"name": "SOLICITUDES",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard/solicitudes?proyecto",
+							"servicios": "solicitud/find-by-almacenista?usr,dashboard/solicitudes?proyecto,solicitud/descargar,adminProyecto/getSolicitudDeInventarioDetalle"
+						},
+						{
+							"index": 0,
+							"name": "EDITAR SOLICITUDES",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard/editarSolicitud?solicitud",
+							"servicios": "dashboard/editarSolicitud?solicitud,solicitud/get-insumos-disp?usr,solicitud/edit-items-solic,adminProyecto/getSolicitudDeInventarioDetalle"
+						},
+						{
+							"index": 0,
+							"name": "GRAFICAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=3",
+							"servicios": "almacen/list-proyectos-bodega?almacenista,proyectos/proyectobyId?idProyecto,materialesConsumidos/getPorcentajesMaterialesProyecto?idProyecto,almacen/list-almacen-proyecto-rama?proyecto,materialesConsumidos/getPorcentajesMaterialesAlmacen?almacen&rama"
+						}
+						
+						
+					]
+				}
+			]
+		},
+		{
+			"index": 5,
+			"menuTitle": "Home-Ejecutivo",
+			"enabled": 1,
+			"icon": "dashboard",
+			"url": "dashboard?opt=4",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "dashboard-4",
+					"icon": "",
+					"enabled": 0,
+					"url": "dashboard?opt=4",
+					"pantallas": [
+						{
+							"index": 0,
+							"name": "dashboard?opt=4",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=4",
+							"servicios": "cuadrilla/lastPosition?proyecto"
+						},
+						{
+							"index": 1,
+							"name": "REGISTRO_ASISTENCIAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=4",
+							"servicios": "dashboardEjecutivo/registroAsistencia,dashboardEjecutivo/registroAsistencia-cuadrilla,dashboardEjecutivo/horas-trabajadas-instalador,dashboardEjecutivo/last-ubicacion-cuadrilla,dashboardEjecutivo/horas-trabajadas-vs-jornada-instalador,dashboardEjecutivo/horas-trabajadas-dy-dia"
+						},
+						{
+							"index": 2,
+							"name": "PROYECTOS",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=4",
+							"servicios": "dashboardEjecutivo/proyectos-avance,dashboardEjecutivo/ramas-avance"
+						},
+						{
+							"index": 3,
+							"name": "GANTT ACTIVIDADES PROYECTO",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=4",
+							"servicios": "adminProyecto/getTareasRama?idRama,adminProyecto/getRamas?idProyecto,proyectos/proyectobyId?idProyecto,timeline/getActividadesbyTarea?idTarea"
+						},
+						{
+							"index": 4,
+							"name": "MATERIALES CONSUMIDOS",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=4",
+							"servicios": "dashboardEjecutivo/proyectos-materiales-consumidos,dashboardEjecutivo/ramas-materiales-consumidos,dashboardEjecutivo/cuadrillas-materiales-consumidos,materialesConsumidos/getPorcentajesMaterialesProyecto?idProyecto,materialesConsumidos/getMaterialesUtilizados?idProyecto&idAlmacen&opt"
+						},
+						{
+							"index": 5,
+							"name": "INCIDENCIAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=4",
+							"servicios": "dashboardEjecutivo/get-listado-incidencias"
+						},
+						{
+							"index": 6,
+							"name": "REGISTRO_ASISTENCIAS_ASOCIADO",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=4",
+							"servicios": "dashboardEjecutivo/registroAsistencia-asociado,dashboardEjecutivo/registroAsistencia-cuadrilla-asociado,dashboardEjecutivo/horas-trabajadas-instalador-asociado,dashboardEjecutivo/last-ubicacion-cuadrilla-asociado,dashboardEjecutivo/horas-trabajadas-vs-jornada-instalador-asociado,dashboardEjecutivo/horas-trabajadas-dy-dia"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 0,
+			"menuTitle": "Home-Administrador",
+			"enabled": 1,
+			"icon": "dashboard",
+			"url": "dashboard?opt=2",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "dashboard-2",
+					"icon": "",
+					"enabled": 0,
+					"url": "dashboard?opt=2",
+					"pantallas": [
+						{
+							"index": 0,
+							"name": "dashboard?opt=2",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=2",
+							"servicios": "dashboard?opt=2,organizacion/listOrganizaciones,organizaciones/cuentas?org&opt,organizacion/organizacionbyId?idOrganizacion,cuenta-cliente/cuentasbyOrganizacion?idOrganizacion,dashboard/lista-cargasBatch?numero,dashboard/actividadesProyecto?proyecto&opt,dashboard/solicitudes?proyecto,dashboard/incidencias?proyecto,dashboard/agregarActividad?tarea&proyecto,dashboard/agregarRama?proyecto,dashboard/agregarTarea?rama&proyecto,dashboard/agregarIncidencia?proyecto,dashboard/detalleIncidencia?numero,cuadrilla,/listCuadrillasAsiganadasProyecto=idProyecto,solicitud/find-by-proyecto?id,proyectos/proyectobyId?idProyecto,proyectos/proyectobyId?idProyecto,almacen/list-catalogo-tarea?numCuenta"
+						},
+						{
+							"index": 1,
+							"name": "Actividades Proyecto",
+							"icon": "",
+							"enabled": 0,
+							"url": "",
+							"servicios": "adminProyecto/getRamas?idProyecto,cuadrilla/listCuadrillasSinProyecto,cuadrilla/listCuadrillasAsiganadasProyecto?idProyecto"
+						},
+						{
+							"index": 2,
+							"name": "Actividades Rama",
+							"icon": "",
+							"enabled": 0,
+							"url": "",
+							"servicios": "solicitud/find-by-proyecto?id,adminProyecto/getTareasRama?idRama,proyectos/proyectobyId?idProyecto,adminProyecto/creaRamaProyecto,adminProyecto/asignaTareasRama,adminProyecto/actividades?proyecto&secuencia,adminProyecto/atencion-actividad?,adminProyecto/listCatalogoMicroActividad?idCatalogoActividades,adminProyecto/asignarActividadesTarea?idTarea"
+						},
+						{
+							"index": 3,
+							"name": "Inventarios",
+							"icon": "",
+							"enabled": 0,
+							"url": "",
+							"servicios": "bodega/almacenes?numero,almacen/list-bodegas?proyecto"
+						},
+						{
+							"index": 4,
+							"name": "CUADRILLAS ASIGNADAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "",
+							"servicios": "adminProyecto/eliminaCuadrillaProyecto?idCuadrilla,adminProyecto/asignaCuadrillaProyecto,cuadrilla/especialidad?numero,adminProyecto/especializarCuadrilla?numeroCuadrilla&idCatalogoActividades,adminProyecto/listCatalogoActividades?idProyecto&numeroCuadrilla,adminProyecto/eliminarEspecialidadCuadrilla?idCuadrilla&idCatalogoActividades"
+						},
+						{
+							"index": 1,
+							"name": "ASIGNA SUPEVISOR A CUADRILLA",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/agregarSupervisor?cuadrilla&proyecto",
+							"servicios": "almacen/list-supervisor-cuadrilla,almacen/update-supervisor-cuadrilla,almacen/list-supervisor-asignado"
+						},
+						{
+							"index": 2,
+							"name": "GEOLOCALIZACION DE CUADRILLAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/geocerca?proyecto&cuadrilla",
+							"servicios": "cuadrilla/lastPosition?proyecto,cuadrilla/getCuadrillaDetalleByIdCuadrilla?proyecto&cuadrilla,proyectos/proyectobyId?idProyecto"
+						},
+						{
+							"index": 3,
+							"name": "REPORTE DE ASISTENCIAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/reporteAsistencia?proyecto",
+							"servicios": ""
+						}
+						,
+						{
+							"index": 4,
+							"name": "INCIDENCIAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/incidencias?proyecto",
+							"servicios": "incidencias/list-incidencias-proyecto?proyecto&fechaInicio&fechaFin,incidencias/update-status-incidencia,incidencias/update-usuario-atiende,incidencias/getUsrActual?usr,incidencias/ubicacion-incidencias?proyecto"
+						}
+						,
+						{
+							"index": 5,
+							"name": "SOLICITUDES",
+							"icon": "",
+							"enabled": 0,
+							"url": "/dashboard/solicitudes?proyecto",
+							"servicios": "solicitud/find-solicitud-origen?id,solicitud/escalar"
+						}
+						,
+						{
+							"index": 6,
+							"name": "MATERIALES ASIGNADOS",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard/materialesConsumidos?proyecto",
+							"servicios": "almacen/asignar-material-rama,materialesConsumidos/getMaterialesUtilizados?idProyecto&idAlmacen&opt"
+						},
+						
+						{
+							"index": 7,
+							"name": "GANTT ACTIVIDADES PROYECTO",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard/gantt-ramas?proyecto",
+							"servicios": "adminProyecto/getTareasRama?idRama,adminProyecto/getRamas?idProyecto,proyectos/proyectobyId?idProyecto,timeline/getActividadesbyTarea?idTarea"
+						},
+						{
+							"index": 9,
+							"name": "SUPERVISOR",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard/getSupervisores?proyecto",
+							"servicios":"almacen/list-supervisor-proyecto?proyecto,almacen/get-almacen-supervisor?supervisor,cuadrilla/listCatalogoActividadesSupervisor?proyecto&supervisor,cuadrilla/listSupervisorEspecialidad?supervisor,cuadrilla/especializarSupervisor?supervisor&catalogoActividad,cuadrilla/eliminarEspecialidadSupervisor?supervisor&catalogoActividad,cuadrilla/listCuadrillasSupervisorAsig?supervisor,almacen/update-supervisor-cuadrilla,cuadrilla/listRamasAtiendeSupervisor?supervisor,cuadrilla/listActividadesSupervisorAtiende?rama&supervisor&opt,cuadrilla/lastPositionSup?proyecto&supervisor"
+						},
+						{
+							"index": 10,
+							"name": "GEOLOCALIZACION DE ACTIVIDADES",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=1",
+							"servicios":"adminProyecto/getUbicacionesActividades?idProyecto"
+						},
+						{
+							"index": 11,
+							"name": "TIMELINE",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=1",
+							"servicios":"timeline/getEmpleado?usr,ws/postComentario,ws/updateStatus,almacen/list-catalogo-incidencias,timeline/getEmpleado?usr,timeline/getEmpleadoAdmin?rol&org,ws/postIncidenciaDetalle"
+						},
+						{
+							"index": 10,
+							"name": "GEOLOCALIZACION DE ASISTENCIAS",
+							"icon": "",
+							"enabled": 0,
+							"url": "dashboard?opt=1",
+							"servicios":"cuadrilla/ubicacion-asistencia?idProyecto&fecha&opt,cuadrilla/list-instaladores-transaccion?transaccion&opt"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 3,
+			"menuTitle": "Administracion Organizaciones",
+			"enabled": 1,
+			"icon": "business",
+			"url": "",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "Alta Organizaciones",
+					"icon": "corporate_fare",
+					"enabled": 1,
+					"url": "administracion/organizacion/alta",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Alta Organizacion",
+							"icon": "business",
+							"enabled": 1,
+							"url": "administracion/organizacion/alta",
+							"servicios": "organizacion/listOrgNoAsociadas,organizacion/createOrganizacion"
+						}
+					]
+				},
+				{
+					"index": 0,
+					"name": "Modificar Organizaciones",
+					"icon": "miscellaneous_services",
+					"enabled": 1,
+					"url": "organizaciones?opt=4",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Lista Organizaciones",
+							"icon": "",
+							"enabled": 1,
+							"url": "organizaciones?opt=4",
+							"servicios": "organizacion/listOrganizacionesAsociados&opt,organizacion/asociadobyId?idAsociado,organizacion/updateOrganizacionAsociado,organizacion/listOrganizacionesByAsociado&idAsociado,organizacion/listOrgHasAsociado"
+						},
+						{
+							"index": 1,
+							"name": "Actualiza organizacionez",
+							"icon": "",
+							"enabled": 1,
+							"url": "administracion/organizacion/update?org&aso",
+							"servicios": ""
+						},
+						{
+							"index": 1,
+							"name": "Actualiza organizacionez",
+							"icon": "",
+							"enabled": 1,
+							"url": "administracion/organizacion/update/datos-fiscales?org&aso",
+							"servicios": ""
+						},
+						{
+							"index": 1,
+							"name": "Actualiza organizacionez",
+							"icon": "",
+							"enabled": 1,
+							"url": "administracion/organizacion/update/direccion-fiscal?org&aso",
+							"servicios": ""
+						},
+						{
+							"index": 1,
+							"name": "Actualiza organizacionez",
+							"icon": "",
+							"enabled": 1,
+							"url": "administracion/organizacion/update/contacto-fiscal?org&aso",
+							"servicios": "telefono/updateTelefonoOrganizacion"
+						},
+						{
+							"index": 1,
+							"name": "Actualiza organizacionez",
+							"icon": "",
+							"enabled": 1,
+							"url": "administracion/organizacion/update/jornada-laboral?org&aso",
+							"servicios": ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 4,
+			"menuTitle": "Alta de Catalogos",
+			"enabled": 1,
+			"icon": "view_list",
+			"url": "",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "Alta Catalogo Tareas",
+					"icon": "card_travel",
+					"enabled": 1,
+					"url": "administracion-altaCatalogo/catalogos/alta-catalogo-act",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Alta Catalogo Actividades",
+							"icon": "card_travel",
+							"enabled": 1,
+							"url": "administracion-altaCatalogo/catalogos/alta-catalogo-act",
+							"servicios": "adminProyecto/getProyectosCta?idCuenta,adminProyecto/getListadoActividadesProyecto?idProyecto,adminProyecto/getListadoTareaProyecto?idProyecto,adminProyecto/creaCatalogoActividades,organizacion/listOrganizaciones,adminProyecto/getProyectosCta,almacen/update-catalogo-actividad?idCatalogoActividad"
+						}
+					]
+				},
+				{
+					"index": 1,
+					"name": "Alta Catalogo MicroActividades",
+					"icon": "reorder",
+					"enabled": 1,
+					"url": "administracion-altaCatalogo/catalogos/alta-catalogo-microActividades",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Alta Catalogo MicroActividades",
+							"icon": "reorder",
+							"enabled": 1,
+							"url": "administracion-altaCatalogo/catalogos/alta-catalogo-microActividades",
+							"servicios": "adminProyecto/creaCatalogoMicros,adminProyecto/getListadoTareaProyecto?idProyecto,adminProyecto/getProyectosCta?idCuenta,adminProyecto/getListadoActividadesProyecto?idProyecto,almacen/update-catalogo-microActividad?idCatalogo"
+						}
+					]
+				},
+				{
+					"index": 2,
+					"name": "Alta Catalogo Actividades",
+					"icon": "today",
+					"enabled": 1,
+					"url": "administracion-altaCatalogo/catalogos/alta-catalogo-tareas",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Alta Catalogo Tareas",
+							"icon": "today",
+							"enabled": 1,
+							"url": "administracion-altaCatalogo/catalogos/alta-catalogo-tareas",
+							"servicios": "adminProyecto/creaCatalogoTareas,adminProyecto/getListadoTareaProyecto?idProyecto,adminProyecto/getProyectosCta?idCuenta,almacen/update-catalogo-tarea?idCatalogo"
+						}
+					]
+				},
+				{
+					"index": 3,
+					"name": "Alta Catalogo Incidencias",
+					"icon": "assignment_late",
+					"enabled": 1,
+					"url": "administracion-altaCatalogo/catalogos/alta-catalogo-incidencias",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Alta Catalogo Incidencias",
+							"icon": "assignment_late",
+							"enabled": 1,
+							"url": "administracion-altaCatalogo/catalogos/alta-catalogo-incidencias",
+							"servicios": "adminProyecto/creaCatalogoIncidencias,almacen/update-catalogo-incidencias?idCatalogoIncidencia"
+						}
+					]
+				},
+				{
+					"index": 4,
+					"name": "Alta Catalogo Items",
+					"icon": "add_shopping_cart",
+					"enabled": 1,
+					"url": "administracion-altaCatalogo/catalogos/alta-catalogo-items",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Alta Catalogo Items",
+							"icon": "add_shopping_cart",
+							"enabled": 1,
+							"url": "administracion-altaCatalogo/catalogos/alta-catalogo-items",
+							"servicios": "adminProyecto/creaCatalogoItems,adminProyecto/get-paquetes?idCuenta,almacen/list-catalogo-items,almacen/update-catalogo-items?idCatalogoItems"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 4,
+			"menuTitle": "Solicitudes",
+			"enabled": 1,
+			"icon": "all_inbox",
+			"url": "",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "Revisar Solicitudes",
+					"icon": "local_grocery_store",
+					"enabled": 1,
+					"url": "solicitudes/list",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Ver solicitudes",
+							"icon": "",
+							"enabled": 1,
+							"url": "solcitudes",
+							"servicios": "solicitud/list-info,solicitud/find,solicitud/list-almacen?id,solicitud/update-estatus"
+						},
+						{
+							"index": 2,
+							"name": "Editar solicitudes",
+							"icon": "",
+							"enabled": 1,
+							"url": "solicitudes/edit?solicitud",
+							"servicios": "solicitud/info?id,solicitud/edit?opt,solicitud/detalle-solicitud?id"
+						},
+						{
+							"index": 3,
+							"name": "Detalle solicitudes",
+							"icon": "",
+							"enabled": 1,
+							"url": "solicitudes/detalle?solicitud",
+							"servicios": "solicitud/detalle-solicitud?id,solicitud/info?id"
+						},
+						{
+							"index": 4,
+							"name": "Detalle Almacenes",
+							"icon": "",
+							"enabled": 1,
+							"url": "bodega/detalle?numero",
+							"servicios": "solcitudes"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 4,
+			"menuTitle": "Administracion Personal",
+			"enabled": 1,
+			"icon": "people_outline",
+			"url": "",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "Alta Personal",
+					"icon": "person_add",
+					"enabled": 1,
+					"url": "administracion/personal/alta",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Alta Personal",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "administracion/personal/alta",
+							"servicios": "organizacion/listOrganizaciones"
+						}
+					]
+				},
+				{
+					"index": 1,
+					"name": "Administracion Personal",
+					"icon": "contacts",
+					"enabled": 1,
+					"url": "administracion/personal/admin",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Administracion Personal",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "administracion/personal/admin",
+							"servicios": "organizacion/listOrganizaciones,usuarioAcceso/createUsuario"
+						},
+						{
+							"index": 2,
+							"name": "Actualizar Personal",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "administracion/personal/actualizar?empleado",
+							"servicios": "usuario-acceso/empleados-org?org,usuario-acceso/getPerfiles,usuario-acceso/createUsuario,usuario-acceso/updateEmpleado"
+						},
+						{
+							"index": 3,
+							"name": "Actualizar Personal POR USUARIO",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "administracion/personal/actualizar?empleado&org",
+							"servicios": "usuario-acceso/getEmpleadobyId?idEmpleado&idOrganizacion"
+						}
+					]
+				},
+				{
+					"index": 2,
+					"name": "Alta Personal Asociado",
+					"icon": "supervisor_account",
+					"enabled": 1,
+					"url": "administracion/personal/alta-asociado",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Alta Personal Asociado",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "administracion/personal/alta-asociado",
+							"servicios": "organizacion/listOrganizacionesAsociados&opt,usuario-acceso/createEmpleadoAsoc"
+						}
+					]
+				},
+				{
+					"index": 3,
+					"name": "Admin Personal Asociado",
+					"icon": "fact_check",
+					"enabled": 1,
+					"url": "administracion/personal/admin-asociado",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Admin Personal Asociado",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "administracion/personal/admin-asociado",
+							"servicios": "organizacion/listOrganizacionesAsociados&opt,usuario-acceso/empleados-aso?aso&org,usuario-acceso/getEmpleadoAsociadobyId?idEmpleado&idAsociado,usuario-acceso/updateEmpleadoAsociado"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 5,
+			"menuTitle": "Administracion Sistema",
+			"enabled": 1,
+			"icon": "tab",
+			"url": "",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "Admiministracion Perfiles",
+					"icon": "accessibility",
+					"enabled": 1,
+					"url": "administracion-perfiles",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Administracion de perfiles",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "administracion-perfiles/seccion?modulo&rol",
+							"servicios": "rol/find-all,rol/info,rol/seccion?value,rol/seccion/alta,rol/modulo/alta,rol/add,rol/seccion/remove,rol/modulo/remove,rol/find"
+						}
+					]
+				},
+				{
+					"index": 1,
+					"name": "Admiministracion Roles",
+					"icon": "streetview",
+					"enabled": 1,
+					"url": "administracion-rol",
+					"pantallas": [
+						{
+							"index": 0,
+							"name": "Administracion de Roles Alta",
+							"icon": "",
+							"enabled": 1,
+							"url": "administracion-rol/alta",
+							"servicios": "rol/add,rol/info,rol/find"
+						},
+						{
+							"index": 1,
+							"name": "Administracion de Roles Alta Update",
+							"icon": "",
+							"enabled": 1,
+							"url": "administracion-rol/update?value",
+							"servicios": "rol/info,rol/find-all,rol/find,rol/update?value"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 0,
+			"menuTitle": "Almacenes y Bodegas",
+			"enabled": 1,
+			"icon": "store_mall_directory",
+			"url": "",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "Creacion de bodegas",
+					"icon": "add_business",
+					"enabled": 1,
+					"url": "bodega/bodega-new",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Creacion de bodegas",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "bodega/bodega-new",
+							"servicios": "almacen/listado-responsable-almcen,almacen/create-bodega,almacen/list-bodega-almacen?idProyecto"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 6,
+			"menuTitle": "Administracion Cuadrillas",
+			"enabled": 1,
+			"icon": "local_shipping",
+			"url": "",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "Creacion de cuadrillas",
+					"icon": "add_circle_outline",
+					"enabled": 1,
+					"url": "dashboard/agregarEmpleadoCuadrilla?idCuadrilla&cuadrilla",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Creacion de cuadrillas",
+							"icon": "local_shipping",
+							"enabled": 1,
+							"url": "dashboard/agregarEmpleadoCuadrilla?idCuadrilla&cuadrilla",
+							"servicios": "dashboard/agregarEmpleadoCuadrilla?idCuadrilla&cuadrilla,cuadrilla/insertCuadrilla,cuadrilla/getInstaladoresCuadrilla?idCuadrilla,cuadrilla/getInstaladoresNoCuadrilla,cuadrilla/updatAsignarCuadrillaInstalador?idCuadrilla&idInstalador,cuadrilla/updatePrincipalCuadrilla?idCuadrilla&idInstalador,cuadrilla/updateQuitarAsignacionCuadrilla?idInstalador"
+						}
+					]
+				},
+				{
+					"index": 1,
+					"name": "Modificar cuadrillas",
+					"icon": "engineering",
+					"enabled": 1,
+					"url": "dashboard/cuadrillasAsignadas?proyecto",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Modificacion de cuadrillas",
+							"icon": "local_shipping",
+							"enabled": 1,
+							"url": "",
+							"servicios": "dashboard/cuadrillasAsignadas?proyecto,cuadrilla/listCuadrillasAsiganadasProyecto?idProyecto,dashboard/agregarEmpleadoCuadrilla?idCuadrilla&cuadrilla,cuadrilla/getInstaladoresCuadrilla?idCuadrilla,cuadrilla/getInstaladoresNoCuadrilla,cuadrilla/updatAsignarCuadrillaInstalador?idCuadrilla&idInstalador,cuadrilla/updatePrincipalCuadrilla?idCuadrilla&idInstalador,cuadrilla/updateQuitarAsignacionCuadrilla?idInstalador"
+						},
+						{
+							"index": 2,
+							"name": "Inventario",
+							"icon": "local_shipping",
+							"enabled": 1,
+							"url": "",
+							"servicios": "inventario/bodega/inventario?numero&isBodega,cuadrilla/find-cuadrilla?cuadrilla,cuadrilla/getInventarioCuadrillaAlmacen?idCuadrilla&idAlmacen"
+						},
+						{
+							"index": 3,
+							"name": "Especialidades",
+							"icon": "local_shipping",
+							"enabled": 1,
+							"url": "",    
+							"servicios": "dashboard/agregarEspecialidad?cuadrilla&proyecto,cuadrilla/especialidad?numero,adminProyecto/listCatalogoActividades?idProyecto&numeroCuadrilla,adminProyecto/especializarCuadrilla?numeroCuadrilla&idCatalogoActividades,adminProyecto/eliminarEspecialidadCuadrilla?idCuadrilla&idCatalogoActividades"
+						},
+						{
+							"index": 4,
+							"name": "Asignar Supervisor",
+							"icon": "local_shipping",
+							"enabled": 1,
+							"url": "", 
+							"servicios": "dashboard/agregarSupervisor?cuadrilla&proyecto,almacen/list-supervisor-asignado,almacen/list-supervisor-cuadrilla,almacen/update-supervisor-cuadrilla"
+						}
+					]
+				}
+			]
+		},
+		{
+			"index": 5,
+			"menuTitle": "Usuarios AP",
+			"enabled": 1,
+			"icon": "tab",
+			"url": "",
+			"subMenu": [
+				{
+					"index": 0,
+					"name": "Usuarios AP",
+					"icon": "accessibility",
+					"enabled": 1,
+					"url": "/register",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Usuarios AP",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "/register",
+							"servicios": "usuario-acceso/createEmpleadoAP,usuario-acceso/getEmpleadoAP?usr,usuario-acceso/updateEmpleadoAP,usuario-acceso/usuarioNombre?user,usuario-acceso/getReporte?rfc&anio&mes,email/sendEmail,email/reset_password,usuario-acceso/getBusquedaEmpleadosAP?rfc&nombre&dependencia&unidadAdmin,usuario-acceso/updateEstatus,batch/postBatch?file,batch/resumenBatch?idCarga"
+						}
+					]
+				},
+				{
+					"index": 1,
+					"name": "Solicitudes AP",
+					"icon": "accessibility",
+					"enabled": 1,
+					"url": "/list-solicitudes",
+					"pantallas": [
+						{
+							"index": 1,
+							"name": "Solicitudes AP",
+							"icon": "people_outline",
+							"enabled": 1,
+							"url": "/list-solicitudes",
+							"servicios": "solicitud/crearSolicitud,solicitud/getSolicitudesByEmpleado?rfc,solicitud/getSolicitud?idSolicitud,solicitud/documentoSolicitud,solicitud/validarImportes,solicitud/getSolicitudesAnalistas"
+						}
+					]
+				}
+				
+				
+			]
+		}
+	]
+}

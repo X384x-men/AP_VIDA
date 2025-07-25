@@ -1,0 +1,13 @@
+{
+  "login": {
+    "title": "Acceso",
+    "btn": {
+      "usuario": "Usuario",
+      "password": "Contraseña"
+    }
+  },
+  "button": {
+    "save": "Guardar",
+    "back": "Regresar"
+  }
+}

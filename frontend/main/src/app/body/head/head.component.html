@@ -1,0 +1,35 @@
+<div class="w-100 custom-headBody">
+  <nav id="navId" class="navbar navbar-expand-lg navbar-dark navbarCustom navbarCustom2">
+    <!--<nav class="navbar navbar-expand-lg navbar-dark bg-primary">-->
+    <img [src]="integraIcon" class="imgAp" style="background-color: #FFF;" />
+    <div *ngIf="login" class="navbar-toggler bottonNavClass" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="dropdown">
+      <span class="btn btn-primary dropdown-toggle btnPrimaryDropDownUserOptions customLogout" id="dropdownMenuButton2"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" [style.width]="'100%'" *ngIf="nameUser | async as value">
+              {{  value  + ' - ' + user}}
+            </span>
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-length dropDownMenuOptions" aria-labelledby="dropdownMenuButton2">
+              <a class="dropdown-item" (click)="logout()" [style.font-size]="'11px'"><mat-icon>logout</mat-icon> Cerrar Sesión</a>
+            </div>
+    </div>
+  </div>
+    <div class="collapse navbar-collapse displayNone" id="navbarSupportedContent" *ngIf="login">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <div class="dropdown">
+            <button mat-button [matMenuTriggerFor]="accountOptions" *ngIf="nameUser | async as value">
+              <mat-icon [style.color]="'#b2d235'" >account_circle</mat-icon>
+              {{ value == 'ANALISTA COMERCIAL COMERCIAL' ? 'Ejecutivo de atencion -' + user : value == 'ANALISTA SINIESTROS SINIESTROS' ? 'COORDINADOR -' + user : value == 'ANALISTA ACTUARIAL ACTUARIAL' ? 'ACTUARÍA -' + user : value  + ' - ' + user}}
+            </button>
+            <mat-menu #accountOptions="matMenu">
+              <button mat-menu-item (click)="logout()">
+                <mat-icon>logout</mat-icon>
+                Cerrar sesión
+              </button>
+            </mat-menu>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>

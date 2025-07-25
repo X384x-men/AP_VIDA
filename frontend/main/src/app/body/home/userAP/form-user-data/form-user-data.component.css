@@ -1,0 +1,132 @@
+.tdClass{
+    display: flex;
+    align-items: flex-end;
+    width: 300px !important;
+}
+
+.dateClass{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    width: 100%;
+}
+
+.label-date{
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: -33px;
+    color: #000000e6;
+}
+
+
+.section-userAP{
+    width: 100%;
+    font-size: 18px;
+    color: #17202A;
+    font-weight: 600;
+    border-bottom: 2px solid #257aa9;
+}
+
+
+.containerForm{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 12px;
+}
+
+.lineSeparator{
+    width: 100%;
+}
+
+.input-size{
+    width: 100% !important;
+}
+
+.widthTd{
+    width: 300px !important;
+    padding:0 10px;
+    display: flex;
+    align-items: flex-end;
+}
+
+
+
+/* 320px
+480px
+600px
+768px
+900px
+1024px
+1200px */
+@media only screen and (max-width: 1900px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 600px) {
+    .widthTd{
+        width: 100% !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 480px) {
+    .widthTd{
+        width: 100% !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 320px) {
+    .widthTd{
+        width: 100% !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+.mat-form-field {
+  width: 30%;
+}

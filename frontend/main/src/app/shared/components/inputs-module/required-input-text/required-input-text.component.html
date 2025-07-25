@@ -1,0 +1,16 @@
+<form>
+  <!-- [formGroup]="options" -->
+  <mat-form-field [hideRequiredMarker]="options.value.hideRequired" [floatLabel]="options.value.floatLabel"
+    [ngStyle]="style">
+    <input (blur)="sendVal($event)" [value]="val" matInput placeholder="{{ data.placeholder | translate }}"
+      [type]="data.type" [formControl]="validInputFormControl" [errorStateMatcher]="matcher" autocomplete="off" (keyup)="mayus($event)" required>
+    <!-- class="form-control" id="addressLine1" formControlName="addressLine1" -->
+    <mat-hint>{{data.hint}}</mat-hint>
+    <mat-error *ngIf="validInputFormControl.hasError('val') && !validInputFormControl.hasError('required')">
+      {{data.messageValidInput}}
+    </mat-error>
+    <mat-error *ngIf="validInputFormControl.hasError('required')">
+      <strong>{{data.messageRequired}}</strong>
+    </mat-error>
+  </mat-form-field>
+</form>

@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>
+  <mat-icon>{{isNew ? 'add_circle': 'edit'}}</mat-icon>
+  <span>{{modalTitle}}</span>
+</h1>
+<form [formGroup]="dependencyForm" (ngSubmit)="addDependency()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="legacy">
+      <mat-label>Nombre de la dependencia</mat-label>
+      <input matInput formControlName="data" required />
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button type="submit" mat-flat-button color="primary" [disabled]="dependencyForm.invalid">
+      Guardar
+    </button>
+    <button mat-flat-button mat-dialog-close>Cancelar</button>
+  </div>
+</form>

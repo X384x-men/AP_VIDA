@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<div class="row text-center">
+  <div class="col-md-4">
+    <div class="btn-group">
+      <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate"
+        (viewDateChange)="viewDateChange.next(viewDate)">
+        <span class="valign-center">
+          <i title="Precedente" class="material-icons md-18">keyboard_arrow_left</i>
+        </span>
+      </div>
+      <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate"
+        (viewDateChange)="viewDateChange.next(viewDate)">
+        <span class="valign-center">
+          <i title="Oggi" class="material-icons md-18">today</i>
+        </span>
+      </div>
+      <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
+        (viewDateChange)="viewDateChange.next(viewDate)">
+        <span class="valign-center">
+          <i title="Successivo" class="material-icons md-18">keyboard_arrow_right</i>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <h3>{{ simpleDate.fullDate }}</h3>
+
+  </div>
+  <div class="col-md-4">
+    <div class="btn-group">
+      <button  matTooltip="Info about the action" class="btn btn-primary" (click)="viewChange.emit('month')" [class.active]="view === 'month'">
+        Mes
+      </button >
+      <div class="btn btn-primary" (click)="viewChange.emit('week')" [class.active]="view === 'week'">
+        Semana
+      </div>
+      <div class="btn btn-primary" (click)="viewChange.emit('day')" [class.active]="view === 'day'">
+        Dia
+      </div>
+
+      <!-- <div>
+        <button type="button" class="btn btn-primary" (click)="update()">
+          Actualizar
+        </button>
+      </div> -->
+    </div>
+  </div>
+</div>
+<br />

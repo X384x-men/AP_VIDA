@@ -1,0 +1,106 @@
+<form [formGroup]="user" class="containerForm">
+  <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'"
+    [style.justify-content]="'space-between'">
+    <label class="section-userAP">Datos Personales</label>
+  </div>
+  <mat-form-field>
+    <input matInput name="nombre" id="nombre" type="text" formControlName="nombre" placeholder="Nombre*">
+    <mat-error>Escriba su nombre, por favor.</mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput name="apellidoP" id="apellidoP" type="text" formControlName="apellidoPaterno"
+      placeholder="Apellido Paterno*">
+    <mat-error>Escriba su apellido paterno, por favor.</mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput name="apellidoM" id="apellidoM" type="text" formControlName="apellidoMaterno"
+      placeholder="Apellido Materno*">
+    <mat-error>Escriba su apellido materno, por favor.</mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Fecha de nacimiento</mat-label>
+    <input id="fechaNacimiento" matInput [matDatepicker]="picker1" formControlName="fechaNacimiento">
+    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+    <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+    <mat-error>Seleccione una fecha, por favor.</mat-error>
+  </mat-form-field>
+  <mat-form-field [style.marginTop.px]="9">
+    <mat-label>Sexo</mat-label>
+    <mat-select id="sexo" formControlName="sexo">
+      <mat-option value="HOMBRE">HOMBRE</mat-option>
+      <mat-option value="MUJER">MUJER</mat-option>
+    </mat-select>
+    <mat-error>Favor se seleccionar su sexo.</mat-error>
+  </mat-form-field>
+  <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'"
+    [style.justify-content]="'space-between'">
+    <label class="section-userAP"></label>
+  </div>
+  <mat-form-field>
+    <input matInput name="rfc" id="rfc" type="text" maxlength="13" minlength="13" formControlName="rfc" placeholder="RFC* (Con homoclave)">
+    <mat-error>Escriba su RFC, por favor.</mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput name="noEmpleado" id="noEmpleado" type="text" formControlName="noEmpleado"
+      placeholder="Número Empleado*">
+    <mat-error>Escriba su número de empleado, por favor.</mat-error>
+  </mat-form-field>
+  <mat-form-field *ngIf="!isAnalista" [style.marginTop.px]="9" [style.width.%]="90">
+    <mat-label for="dependencia">Dependencia</mat-label>
+    <mat-select id="dependencia" formControlName="dependencia"  #mySelect  (selectionChange)=onSelected(mySelect.value)  >
+      <mat-option *ngFor="let dependency of dependencias"
+        [value]="selected == dependency.descripcionCatalogo ? selected:dependency.descripcionCatalogo" >{{dependency.descripcionCatalogo}}</mat-option>
+    </mat-select>
+    <mat-error>Seleccione una dependencia</mat-error>
+  </mat-form-field>
+  <mat-form-field *ngIf="!isAnalista" [style.width.%]="90">
+    <mat-label>Unidad administrativa</mat-label>
+    <mat-select id="unidadAdministrativa" formControlName="unidadAdministrativa">
+      <mat-option *ngFor="let unity of unidades" [value]="unity.descripcion">
+        {{unity.descripcion}}
+      </mat-option>
+    </mat-select>
+    <mat-error>Seleccione su unidad administrativa</mat-error>
+  </mat-form-field>
+  <div *ngIf="isAnalista">
+    <mat-form-field>
+      <mat-select formControlName="tipoAnalista" class="tamano">
+        <mat-option *ngFor="let analyst of analistOptions" [value]="analyst.id">
+          {{analyst.data}}
+        </mat-option>
+      </mat-select>
+      <mat-error>Seleccione un tipo de analista, por favor.</mat-error>
+    </mat-form-field>
+  </div>
+  <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'"
+    [style.justify-content]="'space-between'">
+    <label class="section-userAP"></label>
+  </div>
+  <mat-form-field>
+    <input matInput name="mail" id="mail" type="text" formControlName="mail" placeholder="Correo Electrónico*">
+  </mat-form-field>
+  <mat-form-field *ngIf="isUpdate">
+    <input matInput name="pswValidate" id="pswValidate" [type]="fieldTextType ? 'text' : 'password'"
+      formControlName="pswValidate" placeholder="Contraseña Actual*">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput #psw name="psw" id="psw" [type]="fieldTextType ? 'text' : 'password'" formControlName="psw"
+      [placeholder]="isUpdate ? 'Nueva Contraseña*' : 'Contraseña*'">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput #cpsw name="confirmpsw" id="confirmpsw" [type]="fieldTextType ? 'text' : 'password'" type="password"
+      formControlName="confirmpsw" [placeholder]="isUpdate ? 'Confirma Nueva Contraseña*' : 'Confirma Contraseña*'">
+    <mat-hint style="color: red" *ngIf="psw.value != cpsw.value">Las contraseñas no coinciden.</mat-hint>
+  </mat-form-field>
+  <div>
+  </div>
+</form>
+<div style="flex-shrink: 0;">
+  <mat-checkbox #showPass color="primary" class="example-margin" (change)="fieldTextType = showPass.checked">
+    Mostrar Contraseña
+    {{showPass.value}}
+  </mat-checkbox>
+</div>
+<div class="lineSeparator">
+  <label>* Los campos son requeridos </label>
+</div>

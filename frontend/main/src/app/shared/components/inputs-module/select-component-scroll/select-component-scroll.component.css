@@ -1,0 +1,52 @@
+.input-size {
+    min-width: 230px !important;
+  }
+
+  .fontSizeClass{
+    font-size: 12px !important;
+  }
+
+   .mat-select-panel mat-option.mat-option {
+      height: unset;
+    }
+
+   .mat-option-text.mat-option-text {
+      /*white-space: normal;*/
+      white-space: nowrap !important;
+    }
+
+    .searchInput{
+      width: 100% !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid #7baea799 !important;
+    height: 35px !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+    padding-right: 5px !important;
+    outline: none !important;
+    padding-left: 35px !important;
+    }
+
+    .divSearch{
+      position: relative;
+    }
+
+    .iconSearch{
+      position: absolute;
+      font-size: 35px !important;
+      color: #257aa9;
+    }
+
+    .mat-select-panel{
+      width: auto !important;
+      max-width: 2000px !important;
+    }
+
+
+    .example-viewport-select {
+      height: 220px;
+      /* width: calc(100% - 10px); */
+      width: 100%;
+    }

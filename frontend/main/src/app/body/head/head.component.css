@@ -1,0 +1,178 @@
+.bg-primary {
+    min-width: 25px;
+	background: #33313b  !important;
+}
+.dropdown-menu-length {
+    min-width: 5px;
+}
+
+.dropdown{
+    min-width: 270px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.imgAp{
+    width: 200px;
+}
+
+.customLogout{
+    color: #257aa9 !important;
+    border: 1px solid #257aa9 !important;
+}
+
+
+.custom-headBody{
+    border-bottom: 2px solid #257aa9;
+}
+.displayNone{
+    display: auto;
+}
+
+
+@media only screen and (max-width: 1900px) {
+    .navbarCustom2{
+        height: 75px;
+        position: relative !important;
+    }
+    .imgAp{
+        width: 200px;
+    }
+    .customLogout{
+        font-size: 16px;
+    }
+    .displayNone{
+        display: auto;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .navbarCustom2{
+        height: 75px;
+        position: relative !important;
+    }
+    .imgAp{
+        width: 200px;
+    }
+    .customLogout{
+        font-size: 16px;
+    }
+    .displayNone{
+        display: auto;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .navbarCustom2{
+        height: 75px;
+    position: relative !important;
+    }
+    .imgAp{
+        width: 200px;
+    }
+    .customLogout{
+        font-size: 12px;
+    }
+    .displayNone{
+        display: auto;
+    }
+}
+
+@media only screen and (max-width: 990px) {
+    .navbarCustom2{
+        height: 100px;
+        display: flex;
+    justify-content: center;
+    position: relative !important;
+    }
+    .bottonNavClass{
+        width: 100%;
+    }
+    .imgAp{
+        width: 150px;
+    }
+    .customLogout{
+        font-size: 12px;
+    }
+    .displayNone{
+        display: none;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .navbarCustom2{
+        height: 100px;
+        display: flex;
+    justify-content: center;
+    position: relative !important;
+    }
+    .bottonNavClass{
+        width: 100%;
+    }
+    .imgAp{
+        width: 150px;
+    }
+    .customLogout{
+        font-size: 12px;
+    }
+    .displayNone{
+        display: none;
+    }
+}
+@media only screen and (max-width: 600px) {
+    .navbarCustom2{
+        height: 100px;
+        display: flex;
+    justify-content: center;
+    position: relative !important;
+    }
+    .bottonNavClass{
+        width: 100%;
+    }
+    .imgAp{
+        width: 150px;
+    }
+    .customLogout{
+        font-size: 12px;
+    }
+    .displayNone{
+        display: none;
+    }
+}
+@media only screen and (max-width: 480px) {
+    .navbarCustom2{
+        height: 100px;
+        display: flex;
+    justify-content: center;
+    position: relative !important;
+    }
+    .bottonNavClass{
+        width: 100%;
+    }
+    .imgAp{
+        width: 150px;
+    }
+    .customLogout{
+        font-size: 11px;
+    }
+    .displayNone{
+        display: none;
+    }
+}
+@media only screen and (max-width: 320px) {
+    .navbarCustom2{
+        height: 100px;
+        display: flex;
+    justify-content: center;
+    position: relative !important;
+    }
+    .bottonNavClass{
+        width: 100%;
+    }
+    .imgAp{
+        width: 150px;
+    }
+    .customLogout{
+        font-size: 10px;
+    }
+    .displayNone{
+        display: none;
+    }
+}

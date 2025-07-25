@@ -1,0 +1,176 @@
+<div class="selected">
+  <!--<button mat-stroked-button color="primary" appBackButton>-->
+    <button mat-stroked-button color="primary" [routerLink]="value?['/angular/dashboard-admin/asegurados']:['/angular/dashboardAP']" >
+
+        <mat-icon>chevron_left</mat-icon>
+        Menú
+
+  </button>
+  <div class="widthTd">
+    <app-select-component [style.width]="'100%'" [width]="'100%'" class="tamano" [menuName]='"Selecciona Periodo"' (selectedOption)='getPeriodo($event)'
+      [currentOption]="currentPeriodo" [options]='optionsPeriodo'> </app-select-component>
+  </div>
+</div>
+
+<p class="label-title" *ngIf="userAdmin && nameUser">{{'Nombre de Empleado: ' + nameUser}}</p>
+
+  <div class="container-report">
+
+    <div class="seccion1">
+      <img [src]="integraIcon" class="imgAp" style="background-color: #FFF;" />
+      <div class="title1">
+        <p class="title1-font">ASEGURADORA PATRIMONIAL VIDA, S.A. DE C.V.</p>
+        <p class="title1-font">ESTADO DE CUENTA SEGURO DE AHORRO</p>
+      </div>
+    </div>
+    <div class="seccion">
+      <div class="separador">INFORMACIÓN DEL SERVIDOR PÚBLICO</div>
+      <div class="bodyPrin">
+        <div class="item">
+          <p [style.font-weight]="'600'">R.F.C.:&nbsp;</p>
+          <p *ngIf="dataReport && dataReport.criterio && dataReport.criterio.asegurado && dataReport.criterio.asegurado.rfc">{{dataReport.criterio.asegurado.rfc}}</p>
+        </div>
+        <div class="item">
+          <p [style.font-weight]="'600'">Periodo:&nbsp;</p>
+          <p *ngIf="dataReport && dataReport.criterio && dataReport.criterio.anio && dataReport.criterio.mes">{{ (changeFormatDateUniq(dataReport.criterio.mes + '-' + dataReport.criterio.anio))}}</p>
+        </div>
+        <div class="item">
+          <p [style.font-weight]="'600'">Retenedor:&nbsp;</p>
+          <p *ngIf="dataReport && dataReport.retenedor">{{ dataReport.retenedor}}</p>
+        </div>
+        <div class="item">
+          <p [style.font-weight]="'600'">Poliza:&nbsp;</p>
+          <p *ngIf="dataReport && dataReport.poliza ">{{dataReport.poliza}}</p>
+        </div>
+        <div class="item">
+          <p [style.font-weight]="'600'">Dependencia:&nbsp;</p>
+          <p *ngIf="dataReport && dataReport.criterio && dataReport.criterio.catalogoDependencias && dataReport.criterio.catalogoDependencias.descripcionCatalogo">{{dataReport.criterio.catalogoDependencias.descripcionCatalogo}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="seccion">
+      <div class="separador">RESUMEN DE MOVIMIENTOS Y PERIODOS</div>
+      <div class="bodyResp" *ngIf="dataReport && dataReport.resumenLista">
+        <div class="headerTable">
+          <div [style.font-weight]="'600'" [style.width]="'25%'">DESCRIPCIÓN</div>
+          <div class="celda" [style.font-weight]="'600'">SALDO INICIAL</div>
+          <div class="celda" [style.font-weight]="'600'">PRIMAS APORTADAS</div>
+          <div class="celda" [style.font-weight]="'600'">INTERESES GANADOS</div>
+          <div class="celda" [style.font-weight]="'600'">RETIROS</div>
+          <div class="celda" [style.font-weight]="'600'">SALDO FINAL</div>
+        </div>
+        <div class="table" *ngFor="let item of dataReport.resumenLista; let i = index">
+          <p [style.font-weight]="'600'" [style.width]="'25%'">{{(item.criterios && item.criterios.concepto ? item.criterios.concepto.descripcion : '')}}</p>
+          <p class="celda" >{{item.saldoInicial | currency}}</p>
+          <p class="celda" >{{item.primasAportadas | currency}}</p>
+          <p class="celda" >{{item.interesesGanados | currency}}</p>
+          <p class="celda" >{{item.retiros | currency}}</p>
+          <p class="celda" >{{item.saldoFinal | currency}}</p>
+        </div>
+        <div class="table" *ngIf="dataReport && dataReport.resumen">
+          <p [style.font-weight]="'600'" [style.width]="'25%'">Total</p>
+          <p class="celda" [style.font-weight]="'600'">{{dataReport.resumen.saldoInicial | currency}}</p>
+          <p class="celda" [style.font-weight]="'600'">{{dataReport.resumen.primasAportadas | currency}}</p>
+          <p class="celda" [style.font-weight]="'600'">{{dataReport.resumen.interesesGanados | currency}}</p>
+          <p class="celda" [style.font-weight]="'600'">{{dataReport.resumen.retiros | currency}}</p>
+          <p class="celda" [style.font-weight]="'600'">{{dataReport.resumen.saldoFinal | currency}}</p>
+        </div>
+      </div>
+
+      <div class="bodyResponsive" *ngIf="dataReport && dataReport.resumenLista">
+        <div class="respon" *ngFor="let item of dataReport.resumenLista; let i = index">
+          <div class="headerTable2" >
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">DESCRIPCIÓN</div>
+              <p class="celda2" [style.font-weight]="'600'">{{(item.criterios && item.criterios.concepto ? item.criterios.concepto.descripcion : '')}}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">SALDO INICIAL</div>
+              <p class="celda2" >{{item.saldoInicial | currency}}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">PRIMAS APORTADAS</div>
+              <p class="celda2" >{{item.primasAportadas | currency}}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">INTERESES GANADOS</div>
+              <p class="celda2" >{{item.interesesGanados | currency}}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">RETIROS</div>
+              <p class="celda2" >{{item.retiros | currency}}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">SALDO FINAL</div>
+              <p class="celda2" >{{item.saldoFinal | currency}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="seccion">
+      <div class="separador">OBSERVACIONES</div>
+      <div class="bodyObs">
+        <p>Verifique que sus datos personales estén correctos, en caso de existir algún error u omisión acuda al área de Recursos Humanos de su dependencia, unidad o equivalente de su centro de trabajo, para que se requisite el formato para la actualización de los mismos.</p>
+      </div>
+    </div>
+    <div class="seccion">
+      <div class="separador">DETALLE DE MOVIMIENTOS</div>
+      <div class="bodyResp" *ngIf="dataReport && dataReport.detalles">
+        <div class="headerTable">
+          <div class="celda" [style.text-align]="'left'" [style.font-weight]="'600'">FECHA</div>
+          <div [style.font-weight]="'600'" [style.width]="'25%'">CONCEPTO</div>
+          <div class="celda" [style.font-weight]="'600'">DEPÓSITO</div>
+          <div class="celda" [style.font-weight]="'600'">INTERESES</div>
+          <div class="celda" [style.font-weight]="'600'">RETIROS</div>
+          <div class="celda" [style.font-weight]="'600'">SALDO</div>
+        </div>
+        <div class="table" *ngFor="let item of dataReport.detalles; let i = index">
+          <p class="celda" [style.text-align]="'left'">{{(item.criterio ? changeFormatDateComillas(item.criterio.fecha) : '')}}</p>
+          <p [style.width]="'25%'">{{(item.criterio && item.criterio.concepto ? item.criterio.concepto.descripcion : '')}}</p>
+          <p class="celda" >{{item.deposito | currency}}</p>
+          <p class="celda" >{{item.intereses | currency}}</p>
+          <p class="celda" >{{item.retiros | currency}}</p>
+          <p class="celda" >{{item.saldo | currency}}</p>
+        </div>
+      </div>
+
+      <div class="bodyResponsive marginDefault" *ngIf="dataReport && dataReport.detalles">
+        <div class="respon" *ngFor="let item of dataReport.detalles; let i = index">
+          <div class="headerTable2" >
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">FECHA</div>
+              <p class="celda2" >{{(item.criterio ? changeFormatDateComillas(item.criterio.fecha) : '') }}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'" >CONCEPTO</div>
+              <p class="celda2" >{{(item.criterio && item.criterio.concepto ? item.criterio.concepto.descripcion : '')}}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">DEPÓSITO</div>
+              <p class="celda2" >{{item.deposito | currency}}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">INTERESES</div>
+              <p class="celda2" >{{item.intereses | currency}}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">RETIROS</div>
+              <p class="celda2" >{{item.retiros | currency}}</p>
+            </div>
+            <div class="item-cont">
+              <div class="celda2" [style.font-weight]="'600'">SALDO</div>
+              <p class="celda2" >{{item.saldo | currency}}</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div style="display: flex; justify-content: center;margin-bottom: 16px;">
+    <button type="button" mat-raised-button color="primary" (click)="generatePDF()">
+      <mat-icon>download_file</mat-icon>
+      Descargar</button>
+  </div>

@@ -1,0 +1,95 @@
+.containerForm{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding:20px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px;
+    border-radius: 10px;
+}
+
+.verPwd{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.input-size{
+    width: 300px !important;
+}
+
+@media only screen and (max-width: 1900px) { 
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 1200px) { 
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 1024px) { 
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+@media only screen and (max-width: 900px) { 
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 768px) { 
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 600px) { 
+    .widthTd{
+        width: 100% !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 480px) { 
+    .widthTd{
+        width: 100% !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 320px) { 
+    .widthTd{
+        width: 100% !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+
+
+
+
+

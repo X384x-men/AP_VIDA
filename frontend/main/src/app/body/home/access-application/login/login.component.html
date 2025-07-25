@@ -1,0 +1,74 @@
+<div class="container" id="main">
+  <a href="http://apvida.mx" class="boton-regresar"><i class="material-icons">home</i>Regresar</a>
+  <div class="row" align="center">
+    <div class="col-md-6 offset-md-3 custom-margin">
+      <!-- <img [src]="appVidaIcon" style="width: 650px;"> -->
+      <mat-card class="cardLogin" id="card">
+        <mat-card-title class="title-custom">
+          <label class="title1"> <span>Seguro de Vida</span> Ahorro</label>
+          <label class="title2">Gobierno del Estado de México</label>
+        </mat-card-title>
+        <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+          <mat-card-content>
+            <mat-form-field>
+              <mat-label>Usuario (Es el RFC que registraste previamente)</mat-label>
+              <input matInput type="text" formControlName="username" name="rfc" required maxlength="13" minlength="13">
+              <mat-error>Favor de ingresar su RFC</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Contraseña</mat-label>
+              <input matInput [type]="fieldTextType" formControlName="password" name="password" required>
+              <mat-error>Favor de ingresar su contraseña</mat-error>
+            </mat-form-field>
+
+            <div class="widthTd">
+              <div [style.margin]="'0px 0 0px 0'">
+                <mat-checkbox color="primary" class="example-margin fontSizeFoot" [value]="fieldTextType"
+                  (change)="showPwd($event)">
+                  Mostrar Contraseña
+                </mat-checkbox>
+              </div>
+            </div>
+            <div class="cont-forgot">
+              <p class="forgotPwd">
+                ¿Olvidaste tu contraseña?
+                <a class="clickPwd" routerLink="/angular/changePswd">
+                 <i class="fa fa-arrow-right me-2 animate__animated animate__flash animate__slow	2s animate__infinite	infinite" aria-hidden="true"></i> <strong> Por favor sigue estas indicaciones </strong>  <i class="fa fa-arrow-left ms-2 animate__animated animate__flash animate__slow	2s animate__infinite	infinite" aria-hidden="true"></i>
+                </a>
+              </p>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <button type="submit" class="button-login-ap" mat-raised-button color="primary">
+              Ingresar
+            </button>
+            <a type="button" class="button-login-ap" routerLink="/angular/register" mat-raised-button color="primary">
+              Registrarse
+            </a>
+          </mat-card-actions>
+
+          <div class="message-help">
+            <label class="label-help margin-text-help">Cómo darte de alta.</label>
+            <label class="label-help text-align-help">1. Da click en el botón registrar.</label>
+            <label class="label-help text-align-help">2. Sigue los pasos que aparecen en la siguiente pantalla para
+              configurar tu cuenta.</label>
+          </div>
+        </form>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar fixed-bottom navbar-ligth justify-content-between navbarFooterCustom">
+  <div class="footerInfo">
+    <label class="text-color fontSizeFoot">Aristóteles 77 Desp. 104, Col. Polanco Reforma, C.P. 11550, Alcaldía Miguel
+      Hidalgo, CDMX.</label>
+    <label class="text-color fontSizeFoot">© Todos los Derechos Reservados 2023</label>
+  </div>
+  <div>
+    <a [href]="AVISO_DE_PRIVACIDAD" target="_blank" class="navbar-brand fontSizeFoot yellowText">Aviso de Privacidad</a>
+    <a [href]="DERECHOS_BASICOS_DE_ASEGURADOS" target="_blank" [style.padding-left]="'5px'"
+      class="navbar-brand fontSizeFoot yellowText">Derechos de Asegurados</a>
+  </div>
+</nav>

@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>
+  <mat-icon>{{isNew ? 'add_circle': 'edit'}}</mat-icon>
+  <span>{{modalTitle}}</span>
+</h1>
+<form [formGroup]="ConceptForm" (ngSubmit)="addConcept()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="legacy" style="width: 100%;">
+      <mat-label>Nombre del concepto</mat-label>
+      <input matInput formControlName="description" required />
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button type="submit" mat-flat-button color="primary" [disabled]="ConceptForm.invalid">
+      Guardar
+    </button>
+    <button mat-flat-button mat-dialog-close>Cancelar</button>
+  </div>
+</form>

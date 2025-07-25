@@ -1,0 +1,17 @@
+#chart {
+  max-width: 450px;
+  margin: 35px auto;
+  padding: 0;
+}
+
+#chart2 {
+  max-width: 650px;
+  margin: 35px auto;
+}
+
+
+.btn-busqueda{
+  color: #FFF;
+  background-color: #257aa9;
+  border-radius: 10px !important;
+}

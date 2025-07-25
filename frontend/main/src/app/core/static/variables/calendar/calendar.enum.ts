@@ -1,0 +1,17 @@
+export enum Calendar {
+    DATE_FORMAT_FULL_DATE = 'yyyy-MM-dd HH:mm:ss',
+    DATE_FORMAT_HOURS = 'HH:mm:ss',
+    DAE_FORMAT_DATE = 'YYYY-MM-DD',
+    LOCALE_EN_MX = 'en-MX',
+    PARSE_INPUT = 'YYYY-MM-DD HH:mm:ss',
+    FULL_PICKER_INPUT = 'YYYY-MM-DD HH:mm',
+    DATE_PICKER_INPUT = 'LL',
+    TIME_PICKER_INPUT = 'LT',
+    MONTH_LABEL_INPUT = 'YYYY-MM-dd',
+    DATE_A_11_Y_LABEL = 'LL',
+    MONTH_YEAR_A_11_Y_LABEL = 'MMMM YYYY',
+    DATE_RANGE = 20,
+    MAX_MONTH = 12,
+    MAX_DAY_MONTH = 31,
+    MONTH_FORMAT = 'MMMM'
+}

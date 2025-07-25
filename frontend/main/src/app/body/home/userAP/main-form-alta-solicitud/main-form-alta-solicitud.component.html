@@ -1,0 +1,24 @@
+<div class="margin-bottom" >
+
+  <div class="form-user-ap">
+    <div class="divTitle">
+      <label class="titleListTablesSolic">Alta de solicitud</label>
+    </div>
+
+    <div class="actions-button">
+      <button type="button" class="btn btn-danger button rounded" (click)="end()"
+      [innerText]='"Regresar"' [style.margin-left]="'5px'"></button>
+
+    </div>
+  </div>
+
+  <div class="containerForm">
+    <div class="form-user-ap-form">
+      <!-- Router ['Angular/Form-solicitudes'] -->
+      <app-form-solicitud-data [solicitud]="solicitud" [arrayFiles]="arrayFiles" [prueba]=prueba [isAnalista]="opt == 0 ? false : true"></app-form-solicitud-data>
+    </div>
+  </div>
+
+</div>
+
+

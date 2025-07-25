@@ -1,0 +1,19 @@
+
+<mat-form-field class='input-size' [style.width]="width">
+  <mat-label>{{menuName}}</mat-label>
+  <mat-select #malo [formControl]="optionsControl" [compareWith]="compareObjects" >
+    <div class="divSearch" *ngIf="search">
+      <i class="material-icons iconSearch">
+        search
+      </i>
+      <input class="searchInput" placeholder="Buscar con RFC" (keyup)="onKey($event.target.value)" >
+    </div>
+    <cdk-virtual-scroll-viewport class="virtual-scroll"  style="height:220px; overflow-x:hidden; min-width: 500px;" itemSize="10">
+        <mat-option *cdkVirtualFor="let option of options; let i = index" [attr.data-index]="i" [value]="option"
+          (click)="selectOption(option,i)" class="fontSizeClass">{{ '- ' + option.name }}
+        </mat-option>
+    </cdk-virtual-scroll-viewport>
+  </mat-select>
+  <mat-error *ngIf="optionsControl.hasError('required')">Por favor selecciona una opcion</mat-error>
+  <mat-hint>{{optionsControl.value?.sound}}</mat-hint>
+</mat-form-field>

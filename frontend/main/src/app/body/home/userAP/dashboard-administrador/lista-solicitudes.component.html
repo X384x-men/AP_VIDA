@@ -1,0 +1,168 @@
+<div  class="container-list-solicitud">
+
+  <div class="text-center mb-3 mt-3">
+    <div class="row g-3 align-items-center">
+      <div class="col-2">
+        <label for="inputPassword6" class="col-form-label">Nombre</label>
+      </div>
+      <div class="col-10">
+        <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Nombre" [(ngModel)]='solicitud.nombre'>
+      </div>
+      <div class="col-2">
+        <label for="inputPassword6" class="col-form-label">RFC</label>
+      </div>
+      <div class="col-10">
+        <input class="form-control" type="text" placeholder="RFC" name="rfc" [(ngModel)]='solicitud.RFC' >
+      </div>
+      <div class="col-2">
+        <label for="inputPassword6" class="col-form-label">Status</label>
+      </div>
+      <div class="col-10">
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedoptionsEstatus (click)=onSelectedoptionsEstatus(mySelectedoptionsEstatus.value)>
+          <option selected value="" > - Seleccionar un opción  - </option>
+          <option  *ngFor="let tipoEstatus of optionsEstatus" [value]="tipoEstatus.name"
+          > {{ tipoEstatus.name }} </option>
+        </select>
+      </div>
+      <div class="col-2">
+        <label for="inputPassword6" class="col-form-label">Tipo</label>
+      </div>
+      <div class="col-10">
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedTipoTramite  (click)=onSelectedTipoTramite(mySelectedTipoTramite.value)>
+          <option selected> - Seleccionar un opción -  </option>
+          <option *ngFor="let tipoTramite of optionsTipoTramite"[value]="tipoTramite.name">{{tipoTramite.name}}</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-busqueda mt-3" type="button" (click)="filter()" ><strong class="me-1" >Buscar</strong><i class="fa fa-solid fa-magnifying-glass"></i> </button>
+</div>
+  <div class="row mt-5">
+    <div class="col-3">
+      <div class="export-title2">
+        <div class="containerTabs-title">
+      </div>
+    </div>
+    <div class="col-9">
+      <div class="botones-accion" >
+        <button class="btn btn-busqueda" (click)="downloadSolicitudBatch()" [disabled]="loading" >
+          <i class="fa fa-download" aria-hidden="true"></i>
+           Descargar solicitudes
+         </button>
+      </div>
+    </div>
+  </div>
+
+    <!-- Tabla con paginación y filtro nueva -->
+    <mat-form-field>
+    <mat-label> <strong>*Filtrar busqueda</strong> </mat-label>
+    <input class="w-5" matInput (keyup)="applyFilter($event)" #input>
+  </mat-form-field>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort >
+    <tr mat-header-row *matHeaderRowDef="['Folio','rfcAsegurado', 'nombre','Fecha de alta','Tipo Solicitud','Estatus']"></tr>
+    <tr mat-row *matRowDef="let row; columns:[ 'Folio','rfcAsegurado', 'nombre','Fecha de alta','Tipo Solicitud','Estatus'];"  ></tr>
+    <ng-container matColumnDef="Folio">
+      <th mat-header-cell *matHeaderCellDef>Folio</th>
+      <td mat-cell *matCellDef="let element">{{element.numeroRegistro}} <td>
+    </ng-container>
+    <ng-container matColumnDef="rfcAsegurado">
+      <th mat-header-cell *matHeaderCellDef>RFC</th>
+      <td mat-cell *matCellDef="let element">{{element.rfcAsegurado}} </td>
+    </ng-container>
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef >Nombre</th>
+      <td mat-cell *matCellDef="let element">{{element.nombre}} {{ element.apellidoPaterno }} </td>
+    </ng-container>
+    <ng-container matColumnDef="Fecha de alta">
+      <th mat-header-cell *matHeaderCellDef >Fecha alta</th>
+      <td mat-cell *matCellDef="let element">{{element.fechaSolicitud}}</td>
+    </ng-container>
+    <ng-container matColumnDef="Tipo Solicitud">
+      <th mat-header-cell *matHeaderCellDef >Tipo de Solicitud</th>
+      <td mat-cell *matCellDef="let element">{{element.tipoTramite}} </td>
+    </ng-container>
+    <ng-container matColumnDef="Estatus">
+      <th mat-header-cell *matHeaderCellDef>Estatus de Solicitud</th>
+      <td mat-cell *matCellDef="let element">{{element.statusSolicitud}} </td>
+    </ng-container>
+
+  </table>
+
+  <mat-paginator class="h-50" pageSize="5" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+  <section style="display: flex; flex-direction: column; align-items: center; opacity: 0.7; padding: 16px;" *ngIf="!solicitudes">
+    <h2>Aquí serán mostradas las solicitudes </h2>
+    <p>Cargando...</p>
+  </section>
+</div>
+
+
+<!-- <div class="container ">
+    <div class="text-center mb-3 mt-3">
+      <div class="row g-3 align-items-center">
+        <div class="col-2">
+          <label for="inputPassword6" class="col-form-label">Nombre</label>
+        </div>
+        <div class="col-10">
+          <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Nombre" [(ngModel)]='folio'>
+        </div>
+        <div class="col-2">
+          <label for="inputPassword6" class="col-form-label">RFC</label>
+        </div>
+        <div class="col-10">
+          <input class="form-control" type="text" placeholder="RFC" name="rfc" [(ngModel)]='rfc' >
+        </div>
+        <div class="col-2">
+          <label for="inputPassword6" class="col-form-label">Tipos de Trámite</label>
+        </div>
+        <div class="col-10">
+          <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedTramite (click)="getTipoTramite(mySelectedTramite.value)">
+            <option selected value="" > - Seleccionar un opción  - </option>
+            <option  *ngFor="let tipoTramite of optionsTipoTramite" [value]="tipoTramite.name"
+            > {{ tipoTramite.name }} </option>
+          </select>
+        </div>
+        <div class="col-2">
+          <label for="inputPassword6" class="col-form-label">Estatus</label>
+        </div>
+        <div class="col-10">
+          <select class="form-select form-select-sm" aria-label=".form-select-sm example" #mySelectedStatus (click)="getEstatus(mySelectedStatus.value)">
+            <option selected value="" > - Seleccionar un opción  - </option>
+            <option  *ngFor="let tipoEstatus of optionsEstatus" [value]="tipoEstatus.name"
+            > {{ tipoEstatus.name }} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- <div class="result-body">
+      <div class="header-table">
+        <div class="head-td">Folio</div>
+        <div class="head-td">RFC</div>
+        <div class="head-td">Nombre Completo</div>
+        <div class="head-td">Fecha Alta</div>
+        <div class="head-td">Tipo Solicitud</div>
+        <div class="head-td">Estatus</div>
+      </div>
+      <div *ngIf="loading" class=" text-center animate__animated animate__flash animate__infinite	infinite animate__slow	2s">
+        <i  class="fa fa-spinner fa-spin fa-4x mt-5 " aria-hidden="true"></i>
+      </div>
+      <div *ngIf="!loading && solicitudes.length <= 0" class=" text-center animate__animated animate__slow	2s" style="display: flex; flex-direction: column; align-items: center; opacity: 0.7; padding: 16px;">
+        <h2>¡Aquí serán mostradas las solicitudes!</h2>
+      </div>
+      <div *ngIf="!loading && solicitudes.length >= 1" >
+        <div [ngClass]="i%2 == 0 ? 'body-table row2' : 'body-table row1'" *ngFor="let item of solicitudes; let i = index;">
+          <div class="body-td" *ngIf="isSiniestros"><mat-checkbox *ngIf="item.statusSolicitud === 'Importes validados' && item.fechaOrdenPago == null" [color]="'primary'" [(ngModel)]="item.isLayout"></mat-checkbox></div>
+          <div class="body-td" *ngIf="isContabilidad"><mat-checkbox *ngIf="item.statusSolicitud === 'Proceso de revision de pago' && item.idCalculoActuaria == 0 " [color]="'primary'" [(ngModel)]="item.isReporteContable"></mat-checkbox></div>
+          <div class="body-td">{{item.numeroRegistro}}</div>
+          <div class="body-td">{{item.rfcAsegurado}}</div>
+          <div class="body-td">{{item.nombre}} {{ item.apellidoPaterno }} </div>
+          <div class="body-td">{{item.fechaSolicitud}}</div>
+          <div class="body-td">{{item.tipoTramite}}</div>
+          <div class="body-td">{{item.statusSolicitud}}</div>
+          <section style="display: flex; flex-direction: column; align-items: center; opacity: 0.7; padding: 16px;" *ngIf="solicitudes.lentgh === 0">
+            <h2>Aquí serán mostrados las solicitudes consultadas</h2>
+            <p>Use el filtro de búsqueda</p>
+          </section>
+        </div>
+      </div>
+  </div> -->

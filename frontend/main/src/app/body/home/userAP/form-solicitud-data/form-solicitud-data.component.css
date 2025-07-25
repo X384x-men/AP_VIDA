@@ -1,0 +1,229 @@
+.tdClass{
+    display: flex;
+    align-items: flex-end;
+    width: 300px !important;
+}
+
+.dateClass{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    width: 100%;
+}
+
+.noVisible{
+  pointer-events: visible !important;
+}
+
+.label-date{
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: -20px;
+    color: #000000e6;
+}
+
+
+.section-userAP{
+    width: 100%;
+    font-size: 18px;
+    color: #17202A;
+    font-weight: 600;
+    border-bottom: 2px solid #257aa9;
+}
+
+
+.containerForm{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding:20px;
+}
+
+.lineSeparator{
+    width: 100%;
+}
+
+.input-size{
+    width: 100% !important;
+}
+
+.widthTd{
+    width: 300px !important;
+    padding:0 10px;
+    display: flex;
+    align-items: flex-end;
+}
+
+
+.fileinput{
+    display: none;
+
+}
+
+.btn-primary{
+  background-color: #257aa9;
+
+}
+
+.buttonFile{
+    width: 35px;
+    height: 35px;
+    border-radius: 10px !important;
+    border: 1px solid #949494;
+    margin-bottom: 0 !important;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
+.roundedButton{
+    border-radius: 10px !important;
+}
+
+.loadDoc{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 15px 0;
+}
+
+.cont-inputFile{
+    display: flex;
+    justify-content: space-between;
+}
+
+.targetFile{
+    width: calc(100% - 40px);
+    border-bottom: 1px solid #949494;
+    margin-bottom: 0 !important;
+    display: flex;
+    align-items: center;
+
+    text-overflow: ellipsis;
+    word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.elip{
+    width: calc(100%);
+    text-overflow: ellipsis;
+    word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.textArea-comment{
+    width: 100%;
+      height: 100px;
+      font-size: 13px;
+      border: 1px solid #c5cae9;
+      resize: none;
+      outline: none;
+      padding-bottom: 1.25em;
+
+  }
+
+  .obsText{
+    width: 100% !important;
+    display: flex;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .segLabel{
+    margin: 15px 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
+
+  .docButton{
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 600;
+    margin: 10px 0;
+    pointer-events: auto !important;
+    min-height: 24px;
+  }
+
+/* 320px
+480px
+600px
+768px
+900px
+1024px
+1200px */
+@media only screen and (max-width: 1900px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .widthTd{
+        width: 300px !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 600px) {
+    .widthTd{
+        width: 100% !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 480px) {
+    .widthTd{
+        width: 100% !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+@media only screen and (max-width: 320px) {
+    .widthTd{
+        width: 100% !important;
+        padding:0 10px;
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+
+
+
+
+

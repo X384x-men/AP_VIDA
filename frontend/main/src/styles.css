@@ -1,0 +1,560 @@
+/* @import "../node_modules/bootstrap/scss/bootstrap.scss"; */
+
+
+@import "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css";
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./assets/Material-icons/MaterialIcons-Regular.eot);
+  /* For IE6-8 */
+  src: local('Material Icons'), local('MaterialIcons-Regular'), url(./assets/Material-icons/MaterialIcons-Regular.woff2) format('woff2'), url(./assets/Material-icons/MaterialIcons-Regular.woff) format('woff'), url(./assets/Material-icons/MaterialIcons-Regular.ttf) format('truetype');
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+* {
+  animation: fadeIn ease .3s;
+}
+
+.btn-busqueda{
+  color: #FFF;
+  background-color: #257aa9;
+  border-radius: 10px !important;
+}
+
+.btn-busqueda:hover{
+  color: #FFF;
+  background-color: #2e5fad;
+}
+
+x .material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+.spanLink {
+  color: #1c46bbfb;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.spanLink:hover {
+  color: #2177867e;
+}
+
+.divMenu {
+  padding-top: 100px;
+}
+
+/*modificaciones by gerardRodriguez*/
+
+.btn {
+  border-radius: 0px !important;
+}
+
+.btn-primary {
+  border-radius: 0px !important;
+  background-color: #257aa9 !important;
+  border-color: #257aa9 !important;
+  margin: 0px !important;
+  padding: 4px 16px !important;
+}
+
+.btn-success {
+  border-radius: 0px !important;
+  background-color: rgba( 2, 177, 76, 1) !important;
+  border-color: rgba( 2, 177, 76, 1) !important;
+  margin: 0px !important;
+  padding: 4px 16px !important;
+}
+
+.btn-danger {
+  border-radius: 0px !important;
+}
+
+.btnTopRightEditar {
+  padding-left: 50px !important;
+  padding-right: 50px !important;
+}
+
+.btnTopRightCancelar {
+  margin: 25px;
+  border-radius: 0px !important;
+  background-color: rgba( 255, 6, 2, 1) !important;
+  border-color: rgba( 255, 6, 2, 1) !important;
+  font-weight: 1000;
+  padding-left: 50px !important;
+  padding-right: 50px !important;
+}
+
+.btnTopRightHeader {
+  margin-right: 50px !important;
+  margin-top: 30px !important;
+}
+
+.divOptionBtnFooterForm {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-paginator {
+  -webkit-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.14);
+  -moz-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.14);
+  box-shadow: 0px 6px 15px 0px rgba(0, 0, 0, 0.14);
+}
+
+.mat-paginator-container {
+  margin-top: 25px;
+}
+
+.p-4 .mat-elevation-z8 table th {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.p-4 .mat-elevation-z8 table td {
+  /* border-bottom: solid rgba(0, 0, 0, 0.5) 1.5px; */
+}
+
+/*start Menu dropdown div*/
+
+#elementId {
+  padding: 0px !important;
+  /*padding-left: 30px;*/
+}
+
+.formSearch input {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border-radius: 0px;
+  /*border: none;*/
+  width: 100%;
+  padding-left: 20px;
+}
+
+::-webkit-input-placeholder {
+  /* Edge */
+  color: rgba(0, 0, 0, 0.85);
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: rgba(0, 0, 0, 0.85);
+}
+
+::placeholder {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.mat-expansion-panel-header {
+  padding: 0 15px !important;
+}
+
+.mat-expansion-panel-body {
+  padding: 5px 0px 5px 0px !important;
+  background-color: transparent;
+  margin-top: -20px;
+}
+
+.mat-list-base {
+  padding-top: 0px !important;
+}
+
+.mat-list-item, .mat-list-option {
+  display: block;
+  height: 48px;
+  -webkit-tap-highlight-color: transparent;
+  width: 100%;
+  padding: 0;
+  background-color: transparent;
+}
+
+.mat-list-item-content a {
+  width: 100%;
+}
+
+.matListItem:hover {
+  margin-left: 8px;
+  background-color: rgba( 0, 173, 249, 1);
+  transition-duration: 0.4s;
+}
+
+.activeCustom {
+  margin-left: 8px;
+  background-color: rgba( 0, 173, 249, 1);
+}
+
+.activeCustomBtnMenuCargasBatchFisrtAndLast {
+  background-color: rgba( 0, 173, 249, 1);
+  padding: 6px 45px;
+  margin-right: -34px;
+  margin-left: -34px;
+  border-bottom: solid 0.8px rgba( 0, 173, 249, 1);
+}
+
+.activeCustomBtnMenuCargasBatch {
+  background-color: rgba( 0, 173, 249, 1);
+  padding: 6px 45px;
+  border-bottom: solid 0.8px rgba( 0, 173, 249, 1);
+}
+
+.activeCustomBtnMenuReportes {
+  background-color: rgba( 0, 173, 249, 1);
+  padding: 6px 45px;
+  margin-right: -45px;
+  margin-left: -45px;
+  border-bottom: solid 0.8px rgba( 0, 173, 249, 1);
+}
+
+.mat-list-base .mat-list-item {
+  padding-top: 0px !important;
+}
+
+.mat-expanded[_ngcontent-c3], .mat-expansion-panel-content[_ngcontent-c3]>.mat-expansion-panel-body[_ngcontent-c3] {
+  color: #fff;
+  background: #5486be !important;
+  border: 1px solid #ffffff;
+  /* margin-bottom: 20px; */
+  margin-top: 0px;
+}
+
+.mat-expansion-indicator:after {
+  color: white !important;
+}
+
+/*end Menu dropdown div*/
+
+/*start select panel*/
+
+.mat-select-panel {
+  margin-top: 35px !important;
+}
+
+/*end select panel*/
+
+/*start modal panel*/
+
+.mat-dialog-container {
+  padding: 0 !important;
+}
+.mat-dialog-content {
+  margin: 0 !important;
+}
+
+/*start styles to btn cancelar modal panel*/
+
+.btnDialogCancelar {
+  border: solid white;
+  background: #f44336;
+  color: white !important;
+  font-size: 1.0625em !important;
+  padding: 6px 16px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+}
+
+/*end styles to btn cancelar modal panel*/
+
+/*end modal panel*/
+
+/*start styles to input element into forms*/
+
+.mat-form-field {
+
+}
+
+/*end styles to input element into forms*/
+
+.h2TitleMainPanel {
+  margin-top: 25px;
+  margin-bottom: 0px;
+  margin-left: 10px; /*50px*/
+}
+
+.h3SubTitleMainPanel {
+  margin-top: 25px;
+  margin-bottom: 0px;
+  margin-left: 50px;
+}
+
+/*start Nav bar primary*/
+
+.navbarCustom {
+  height: 75px;
+  background-color: #FFF;
+}
+
+.btnPrimaryDropDownUserOptions {
+  background-color: transparent !important;
+  border-color: white !important;
+  border-radius: 0px !important;
+  cursor: pointer;
+}
+
+.dropDownMenuOptions {
+  border-radius: 0px !important;
+  margin-top: 10px !important;
+  width: 270px;
+  cursor: pointer;
+}
+
+/*end Nav bar primary*/
+
+/*start Nav bar footer*/
+
+.navbarFooterCustom {
+  background-color: #257aa9;
+}
+
+/*end Nav bar footer*/
+
+/*start Estilos para formularios*/
+
+.tableForm tr {
+  border-bottom: none !important;
+}
+
+.tableForm tr td {
+  border: none !important;
+  padding: 4px !important;
+  overflow: hidden;
+}
+
+.matDividerCustom {
+  background-color: rgba(0, 0, 0, 0.14);
+}
+
+.labelForInputForm {
+  color: rgba( 0, 0, 0, 0.75) !important;
+  margin-left: 14px;
+  margin-bottom: 0px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.mat-form-field-label {
+  color: rgba( 0, 0, 0, 0.9) !important;
+}
+
+.mat-form-field-infix {
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: rgba( 0, 0, 0, 0.9);
+  width: auto !important;
+  min-width: 180px !important;
+}
+
+input.mat-input-element {
+  margin-top: 10px;
+}
+
+.mat-form-field-underline {
+  background-attachment: rgba( 0, 0, 0, 0.6);
+}
+
+.mat-action-row {
+  border: none !important;
+  padding: 0px 15px !important;
+  margin-top: -3px;
+}
+
+.mat-action-row .btnRegresar {
+  margin-right: 8px;
+}
+
+.btnRegresar {
+  background: rgba(255, 255, 255, 1);
+  background: -moz-linear-gradient(top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(252, 251, 254, 1) 51%, rgba(204, 204, 204, 1) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255, 255, 255, 1)), color-stop(50%, rgba(255, 255, 255, 1)), color-stop(51%, rgba(252, 251, 254, 1)), color-stop(100%, rgba(204, 204, 204, 1)));
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(252, 251, 254, 1) 51%, rgba(204, 204, 204, 1) 100%);
+  background: -o-linear-gradient(top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(252, 251, 254, 1) 51%, rgba(204, 204, 204, 1) 100%);
+  background: -ms-linear-gradient(top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(252, 251, 254, 1) 51%, rgba(204, 204, 204, 1) 100%);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(252, 251, 254, 1) 51%, rgba(204, 204, 204, 1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f4f3fb', GradientType=0);
+  border-radius: 2px !important;
+}
+
+.matSelectCustom {
+  margin-bottom: 11px !important;
+}
+
+/*end Estilos para formularios*/
+
+.divHeight {
+  height: 50px;
+  background-color: transparent;
+}
+
+.mat-sort-header-container {
+  font-weight: 600;
+  font-size: 14px !important;
+  color: rgba( 0, 0, 0, 0.8);
+}
+
+.tdLinkDetail label {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tdLinkDetail:hober {
+  text-decoration: underline;
+  color: #5486be;
+}
+
+.btnWidth100 {
+  width: 100%;
+}
+
+/*
+Detalles de cuenta
+*/
+
+.divHeaderDataCurrent {
+  background-color: rgba( 242, 242, 242, 0.6);
+  margin-bottom: -35px;
+}
+
+/*
+Preloader para pantallas
+*/
+
+.preloader {
+  margin: 100px 35%;
+}
+
+/*
+imagen para selccion de lenguaje
+*/
+
+.imgSelectLanguage {
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+
+
+.titleListTables{
+  font-size: 22px !important;
+  margin: 20px 20px 20px 20px !important;
+  font-weight: 600 !important;
+}
+
+.boxTitle{
+  font-size: 22px !important;
+  margin: 0px 0px 20px 0px !important;
+  font-weight: 600 !important;
+}
+
+.p-4-custom {
+  padding: 0 20px 20px 20px !important;
+}
+
+
+
+/* Estilo de tabla striped */
+
+/* .mat-row:nth-child(even){
+  background-color:#e4f0ec;
+  }
+
+.mat-row:nth-child(odd){
+  background-color:#ffffff;
+  }
+
+
+  .mat-header-row{
+        background-color: #5486be;
+  }
+  .mat-sort-header-container{
+    color:#FFF;
+  } */
+
+
+ /* Estilo de tabla striped */
+/*
+ .btn{
+   height: 35px !important;
+ }
+
+ label{
+   margin: 0 !important;
+ }
+
+
+
+
+
+ .mat-paginator-container {
+  margin: 0 !important;
+}
+.p-4-custom {
+  padding: 0 0 20px 0 !important;
+}
+
+.buttons-main{
+  margin: 0 !important;
+}
+
+.titleClass{
+  padding: 0 !important;
+}
+
+.card{
+  padding: 0 20px 20px 20px !important;
+} */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #257aa9;
+}
+
+.mat-raised-button.mat-primary {
+  background-color: #257aa9 !important;
+}
+
+.mat-stroked-button.mat-primary {
+  color: #257aa9;
+}

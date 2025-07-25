@@ -1,0 +1,41 @@
+<div class="margin-bottom" *ngIf="!welcome && !loading">
+  <div class="form-user-ap">
+    <label class="titleListTables">Registro de datos</label>
+    <label class="nota-ap">Instrucciones: </label>
+    <label class="nota-ap instruction">Favor llenar los campos que te solicitamos para que puedas consultar la
+      información de tu cuenta, es muy importante que el RFC lo escribas con homoclave correctamente ya que se
+      convertirá en tu nombre de USUARIO para entrar al portal, así mismo debes crear una contraseña que debes
+      conservar.</label>
+    <label class="nota-ap">El campo RFC será tu usuario para poder ingresar al portal de consulta.</label>
+  </div>
+  <div class="containerForm">
+    <div class="form-user-ap-form">
+      <app-form-user-data [user]="user" [isUpdate]="false"></app-form-user-data>
+    </div>
+  </div>
+  <div class="button-ap">
+    <button type="button" mat-raised-button color="danger" routerLink="/login" [innerText]='"Cancelar"'
+      [style.margin-right]="'10px'"></button>
+    <button type="button" mat-raised-button color="primary" (click)="guardar()" [innerText]='"Registrarse"' [disabled]="user.invalid"
+      style="color: #eee"></button>
+  </div>
+</div>
+
+
+<div *ngIf="!loading && welcome" >
+  <div class="welcome-mesaage">
+    <label class="title1-welcome">¡Te damos la mas cordial bienvenida!</label>
+    <label class="title12-welcome">En este portal podras consultar los movimientos y saldos de tu seguro de vida
+      ahorro</label>
+    <label class="title2-welcome" [style.font-weight]="'600'">Recuerde no compartir su contraseña con nadie y
+      conservarla en un lugar seguro.</label>
+    <label class="title2-welcome">Usuario: <span [style.font-weight]="'600'">{{rfc}}</span></label>
+    <button type="button" class="btn btn-info button" routerLink="/login" [style.background-color]="'#257aa9'">
+      Finalizar</button>
+  </div>
+</div>
+
+
+<div *ngIf="loading" class="position-absolute top-50 start-50 translate-middle animate__animated animate__flash animate__infinite	infinite animate__slow	2s">
+  <i  class="fa fa-spinner fa-spin fa-4x mt-5 " aria-hidden="true"></i>
+</div>

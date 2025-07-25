@@ -1,0 +1,88 @@
+.text-color {
+    color: #fff;
+}
+
+
+.footerInfo{
+    display: flex;
+    flex-direction: row;
+}
+
+.navbarFooterCustom{
+    padding: 5px 10px !important;
+}
+
+
+@media only screen and (max-width: 1900px) { 
+    .fontSizeFoot{
+        font-size: 11px;
+        margin: 0 !important;
+        padding: 0;
+    }
+}
+@media only screen and (max-width: 1200px) { 
+    .fontSizeFoot{
+        font-size: 11px;
+        margin: 0 !important;
+        padding: 0;
+    }
+}
+@media only screen and (max-width: 1024px) { 
+    .fontSizeFoot{
+        font-size: 11px;
+        margin: 0 !important;
+        padding: 0;
+    } 
+}
+
+@media only screen and (max-width: 900px) { 
+    .fontSizeFoot{
+        font-size: 11px;
+        margin: 0 !important;
+        padding: 0;
+    }
+}
+@media only screen and (max-width: 768px) { 
+    .fontSizeFoot{
+        font-size: 11px;
+        margin: 0 !important;
+        padding: 0;
+    }
+    .footerInfo{
+        display: flex;
+        flex-direction: column;
+    }
+}
+@media only screen and (max-width: 600px) { 
+    .fontSizeFoot{
+        font-size: 9px;
+        margin: 0 !important;
+        padding: 0;
+    }
+    .footerInfo{
+        display: flex;
+        flex-direction: column;
+    }
+}
+@media only screen and (max-width: 480px) { 
+    .fontSizeFoot{
+        font-size: 9px;
+        margin: 0 !important;
+        padding: 0;
+    }
+    .footerInfo{
+        display: flex;
+        flex-direction: column;
+    }
+}
+@media only screen and (max-width: 320px) { 
+    .fontSizeFoot{
+        font-size: 9px;
+        margin: 0 !important;
+        padding: 0;
+    }
+    .footerInfo{
+        display: flex;
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,37 @@
+<form [formGroup]="recoveryForm">
+  <div class="containerForm" *ngIf="code == 0">
+    <mat-form-field class="input-size">
+      <input matInput name="rfc" id="rfc" type="text" formControlName="rfc" placeholder="RFC* (Con homoclave)">
+    </mat-form-field>
+    <mat-form-field class="input-size">
+      <input matInput name="mail" id="mail" type="text" formControlName="email" placeholder="Correo Electrónico*">
+      <mat-error>Favor de agregar su correo electrónico</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="containerForm" *ngIf="code != 0">
+    <div class="widthTd">
+      <mat-form-field class="input-size">
+        <mat-label>{{isUpdate ? 'Nueva Contraseña*' : 'Contraseña*'}}</mat-label>
+        <input matInput ngModel name="psw" id="psw" [type]="fieldTextType ? 'text' : 'password'"
+          formControlName="psw">
+      </mat-form-field>
+    </div>
+
+    <div class="widthTd">
+      <mat-form-field class="input-size">
+        <mat-label>{{isUpdate ? 'Confirma Nueva Contraseña*' : 'Confirma Contraseña*'}}</mat-label>
+        <input matInput ngModel name="confirmpsw" id="confirmpsw" [type]="fieldTextType ? 'text' : 'password'"
+          type="password" formControlName="confirmpsw">
+      </mat-form-field>
+    </div>
+
+    <div class="widthTd verPwd" [style.width]="'100%'">
+      <div [style.margin]="'20px 0 30px 0'">
+        <mat-checkbox color="primary" class="example-margin" (change)="fieldTextType = $event.checked">
+          Mostrar Contraseña
+        </mat-checkbox>
+      </div>
+    </div>
+  </div>
+</form>

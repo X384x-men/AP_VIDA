@@ -1,0 +1,14 @@
+.mat-dialog-title {
+  background-color: #f44336;
+}
+.mat-dialog-content {
+  text-align: left;
+}
+button[type="submit"] {
+  background-color: #f44336;
+  color: #fff;
+}
+small {
+  color: #f44336;
+  display: block;
+}

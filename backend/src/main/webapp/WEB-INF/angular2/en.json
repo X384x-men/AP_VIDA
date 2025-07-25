@@ -1,0 +1,13 @@
+{
+	"login": {
+		"title": "Login",
+		"btn": {
+			"usuario": "User",
+			"password": "Password"
+		}
+	},
+	"button": {
+		"save": "Save",
+		"back": "Back"
+	}
+}

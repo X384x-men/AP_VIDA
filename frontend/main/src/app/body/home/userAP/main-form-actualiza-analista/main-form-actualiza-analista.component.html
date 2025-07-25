@@ -1,0 +1,24 @@
+
+
+<div class="margin-bottom">
+
+  <div class="form-user-ap">
+    <label class="titleListTables">Actualizar datos</label>
+    <p class="nota-ap ">
+    Si actualizas tu contraseña asegurate de guardarla en un lugar donde puedas recordar
+    <br>Si no deseas actualizar tu contraseña deja en blanco esos campos</p>
+  </div>
+
+  <div class="containerForm">
+    <div class="form-user-ap-form">
+      <app-form-user-data [isAnalista]="true" [user]="user" [isUpdate]="true"></app-form-user-data>
+    </div>
+  </div>
+
+
+  <div class="button-ap">
+    <button type="button" mat-raised-button appBackButton>CANCELAR</button>
+    <button type="button" mat-raised-button color="primary" (click)="guardar()">GUARDAR</button>
+  </div>
+
+</div>

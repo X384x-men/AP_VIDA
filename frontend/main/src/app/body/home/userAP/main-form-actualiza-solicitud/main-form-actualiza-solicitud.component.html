@@ -1,0 +1,275 @@
+<div class="margin-bottom" >
+
+  <div class="form-user-ap">
+    <div class="divTitle">
+      <label class="titleListTablesSolic">Solicitud Folio: {{solicitud.numeroRegistro}}</label>
+      <label class="titleListTablesSolic titleEstatus" [style.font-size]="'12px'">Estatus: {{solicitud.statusSolicitud}}</label>
+    </div>
+
+    <div class="actions-button" *ngIf="(!isExterno) && isComercial ? true: false">
+
+      <!-- Boton momentaneo para dar terminada una solicitud -->
+      <button type="button" class="btn btn-danger button rounded" (click)="validarSolicitud('Terminada')"data-toggle="modal"
+      [innerText]='"Terminar Solicitud"' [style.margin-left]="'5px'" *ngIf="solicitud.statusSolicitud === 'En proceso'"></button >
+      <!-- aqui culmina el boton momentaneo  -->
+
+      <button type="button" class="btn btn-info button" (click)="validar()"
+      [innerText]='"Validar solicitud"' [style.background-color]="'#257aa9'" [style.margin-left]="'5px'" *ngIf="solicitud.validadoModulo == 0 && solicitud.statusSolicitud === 'Nueva' || solicitud.statusSolicitud === 'Actualizada'"></button>
+
+      <button type="button" class="btn btn-info button" [attr.data-target]="'#modalObs'" data-toggle="modal" *ngIf="solicitud.validadoModulo == 0 && solicitud.statusSolicitud === 'Nueva' || solicitud.statusSolicitud === 'Actualizada'"  [innerText]='"Doc faltantes o incorrectos"' [style.background-color]="'#257aa9'" [style.margin-left]="'5px'"></button>
+
+      <button type="button" class="btn btn-danger button" (click)="end()" [innerText]='"Regresar"' [style.margin-left]="'5px'"></button>
+    </div>
+
+    <div class="actions-button" *ngIf=" isExterno ? true: false">
+      <!-- <button type="button" class="btn btn-danger button" (click)="cancelSolicitud()" *ngIf="solicitud.statusSolicitud === 'Nueva' " [innerText]='"Cancelar solicitud"' [style.margin-left]="'5px'"></button> -->
+        <button type="button" class="btn btn-danger button" (click)="end()"
+        [innerText]='"Regresar"' [style.margin-left]="'5px'"></button>
+    </div>
+
+<!-- (click)="retrocederSolicitud()" -->
+    <div class="actions-button" *ngIf="(!isExterno) && isSiniestros ? true: false">
+      <!-- Boton momentaneo para dar terminada una solicitud -->
+      <button type="button" class="btn btn-danger button rounded" (click)="validarSolicitud('Terminada')"data-toggle="modal"
+      [innerText]='"Terminar Solicitud"' [style.margin-left]="'5px'" *ngIf="solicitud.statusSolicitud === 'En proceso'"></button>
+      <!-- aqui culmina el boton momentaneo  -->
+      <button type="button" class="btn btn-danger button rounded" [attr.data-target]="'#modalObsRechazo'" data-toggle="modal"
+      [innerText]='"Retroceder solicitud"' [style.margin-left]="'5px'" *ngIf="solicitud.statusSolicitud === 'En proceso'"></button>
+      <button type="button" class="btn btn-info button rounded" (click)="procesoPago()"
+      [innerText]='"Mandar a proceso de revision de pago"' [style.margin-left]="'5px'" *ngIf="solicitud.statusSolicitud === 'En proceso'"></button>
+      <button type="button" class="btn btn-danger button" (click)="end()"
+      [innerText]='"Regresar"' [style.margin-left]="'5px'"></button>
+    </div>
+
+    <div class="actions-button" *ngIf="(!isExterno) && isContabilidad ? true: false">
+      <button type="button" class="btn btn-danger button" (click)="end()" [innerText]='"Regresar"' [style.margin-left]="'5px'"></button>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="containerForm" [style.pointer-events]="solicitud.statusSolicitud === 'Importes validados' && solicitud.fechaOrdenPago != null && isSiniestros ? 'auto' : 'none'" *ngIf="((solicitud.statusSolicitud === 'Importes validados' || solicitud.statusSolicitud === 'Rechazada' || solicitud.statusSolicitud === 'Terminada') && solicitud.fechaOrdenPago != null)">
+    <div class="form-user-ap-form">
+      <div class="containerFormImportes">
+
+        <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'" [style.margin]="'20px 0'">
+          <label class="section-userAP">Información del pago</label>
+        </div>
+
+
+        <div class="widthTd">
+          <mat-form-field class="input-size" >
+            <input matInput ngModel name="importeApagar" id="importeApagar" type="text" (keyup)="mayus('importeApagar')"
+              (blur)="validate()" [(ngModel)]='solicitud.importeApagar' placeholder="Importe a pagar">
+          </mat-form-field>
+        </div>
+        <div class="widthTd">
+          <div class="dateClass">
+            <span class="label-date">Fecha importe contable*</span>
+            <mat-form-field [style.width]="'100%'">
+              <input matInput [matDatepicker]="picker1" (dateInput)="getFechaImp('change', $event)"
+                (dateChange)="getFechaImp('change', $event)" [formControl]="date1">
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <div class="widthTd">
+          <div class="dateClass">
+            <span class="label-date">Fecha transferencia/cheque*</span>
+            <mat-form-field [style.width]="'100%'">
+              <input matInput [matDatepicker]="picker2" (dateInput)="getFechaTransf('change', $event)"
+                (dateChange)="getFechaTransf('change', $event)" [formControl]="date2">
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2 disabled="false"></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-floating m-1">
+          <!-- <mat-form-field class="input-size" >
+            <input matInput ngModel name="importeContable" id="importeContable" type="text" (keyup)="mayus('estPagRechPen')"
+              (blur)="validate()" [(ngModel)]='solicitud.estPagRechPen' placeholder="Estatus de pago">
+          </mat-form-field> -->
+          <select class="form-select" id="floatingInputGridTipoTramite" [class.is-invalid]="tipoTramite.invalid && tipoTramite.touched " [(ngModel)]="solicitud.estPagRechPen" name="importeContable" #tipoTramite="ngModel" required >
+            <option selected > Seleccionar una opcion </option>
+            <option *ngFor="let optionsEstatus of dataEstatus" [value]="optionsEstatus.name"> {{ optionsEstatus.data }} </option>
+          </select>
+          <label for="floatingInputGridTipoTramite">Estatus de pago</label>
+            <small *ngIf="tipoTramite.invalid && tipoTramite.touched" class="form-text text-danger"> Debe ingresar un Estatus de pago</small>
+        </div>
+        <div class="widthTd">
+          <mat-form-field class="input-size" >
+            <input matInput ngModel name="importeApagar" id="importeApagar" type="text" (keyup)="mayus('numChequeTransf')"
+              (blur)="validate()" [(ngModel)]='solicitud.numChequeTransf' placeholder="Num cheque/transferencia">
+          </mat-form-field>
+        </div>
+        <div class="widthTd obsText">
+          <label >Observaciones</label>
+            <textarea class="textArea-comment" [(ngModel)]="solicitud.obsSiniestros" ></textarea>
+
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+    <div class="button-ap" *ngIf="(isSiniestros && solicitud.statusSolicitud === 'Importes validados' && solicitud.fechaOrdenPago != null)">
+    <button type="button" class="btn btn-info button" (click)="validarSolicitud('Rechazada')"
+              [innerText]='"Rechazada"' [style.background-color]="'#C0392B'" [style.margin-right]="'5px'"></button>
+    <button type="button" class="btn btn-info button" (click)="validarSolicitud('Terminada')"
+              [innerText]='"Terminada"' [style.background-color]="'#257aa9'" [style.margin-left]="'5px'"></button>
+  </div>
+
+
+
+
+
+<div class="containerForm" [style.pointer-events]="solicitud.statusSolicitud === 'Proceso de revision de pago' && isContabilidad ? 'auto' : 'none'" *ngIf="(solicitud.statusSolicitud === 'Proceso de revision de pago') || (solicitud.statusSolicitud === 'Importes validados') || (solicitud.statusSolicitud === 'Terminada') || (solicitud.statusSolicitud === 'Rechazada')">
+  <div class="form-user-ap-form">
+    <div class="containerFormImportes">
+
+      <div class="lineSeparator" [style.display]="'flex'" [style.align-items]="'flex-end'" [style.justify-content]="'space-between'" [style.margin]="'20px 0'">
+        <label class="section-userAP">Importes</label>
+      </div>
+
+      <td class="widthTd">
+        <mat-form-field class="input-size">
+          <input matInput ngModel name="sueldo2" id="sueldo2" type="text" (blur)="validate()" [ngModel]="solicitud.sueldo | currency" [ngModelOptions]="{updateOn:'blur'}" (ngModelChange)="solicitud.sueldo=$event"
+            placeholder="Sueldo base quincenal" (keyup)="mayus('sueldo')">
+        </mat-form-field>
+      </td>
+      <div class="widthTd">
+        <mat-form-field class="input-size" >
+          <input matInput ngModel name="aportacionTotal" id="aportacionTotal" type="text" (keyup)="mayus('aportacionTotal')"
+            (blur)="validate()" [(ngModel)]='solicitud.aportacionTotal' placeholder="Aportación inicial">
+        </mat-form-field>
+      </div>
+      <div class="widthTd">
+        <mat-form-field class="input-size" >
+          <input matInput ngModel name="retiroMaximo" id="retiroMaximo" type="text" (keyup)="mayus('retiroMaximo')"
+            (blur)="validate()" [(ngModel)]='solicitud.retiroMaximo' placeholder="Retiro">
+        </mat-form-field>
+      </div>
+      <div class="widthTd">
+        <mat-form-field class="input-size" >
+          <input matInput ngModel name="importeSolicitado" id="importeSolicitado" type="text" (keyup)="mayus('importeSolicitado')"
+            (blur)="validate()" [(ngModel)]='solicitud.importeSolicitado' placeholder="Importe solicitado" disabled>
+        </mat-form-field>
+      </div>
+      <td class="widthTd">
+        <mat-form-field class="input-size">
+          <input matInput ngModel name="saldoFinal" id="saldoFinal" type="text" (blur)="validate()" [(ngModel)]='solicitud.saldoFinal'
+            placeholder="Saldo Final" (keyup)="mayus('saldoFinal')">
+        </mat-form-field>
+      </td>
+      <div class="widthTd">
+        <mat-form-field class="input-size" >
+          <input matInput ngModel name="importeContable" id="importeContable" type="text" (keyup)="mayus('importeContable')"
+            (blur)="validate()" [(ngModel)]='solicitud.importeContable' placeholder="Saldo de regreso (Archivo)">
+        </mat-form-field>
+      </div>
+      <div class="widthTd">
+        <mat-form-field class="input-size" >
+          <input matInput ngModel name="importeApagar" id="importeApagar" type="text" (keyup)="mayus('importeApagar')"
+            (blur)="validate()" [(ngModel)]='solicitud.importeApagar' placeholder="Neto a pagar">
+        </mat-form-field>
+      </div>
+      <div class="widthTd">
+        <mat-form-field class="input-size" >
+          <input matInput ngModel name="intereses" id="intereses" type="text" (keyup)="mayus('intereses')"
+            (blur)="validate()" [(ngModel)]='solicitud.intereses' placeholder="Intereses">
+        </mat-form-field>
+      </div>
+      <div class="widthTd">
+        <mat-form-field class="input-size" >
+          <input matInput ngModel name="montoCalculado" id="montoCalculado" type="text" (keyup)="mayus('montoCalculado')"
+            (blur)="validate()" [(ngModel)]='solicitud.montoCalculado' placeholder="Monto Calculado (Pos pagado)">
+        </mat-form-field>
+      </div>
+      <div class="widthTd">
+        <mat-form-field class="input-size" >
+          <input matInput ngModel name="pagoAnterior" id="pagoAnterior" type="text" (keyup)="mayus('pagoAnterior')"
+            (blur)="validate()" [(ngModel)]='solicitud.pagoAnterior' placeholder="Pago Anterior">
+        </mat-form-field>
+      </div>
+      <td class="widthTd">
+        <mat-form-field class="input-size">
+          <input matInput ngModel name="valRetencion" id="valRetencion" type="text" (blur)="validate()" [(ngModel)]='solicitud.valRetencion'
+            placeholder="Retención" (keyup)="mayus('valRetencion')">
+        </mat-form-field>
+      </td>
+      <td class="widthTd">
+        <mat-form-field class="input-size">
+          <mat-label>Fecha Cálculo</mat-label>
+          <input id="FechaCalculo" matInput [matDatepicker]="picker1" ngModel name="fechaCalculo" id="fechaCalculo"(blur)="validate()" [(ngModel)]='solicitud.fechaCalculo' placeholder="Fecha Cálculo" (keyup)="mayus('fechaCalculo')">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+          <mat-error>Seleccione una fecha, por favor.</mat-error>
+        </mat-form-field>
+      </td>
+    </div>
+  </div>
+</div>
+
+<div class="button-ap" *ngIf="isContabilidad && solicitud.statusSolicitud === 'Proceso de revision de pago'">
+  <button type="button" class="btn btn-info button rounded" (click)="validarImportes()" [innerText]='"Validar Importes"' [style.background-color]="'#257aa9'" [style.margin-left]="'5px'"></button>
+</div>
+
+
+  <div class="containerForm" [style.pointer-events]="(!isExterno) && isComercial && solicitud.validadoModulo == 1 ? 'none' :
+  isExterno && solicitud.statusSolicitud !== 'Nueva' && solicitud.statusSolicitud !== 'PENDIENTE DE DOCS' ? 'none' :
+  (!isExterno) && isSiniestros && solicitud.statusSolicitud != 'En proceso' ? 'none':
+  (!isExterno) && isContabilidad ? 'none' : 'auto'">
+    <div class="form-user-ap-form">
+      <!-- router ['Angular/form-edit-solicitudes'] -->
+      <app-form-solicitud-data [solicitud]="solicitud" [arrayFiles]="arrayFiles" [arrayPdf]="arrayPdf" [prueba]=true [isAnalista]="opt == 0 ? false : true"></app-form-solicitud-data>
+    </div>
+  </div>
+
+</div>]
+
+<div class="modal fade" id="modalObs" tabindex="-1" role="dialog" aria-labelledby="modalObsTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" [style.background-color]="'#257aa9'" [style.color]="'#FFF'">
+        <label class="modal-title" id="modalObsTitle">Observación</label>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" [style.color]="'#FFF'">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}">
+        <textarea class="obsDoc" [(ngModel)]="observacionDoc" ></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" [style.height]="'35px'">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" [style.height]="'35px'" [style.pointer-events]="observacionDoc != '' ? 'auto' : 'none'" (click)=" saveObs('PENDIENTE DE DOCS')">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de rechazo en siniestro o actuarial -->
+<div class="modal fade" id="modalObsRechazo" tabindex="-1" role="dialog" aria-labelledby="modalObsRechazoTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" [style.background-color]="'#257aa9'" [style.color]="'#FFF'">
+        <label class="modal-title" id="modalObsRechazoTitle">Observación</label>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" [style.color]="'#FFF'">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}">
+        <textarea class="obsDoc" [(ngModel)]="observacionDoc" ></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" [style.height]="'35px'">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" [style.height]="'35px'" [style.pointer-events]="observacionDoc != '' ? 'auto' : 'none'" (click)=" saveObs('Falta de información')">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

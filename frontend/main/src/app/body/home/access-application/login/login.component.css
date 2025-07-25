@@ -1,0 +1,394 @@
+.row {
+  margin-top: 50px;
+}
+
+mat-card {
+  text-align: center;
+}
+
+.mat-form-field {
+  display: block;
+  margin: auto;
+  max-width: 400px;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  /*align-items: center;*/
+  height: calc(100vh - 75px);
+}
+
+.custom-margin {
+  margin: 0 !important;
+}
+
+.title-custom {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.title1 {
+  font-size: 30px;
+  font-weight: 600;
+  color: #257aa9;
+  margin: 0;
+}
+
+.title1 span {
+  color: #17202a;
+}
+
+.title2 {
+  color: #17202a;
+  font-size: 20px;
+  margin: 0;
+}
+
+.button-login-ap {
+  background-color: #257aa9;
+  margin-bottom: 10px !important;
+  width: 150px;
+}
+
+.message-help {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.label-help {
+  margin: 0;
+  width: 75%;
+}
+
+.text-align-help {
+  text-align: initial;
+}
+
+.margin-text-help {
+  margin-bottom: 15px;
+}
+
+.text-color {
+  color: #fff;
+}
+
+.boton-regresar {
+  position: absolute;
+  margin: 0;
+  right: 10px;
+  top: 10px;
+  width: 150px;
+  height: 35px;
+  background-color: #257aa9;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.boton-regresar i {
+  margin-right: 5px;
+}
+
+.cardLogin {
+  width: 650px;
+  margin-bottom: 50px;
+}
+
+.footerInfo {
+  display: flex;
+  flex-direction: row;
+}
+
+.navbarFooterCustom {
+  padding: 5px 10px !important;
+}
+
+.forgotPwd {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.cont-forgot {
+  display: flex;
+  justify-content: center;
+}
+
+.mat-card-actions {
+  display: flex;
+  justify-content: space-around;
+}
+
+.clickPwd {
+  color: #111;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.clickPwd:hover {
+  cursor: pointer;
+  color: #257aa9;
+}
+
+@media only screen and (max-width: 1900px) {
+  .cardLogin {
+    width: 650px;
+  }
+  .title1 {
+    font-size: 30px;
+    font-weight: 600;
+    color: #257aa9;
+    margin: 0;
+  }
+
+  .title2 {
+    margin: 0;
+    font-size: 20px;
+  }
+  .label-help,
+  .forgotPwd {
+    margin: 0;
+    width: 75%;
+    font-size: 16px;
+  }
+  .fontSizeFoot {
+    font-size: 11px;
+    margin: 0 !important;
+    padding: 0;
+  }
+}
+@media only screen and (max-width: 1200px) {
+  .cardLogin {
+    width: 650px;
+  }
+  .title1 {
+    font-size: 30px;
+    font-weight: 600;
+    color: #257aa9;
+    margin: 0;
+  }
+
+  .title2 {
+    margin: 0;
+    font-size: 20px;
+  }
+  .label-help,
+  .forgotPwd {
+    margin: 0;
+    width: 75%;
+    font-size: 16px;
+  }
+  .fontSizeFoot {
+    font-size: 11px;
+    margin: 0 !important;
+    padding: 0;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .cardLogin {
+    width: 650px;
+  }
+  .title1 {
+    font-size: 30px;
+    font-weight: 600;
+    color: #257aa9;
+    margin: 0;
+  }
+
+  .title2 {
+    margin: 0;
+    font-size: 20px;
+  }
+  .label-help,
+  .forgotPwd {
+    margin: 0;
+    width: 75%;
+    font-size: 16px;
+  }
+  .fontSizeFoot {
+    font-size: 11px;
+    margin: 0 !important;
+    padding: 0;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .cardLogin {
+    width: 650px;
+  }
+  .title1 {
+    font-size: 30px;
+    font-weight: 600;
+    color: #257aa9;
+    margin: 0;
+  }
+
+  .title2 {
+    margin: 0;
+    font-size: 20px;
+  }
+  .label-help,
+  .forgotPwd {
+    margin: 0;
+    width: 75%;
+    font-size: 16px;
+  }
+  .fontSizeFoot {
+    font-size: 11px;
+    margin: 0 !important;
+    padding: 0;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .cardLogin {
+    width: 600px;
+  }
+  .title1 {
+    font-size: 30px;
+    font-weight: 600;
+    color: #257aa9;
+    margin: 0;
+  }
+
+  .title2 {
+    margin: 0;
+    font-size: 20px;
+  }
+  .label-help,
+  .forgotPwd {
+    margin: 0;
+    width: 75%;
+    font-size: 14px;
+  }
+  .fontSizeFoot {
+    font-size: 11px;
+    margin: 0 !important;
+    padding: 0;
+  }
+  .footerInfo {
+    display: flex;
+    flex-direction: column;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .cardLogin {
+    width: 500px;
+  }
+  .title1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #257aa9;
+    margin: 0;
+  }
+
+  .title2 {
+    margin: 0;
+    font-size: 18px;
+  }
+  .label-help,
+  .forgotPwd {
+    margin: 0;
+    width: 75%;
+    font-size: 12px;
+  }
+  .boton-regresar {
+    width: 100%;
+    right: 0px;
+  }
+  .fontSizeFoot {
+    font-size: 9px;
+    margin: 0 !important;
+    padding: 0;
+  }
+  .footerInfo {
+    display: flex;
+    flex-direction: column;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .cardLogin {
+    width: 350px;
+  }
+  .title1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #257aa9;
+    margin: 0;
+  }
+
+  .title2 {
+    margin: 0;
+    font-size: 16px;
+  }
+  .label-help,
+  .forgotPwd {
+    margin: 0;
+    width: 75%;
+    font-size: 11px;
+  }
+  .boton-regresar {
+    width: 100%;
+    right: 0px;
+  }
+  .fontSizeFoot {
+    font-size: 9px;
+    margin: 0 !important;
+    padding: 0;
+  }
+  .footerInfo {
+    display: flex;
+    flex-direction: column;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .cardLogin {
+    width: 250px;
+  }
+  .title1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #257aa9;
+    margin: 0;
+  }
+
+  .title2 {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .label-help,
+  .forgotPwd {
+    margin: 0;
+    width: 75%;
+    font-size: 11px;
+  }
+  .boton-regresar {
+    width: 100%;
+    right: 0px;
+  }
+  .fontSizeFoot {
+    font-size: 9px;
+    margin: 0 !important;
+    padding: 0;
+  }
+  .footerInfo {
+    display: flex;
+    flex-direction: column;
+  }
+}
+.yellowText {
+  color: #ac9c09;
+}
+
+input[name="rfc"] {
+  text-transform: uppercase;
+}

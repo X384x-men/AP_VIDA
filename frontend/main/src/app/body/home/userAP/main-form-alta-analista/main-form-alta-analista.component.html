@@ -1,0 +1,34 @@
+
+<div *ngIf="!loading" class="margin-bottom" >
+
+  <div *ngIf="!welcome" >
+    <div class="form-user-ap">
+      <label class="titleListTables">Alta de analista</label>
+    </div>
+    <div class="containerForm">
+      <div class="form-user-ap-form">
+        <app-form-user-data [isAnalista]="true" [user]="user" [isUpdate]="false"></app-form-user-data>
+      </div>
+    </div>
+    <div class="button-ap">
+      <button type="button" mat-raised-button color="danger" (click)="back()" [innerText]='"Cancelar"'
+        [style.margin-right]="'10px'"></button>
+      <button type="button" mat-raised-button color="primary" (click)="guardar()" [innerText]='"Registrar"'
+        style="color: #eee"></button>
+    </div>
+  </div>
+
+  <div *ngIf="welcome" class="welcome-mesaage">
+    <label class="title1-welcome">¡Te damos la mas cordial bienvenida Analista!</label>
+    <label class="title2-welcome" [style.font-weight]="'600'">Recuerde no compartir su contraseña con nadie y
+      conservarla en un lugar seguro.</label>
+    <label class="title2-welcome">Usuario: <span [style.font-weight]="'600'">{{rfc}}</span></label>
+    <button type="button" class="btn btn-info button" (click)="back()"    [style.background-color]="'#257aa9'">
+      Finalizar</button>
+  </div>
+
+</div>
+
+<div *ngIf="loading" class="position-absolute top-50 start-50 translate-middle animate__animated animate__flash animate__infinite	infinite animate__slow	2s">
+  <i  class="fa fa-spinner fa-spin fa-4x mt-5 " aria-hidden="true"></i>
+</div>

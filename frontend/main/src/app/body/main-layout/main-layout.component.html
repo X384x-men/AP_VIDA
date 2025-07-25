@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<app-head></app-head>
+<div class="w-10">
+  <div class="row h-100 w-30">
+   <!--  <div class="col col-lg-2" id="elementId" *ngIf="!isRoleEjec"> -->
+      <!-- <div [ngClass]="showSideBar ? 'sideClass openSide' : 'sideClass closeSide'" id="elementId" *ngIf="!isRoleEjec && !isRoleAlm" (click)="showSideBar = true" (mouseleave)="showSideBar = false">
+      <app-side-bar [showSideBar]="showSideBar"></app-side-bar>
+    </div> -->
+    <div class="col-sm maxContent overflow-auto custom-background"  [style.padding]="'0'">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+<div class="align-content-center">
+  <app-foot> </app-foot>
+</div>

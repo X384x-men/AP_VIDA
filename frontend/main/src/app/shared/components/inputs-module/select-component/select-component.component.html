@@ -1,0 +1,17 @@
+<mat-form-field class='input-size' [style.width]="width">
+  <mat-label>{{menuName}}</mat-label>
+  <mat-select #malo [formControl]="optionsControl" [compareWith]="compareObjects">
+    <div class="divSearch" *ngIf="search">
+      <i class="material-icons iconSearch">
+        search
+      </i>
+      <input class="searchInput" placeholder="Buscar..." (keyup)="onKey($event.target.value)" >
+    </div>
+    <mat-option value="">Seleccione una opción</mat-option>
+    <mat-option *ngFor="let option of options; let i = index" [attr.data-index]="i" [value]="option"
+      (click)="selectOption(option,i)" class="fontSizeClass">{{ '- ' + option.name}}
+    </mat-option>
+  </mat-select>
+  <mat-error *ngIf="optionsControl.hasError('required')">Por favor selecciona una opcion</mat-error>
+  <mat-hint>{{optionsControl.value?.sound}}</mat-hint>
+</mat-form-field>

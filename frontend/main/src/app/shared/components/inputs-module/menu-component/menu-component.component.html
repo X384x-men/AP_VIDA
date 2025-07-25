@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<mat-list>
+  <div style="position: fixed" [style.left]="contextMenuPosition.x" [style.top]="contextMenuPosition.y"
+    [matMenuTriggerFor]="contextMenu" color="primary">
+  </div>
+</mat-list>
+<mat-menu #contextMenu="matMenu">
+  <ng-container *ngFor="let menu of menuDropDown.menu">
+    <button mat-menu-item [matMenuTriggerFor]="subMenu" [disabled]="menu.enabled" (mouseover)="onSelectMenu(menu)">
+      <mat-icon>{{menu.icon}}</mat-icon>
+      <span [innerHTML]="menu.name"></span>
+    </button>
+    <mat-menu #subMenu="matMenu" color="primary">
+      <button *ngFor="let options of menu.options" [disabled]='options.enabled' mat-menu-item
+        (click)="onSelectOption(options)">
+        <mat-icon>{{options.icon}}</mat-icon>
+        <span [innerHTML]="options.option"></span>
+      </button>
+    </mat-menu>
+  </ng-container>
+</mat-menu>

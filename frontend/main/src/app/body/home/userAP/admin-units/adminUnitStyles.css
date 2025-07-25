@@ -1,0 +1,18 @@
+.mat-dialog-title {
+  align-items: center;
+  background: #28a745;
+  color: #eee;
+  display: flex;
+  padding: 12px;
+}
+.mat-dialog-title mat-icon {
+  margin-right: 8px;
+}
+
+.mat-dialog-actions {
+  justify-content: center;
+}
+
+.mat-dialog-content mat-form-field {
+  width: 100%;
+}

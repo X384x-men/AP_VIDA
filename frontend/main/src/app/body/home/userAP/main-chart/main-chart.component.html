@@ -1,0 +1,51 @@
+<div *ngIf="loading" class=" text-center animate__animated animate__flash animate__infinite	infinite animate__slow	2s">
+  <i  class="fa fa-spinner fa-spin fa-4x mt-5 " aria-hidden="true"></i>
+</div>
+
+<div *ngIf="!loading" >
+  <div class="row">
+    <div class="col-6">
+      <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [plotOptions]="chartOptions.plotOptions"
+        [labels]="chartOptions.labels"
+        [legend]="chartOptions.legend"
+        [colors]="chartOptions.colors"
+        [responsive]="chartOptions.responsive"
+      ></apx-chart>
+    </div>
+    <div class="col-6">
+      <div id="chart" >
+        <apx-chart
+        [series]="chartOptions1.series"
+        [chart]="chartOptions1.chart"
+        [plotOptions]="chartOptions1.plotOptions"
+        [labels]="chartOptions1.labels"
+        [legend]="chartOptions1.legend"
+        [colors]="chartOptions1.colors"
+        [responsive]="chartOptions1.responsive"
+        ></apx-chart>
+      </div>
+    </div>
+  </div>
+
+  <div id="chart">
+    <apx-chart
+      [series]="chartOptions2.series"
+      [chart]="chartOptions2.chart"
+      [dataLabels]="chartOptions2.dataLabels"
+      [plotOptions]="chartOptions2.plotOptions"
+      [yaxis]="chartOptions2.yaxis"
+      [xaxis]="chartOptions2.xaxis"
+      [stroke]="chartOptions2.stroke"
+      [grid]="chartOptions2.grid"
+      [fill]="chartOptions2.fill"
+      [annotations]="chartOptions2.annotations"
+    ></apx-chart>
+  </div>
+  <div class="text-end">
+    <button type="button" class="btn btn-busqueda " (click)="refresh()" >Refrescar</button>
+  </div>
+</div>
+

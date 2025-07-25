@@ -1,0 +1,20 @@
+<div class="main-ap custom-background p-2" [style.background-image]="'url('+apvidaBackground+')'">
+  <mat-card>
+    <mat-card-header>
+      <div class="containerTabs-title">
+        <button mat-stroked-button class="titleAdmin" routerLink="asegurados" routerLinkActive="selected">Asegurados</button>
+       <!--<button mat-stroked-button class="titleAdmin" routerLink="analistas" routerLinkActive="selected">Analistas</button>-->
+        <button mat-stroked-button class="titleAdmin" routerLink="estados-de-cuenta" routerLinkActive="selected" >Estados de cuenta</button>
+        <!-- Enpoints pendientes de pasar de firebase a backend-->
+        <button mat-stroked-button class="titleAdmin" routerLink="dependencias" routerLinkActive="selected">Dependencias</button>
+        <button mat-stroked-button class="titleAdmin" routerLink="unidades-administrativas" routerLinkActive="selected">Unidades administrativas</button>
+        <button mat-stroked-button class="titleAdmin" routerLink="catalogo-de-conceptos" routerLinkActive="selected">Catálogo de conceptos</button>
+        <button mat-stroked-button class="titleAdmin" routerLink="listas-de-solicitudes" routerLinkActive="selected">Lista de Solicitudes</button>
+        <button mat-stroked-button class="titleAdmin" routerLink="graficas" routerLinkActive="selected">Graficas</button>
+
+      </div>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <router-outlet></router-outlet>
+  </mat-card>
+</div>

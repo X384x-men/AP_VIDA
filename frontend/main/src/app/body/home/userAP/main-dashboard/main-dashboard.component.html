@@ -1,0 +1,40 @@
+<div class="main-ap custom-background" [style.background-image]="'url('+apvidaBackground+')'">
+
+  <div class="button-ap-admin">
+
+    <p class="label-title">{{'Nombre de Empleado: ' + nameUser}}</p>
+    <span class="mat-small help" *ngIf="isHelp">
+      <mat-icon>info</mat-icon>
+      Vea sus estados de cuenta ordenados por mes
+    </span>
+    <button class="itemDashboard" routerLink="/angular/reporte">
+      <mat-icon>
+        assignment
+      </mat-icon>
+      <label class="title-item">Consulta de movimientos</label>
+    </button>
+    <span class="mat-small help" *ngIf="isHelp">
+      <mat-icon>info</mat-icon>
+      Ingrese aquí para ver y modificar su información
+    </span>
+    <button class="itemDashboard" routerLink="/angular/update">
+      <mat-icon>
+        autorenew
+      </mat-icon>
+      <label class="title-item">Actualizar información </label>
+    </button>
+    <span class="mat-small help" *ngIf="isHelp">
+      <mat-icon>info</mat-icon>
+      El saldo presente corresponde al corte al 31 de julio de 2020 con la anterior aseguradora
+    </span>
+    <!-- <div class="itemDashboard" (click)="goSolicitudes()" >
+        <mat-icon>
+          edit_note
+        </mat-icon>
+        <label class="title-item">Solicitudes </label>
+    </div> -->
+    <button mat-raised-button (click)="toggleHelp()">
+      ¿Necesita ayuda para realizar una operación?
+      Presione aqui
+    </button>
+  </div>

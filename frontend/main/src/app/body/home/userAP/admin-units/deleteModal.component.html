@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>
+  <mat-icon>delete</mat-icon>
+  <span>Esta acción no se puede deshacer</span>
+</h1>
+<form [formGroup]="adminUnitForm" (ngSubmit)="deleteAdminUnit()">
+  <div mat-dialog-content>
+    <p>¿Desea eliminar unidad administrativa <b>{{adminUnit.data}}</b>?</p>
+    <mat-form-field color="default" appearance="legacy">
+      <mat-label>Confirme la unidad administrativa</mat-label>
+      <input matInput required formControlName="confirmData">
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-flat-button mat-dialog-close>Conservar</button>
+    <button mat-flat-button type="submit" [disabled]="adminUnitForm.invalid">Eliminar</button>
+  </div>
+</form>
