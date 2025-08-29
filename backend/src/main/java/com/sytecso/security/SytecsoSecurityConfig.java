@@ -171,6 +171,8 @@ public class SytecsoSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/angular2/**");
 		web.ignoring().antMatchers("/assets/**");
+		web.ignoring()
+	       .antMatchers("/angular2/**", "/assets/**", "/styles.css", "/runtime.js", "/polyfills.js", "/main.js", "/scripts.js");
 	}
 
 	@Bean

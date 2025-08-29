@@ -36,7 +36,7 @@ public class TemplateEmail {
 				"                                                  <tbody>" + 
 				"                                                    <tr style=\"height: 34px;\">" + 
 				"                                                      <td style=\"font-size: 30px; color: #ffffff; font-weight: normal; text-align: center; font-family: Roboto, Arial, Helvetica, sans-serif; word-break: break-word; height: 34px; width: 520px;\" align=\"center\">" + 
-				"                                                        <span style=\"color: #ffffff; font-size: 30px; line-height: 30px;\">Restablecer Contraseña</span>" + 
+				"                                                        <span style=\"color: #ffffff; font-size: 30px; line-height: 30px;\">Restablecer Contrase&ntilde;a</span>" + 
 				"                                                      </td>" + 
 				"                                                    </tr>" + 
 				"<!-- start space -->" + 
@@ -108,20 +108,20 @@ public class TemplateEmail {
 				"                          <span style=\"font-weight: 400;\">" + 
 				"                            <br>" + 
 				"                          </span> " + 
-				"                          <span style=\"font-weight: 400;\">Se solicitó recientemente cambiar la contraseña de su cuenta.</span> " + 
+				"                          <span style=\"font-weight: 400;\">Se solicit&oacute; recientemente cambiar la contrase&ntilde;a de su cuenta.</span> " + 
 				"                          <span style=\"font-weight: 400;\">" + 
 				"                            <br>" + 
 				"                          </span> " + 
 				"                          <span style=\"font-weight: 400;\">" + 
 				"                            <br>" + 
 				"                          </span> " + 
-				"                          <span style=\"font-weight: 400;\">Si usted solicitó este cambio de contraseña, pulse el enlace siguiente para establecer una nueva contraseña dentro de 24 horas:</span> " + 
+				"                          <span style=\"font-weight: 400;\">Si usted solicit&oacute; este cambio de contrase&ntilde;a, pulse el enlace siguiente para establecer una nueva contrase&ntilde;a dentro de 24 horas:</span> " + 
 				"                          <span style=\"font-weight: 400;\">" + 
 				"                            <br>" + 
 				"                          </span> " + 
 				"                          <strong>" + 
 				"                            <a href=\" "+url+"\" style=\"background-color: #216085; color: #ffffff; border: 0px solid #000000; border-radius: 3px; box-sizing: border-box; font-size: 13px; "
-				+ "							font-weight: bold; line-height: 40px; padding: 12px 24px; text-align: center; text-decoration: none; text-transform: uppercase; vertical-align: middle;\" rel=\"noopener\">CAMBIO CONTRASEÑA!</a>" + 
+				+ "							font-weight: bold; line-height: 40px; padding: 12px 24px; text-align: center; text-decoration: none; text-transform: uppercase; vertical-align: middle;\" rel=\"noopener\">CAMBIO CONTRASE&Ntilde;A!</a>" + 
 				"                          </strong> " + 
 				"                          <span style=\"font-weight: 400;\">" + 
 				"                            <br>" + 
@@ -139,14 +139,14 @@ public class TemplateEmail {
 				"                          <span style=\"font-weight: 400;\">" + 
 				"                            <br>" + 
 				"                          </span> " + 
-				"                          <span style=\"font-weight: 400;\">Si no desea cambiar su contraseña, ignore este mensaje.</span> "+
+				"                          <span style=\"font-weight: 400;\">Si no desea cambiar su contrase&ntilde;a, ignore este mensaje.</span> "+
 				"                          <span style=\"font-weight: 400;\">" + 
 				"                            <br>" + 
 				"                            <br>" + 
 				"                          </span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
-				"                          <span style=\"font-weight: 400;\">Mensaje automático por favor no responda este mensaje</span>" + 
+				"                          <span style=\"font-weight: 400;\">Mensaje autom&aacute;tico por favor no responda este mensaje</span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
 				"                          <span style=\"font-weight: 400;\">" + 
@@ -201,7 +201,7 @@ public class TemplateEmail {
 				"                                    <tr>" + 
 				"                                      <td style=\"font-size: 14px; line-height: 24px; color: #ffffff; font-weight: normal; text-align: left; font-family: Roboto, Arial, Helvetica, sans-serif; padding-right: 10px; word-break: break-word; width: 387px;\" align=\"left\">" + 
 				"                                        <span style=\"text-decoration: none; color: #ffffff; font-size: inherit; line-height: 24px;\">" + 
-				"                                          <span style=\"font-weight: 400;\">Visite nuestra Página: www.spsegurospatrimonial.mx</span>." + 
+				"                                          <span style=\"font-weight: 400;\">Visite nuestra P&aacute;gina: www.spsegurospatrimonial.mx</span>." + 
 				"                                        </span>" + 
 				"                                      </td>" + 
 				"                                    </tr>" + 
@@ -276,7 +276,7 @@ public class TemplateEmail {
 				"                                                  <tbody>" + 
 				"                                                    <tr style=\"height: 34px;\">" + 
 				"                                                      <td style=\"font-size: 30px; color: #ffffff; font-weight: normal; text-align: center; font-family: Roboto, Arial, Helvetica, sans-serif; word-break: break-word; height: 34px; width: 520px;\" align=\"center\">" + 
-				"                                                        <span style=\"color: #ffffff; font-size: 30px; line-height: 30px;\">Restablecer Contraseña</span>" + 
+				"                                                        <span style=\"color: #ffffff; font-size: 30px; line-height: 30px;\">Restablecer Contrase&ntilde;a</span>" + 
 				"                                                      </td>" + 
 				"                                                    </tr>" + 
 				"<!-- start space -->" + 
@@ -351,10 +351,10 @@ public class TemplateEmail {
 				"                        </p>" + 
 				"                        <p>" + 
 				"                          <span style=\"font-weight: 400;\">" + 
-				"                            <br>La contraseña de su cuenta" + 
+				"                            <br>La contrase&ntilde;a de su cuenta" + 
 				"                          </span> " + 
 				"                          <strong>www.spsegurospatrimonial.mx</strong> " + 
-				"                          <span style=\"font-weight: 400;\">se restableció con éxito el</span> " + 
+				"                          <span style=\"font-weight: 400;\">se restableci&oacute; con &eacute;xito el</span> " + 
 				"                          <strong>"+fecha+"</strong>" + 
 				"                        </p>" + 
 				"                        <p>" + 
@@ -364,7 +364,7 @@ public class TemplateEmail {
 				"                          </span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
-				"                          <span style=\"font-weight: 400;\">Mensaje automático por favor no responda este mensaje</span>" + 
+				"                          <span style=\"font-weight: 400;\">Mensaje autom&aacute;tico por favor no responda este mensaje</span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
 				"                          <span style=\"font-weight: 400;\">" + 
@@ -418,7 +418,7 @@ public class TemplateEmail {
 				"                                    <tr>" + 
 				"                                      <td style=\"font-size: 14px; line-height: 24px; color: #ffffff; font-weight: normal; text-align: left; font-family: Roboto, Arial, Helvetica, sans-serif; padding-right: 10px; word-break: break-word; width: 387px;\" align=\"left\">" + 
 				"                                        <span style=\"text-decoration: none; color: #ffffff; font-size: inherit; line-height: 24px;\">" + 
-				"                                          <span style=\"font-weight: 400;\">Visite nuestra Página: www.spsegurospatrimonial.mx</span>." + 
+				"                                          <span style=\"font-weight: 400;\">Visite nuestra P&aacute;gina: www.spsegurospatrimonial.mx</span>." + 
 				"                                        </span>" + 
 				"                                      </td>" + 
 				"                                    </tr>" + 
@@ -472,7 +472,7 @@ public class TemplateEmail {
 				"				         </tr>   " + 
 				"				         <tr bgcolor = #257aa9>   " + 
 				"				            <td colspan =  4> " + 
-				"                            <p style=\"color: #FFFFFF; font-size: 12pt\">INFORMACIÓN DEL SERVIDOR PÚBLICO</p> " + 
+				"                            <p style=\"color: #FFFFFF; font-size: 12pt\">INFORMACI&Oacute;N DEL SERVIDOR P&Uacute;BLICO</p> " + 
 				"                            </td>   " + 
 				"				         </tr> " + 
 				"                         <tr>   " + 
@@ -492,7 +492,7 @@ public class TemplateEmail {
 				"                            </td>   " + 
 				"				         </tr> " + 
 				"                         <tr>   " + 
-				"				            <td>Verifique que sus datos personales estén correctos, en caso de existir algún error u omisión acuda al área de Recursos Humanos de su dependencia, unidad o equivalente de su centro de trabajo, para que se requisite el formato para la actualización de los mismos.</td>   " + 
+				"				            <td>Verifique que sus datos personales est&eacute;n correctos, en caso de existir alg&uacute;n error u omisi&oacute;n acuda al &aacute;rea de Recursos Humanos de su dependencia, unidad o equivalente de su centro de trabajo, para que se requisite el formato para la actualizaci&oacute;n de los mismos.</td>   " + 
 				"				         </tr> " + 
 				"				      </table>   " + 
 				"				</body>   " + 
@@ -534,7 +534,7 @@ public class TemplateEmail {
 				"                                                  <tbody>" + 
 				"                                                    <tr style=\"height: 34px;\">" + 
 				"                                                      <td style=\"font-size: 30px; color: #ffffff; font-weight: normal; text-align: center; font-family: Roboto, Arial, Helvetica, sans-serif; word-break: break-word; height: 34px; width: 520px;\" align=\"center\">" + 
-				"                                                        <span style=\"color: #ffffff; font-size: 30px; line-height: 30px;\">Actualización de Datos</span>" + 
+				"                                                        <span style=\"color: #ffffff; font-size: 30px; line-height: 30px;\">Actualizaci&oacute;n de Datos</span>" + 
 				"                                                      </td>" + 
 				"                                                    </tr>" + 
 				"<!-- start space -->" + 
@@ -608,7 +608,7 @@ public class TemplateEmail {
 				"                          </span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
-				"                          <span style=\"font-weight: 400;\">La petición para actualizar los datos de acceso al portal www.spsegurospatrimonial.mx ha sido exitosa</span>" + 
+				"                          <span style=\"font-weight: 400;\">La petici&oacute;n para actualizar los datos de acceso al portal www.spsegurospatrimonial.mx ha sido exitosa</span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
 				"                          <span style=\"font-weight: 400;\">" + 
@@ -616,7 +616,7 @@ public class TemplateEmail {
 				"                          </span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
-				"                          <span style=\"font-weight: 400;\">Le recordamos que a través del portal usted puede consultar los estados de cuenta mes.</span>" + 
+				"                          <span style=\"font-weight: 400;\">Le recordamos que a trav&eacute;s del portal usted puede consultar los estados de cuenta mes.</span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
 				"                          <span style=\"font-weight: 400;\">" + 
@@ -625,7 +625,7 @@ public class TemplateEmail {
 				"                          </span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
-				"                          <span style=\"font-weight: 400;\">Mensaje automático por favor no responda este mensaje</span>" + 
+				"                          <span style=\"font-weight: 400;\">Mensaje autom&aacute;tico por favor no responda este mensaje</span>" + 
 				"                        </p>" + 
 				"                        <p>" + 
 				"                          <span style=\"font-weight: 400;\">" + 
@@ -679,7 +679,7 @@ public class TemplateEmail {
 				"                                    <tr>" + 
 				"                                      <td style=\"font-size: 14px; line-height: 24px; color: #ffffff; font-weight: normal; text-align: left; font-family: Roboto, Arial, Helvetica, sans-serif; padding-right: 10px; word-break: break-word; width: 387px;\" align=\"left\">" + 
 				"                                        <span style=\"text-decoration: none; color: #ffffff; font-size: inherit; line-height: 24px;\">" + 
-				"                                          <span style=\"font-weight: 400;\">Visite nuestra Página: www.spsegurospatrimonial.mx</span>." + 
+				"                                          <span style=\"font-weight: 400;\">Visite nuestra P&oacute;gina: www.spsegurospatrimonial.mx</span>." + 
 				"                                        </span>" + 
 				"                                      </td>" + 
 				"                                    </tr>" + 
@@ -901,7 +901,7 @@ public class TemplateEmail {
 				"                                    <tr>" + 
 				"                                      <td style=\"font-size: 14px; line-height: 24px; color: #ffffff; font-weight: normal; text-align: left; font-family: Roboto, Arial, Helvetica, sans-serif; padding-right: 10px; word-break: break-word; width: 387px;\" align=\"left\">" + 
 				"                                        <span style=\"text-decoration: none; color: #ffffff; font-size: inherit; line-height: 24px;\">" + 
-				"                                          <span style=\"font-weight: 400;\">Visite nuestra Página: www.spsegurospatrimonial.mx</span>." + 
+				"                                          <span style=\"font-weight: 400;\">Visite nuestra P&aacute;gina: www.spsegurospatrimonial.mx</span>." + 
 				"                                        </span>" + 
 				"                                      </td>" + 
 				"                                    </tr>" + 
@@ -1202,7 +1202,7 @@ public class TemplateEmail {
 				"                                                  <tbody>" + 
 				"                                                    <tr style=\"height: 34px;\">" + 
 				"                                                      <td style=\"font-size: 30px; color: #ffffff; font-weight: normal; text-align: center; font-family: Roboto, Arial, Helvetica, sans-serif; word-break: break-word; height: 34px; width: 520px;\" align=\"center\">" + 
-				"                                                        <span style=\"color: #ffffff; font-size: 30px; line-height: 30px;\">Creación de Aclaración</span>" + 
+				"                                                        <span style=\"color: #ffffff; font-size: 30px; line-height: 30px;\">Creaci&oacute;n de Aclaraci&oacute;n</span>" + 
 				"                                                      </td>" + 
 				"                                                    </tr>" + 
 				"<!-- start space -->" + 
@@ -1290,7 +1290,7 @@ public class TemplateEmail {
 				"                          <span style=\"font-weight: 400;\">" + 
 				"                            <br>" + 
 				"                          </span> " + 
-				"                          <span style=\"font-weight: 400;\">Si no realiz&oacute; ninguna aclaración, ignore este mensaje.</span> " + 
+				"                          <span style=\"font-weight: 400;\">Si no realiz&oacute; ninguna aclaraci&oacute;n, ignore este mensaje.</span> " + 
 				"                          <span style=\"font-weight: 400;\">" + 
 				"                            <br>" + 
 				"                            <br>" + 

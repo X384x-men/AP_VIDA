@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FootComponent } from './foot/foot.component';
 import { BodyContentRouting } from './body-content-routing.module';
 import { HeadComponent } from './head/head.component';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { MaterialModule } from '../shared/material/material-module';
 import { AccessApplicationModule } from './home/access-application/access-application.module';

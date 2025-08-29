@@ -25,6 +25,9 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/angular2/**").addResourceLocations("WEB-INF/angular2/");
 		registry.addResourceHandler("/assets/**").addResourceLocations("WEB-INF/assets/");
+		// Fallback para /styles.css -> /WEB-INF/angular2/styles.css
+	    registry.addResourceHandler("/styles.css")
+	            .addResourceLocations("/WEB-INF/angular2/");
 	}
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {

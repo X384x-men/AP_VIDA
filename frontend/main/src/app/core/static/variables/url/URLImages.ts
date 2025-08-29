@@ -62,7 +62,7 @@ const URL_SERVICE_NOT_COMPILED = environment.url + nameApp;
  */
 
  // Puerto 4200 (NO TRANSPILADO)
-  export const GlobalVariable = Object.freeze({
+  /*export const GlobalVariable = Object.freeze({
   BASE_URL_API: LOCAL_PATH,
   MAIN_LOGO_INTEGRA: IMAGE_BASE_URL_API.concat('Logo.png'),
   BACKGROUND_IMG_APVIDA: IMAGE_BASE_URL_API.concat('familia.png'),
@@ -72,10 +72,10 @@ const URL_SERVICE_NOT_COMPILED = environment.url + nameApp;
   APLICATION_CONTEXT_PATH: '/'+nameApp,
   XSRF_TOKEN: 'XSRF-TOKEN',
   ADMIN_PROFILE_NAME: 'ADMIN'
-});
+});*/
 
-// Puerto 8081 (ARCHIVOS TRANSPILADOS) PROD
-/*export const GlobalVariable = Object.freeze({
+// Puerto 8080 o 8081 (ARCHIVOS TRANSPILADOS) PROD
+export const GlobalVariable = Object.freeze({
   BASE_URL_API: CONTEXT_PATH,
   MAIN_LOGO_INTEGRA: IMAGE_COMPILED_BASE_URL_API.concat('Logo.png'),
   BACKGROUND_IMG_APVIDA: IMAGE_COMPILED_BASE_URL_API.concat('familia.png'),
@@ -86,7 +86,7 @@ const URL_SERVICE_NOT_COMPILED = environment.url + nameApp;
   XSRF_TOKEN: 'XSRF-TOKEN',
   ADMIN_PROFILE_NAME: 'ADMIN'
 });
-*/
+
 
 const PARENT_URL_PDF = 'PDF';
 export const PdfVariable = Object.freeze({

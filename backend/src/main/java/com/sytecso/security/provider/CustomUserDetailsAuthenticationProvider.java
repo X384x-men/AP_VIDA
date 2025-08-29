@@ -45,7 +45,7 @@ public class CustomUserDetailsAuthenticationProvider extends AbstractUserDetails
 		}	
 		if(!userDetailsService.loadUserByUsername(userDetails.getUsername()).isEnabled()) {
 			logger.debug("Authentication failed: user is inactive");
-			String message = "El usuario se encuentra inactivo, para proporcionarle informaci&oacute;n por favor comuniquese con nosotros a trav&eacute;s del correo electr&oacute;nico modulo.urawa@apvida.mx";
+			String message = "El usuario se encuentra inactivo, para proporcionarle informaci&oacute;n por favor comuniquese con nosotros a trav&eacute;s del correo electr&oacute;nico modulo.urawa@spsegurospatrimonial.mx";
 			byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
 			String messageUTF = new String(bytes, StandardCharsets.UTF_8);
 			throw new BadCredentialsException(

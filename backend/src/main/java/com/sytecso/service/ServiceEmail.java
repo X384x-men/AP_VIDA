@@ -80,8 +80,8 @@ public class ServiceEmail implements EmailPort{
 	        	 EmpleadoAPDTO empleado= serviceUsuario.getEmpleadoAPbyRFC(emailBody.getRfc());
 	        	
 	        	 
-	        	String url=context.getServer()+"/"+context.getApp_Name()+"/angular/changePswd?code="+token;
-	        	//String url="https://www.apvida-consultas.mx/"+context.getApp_Name()+"/angular/changePswd?code="+token; // PROD
+	        	//String url=context.getServer()+"/"+context.getApp_Name()+"/angular/changePswd?code="+token;
+	        	String url="https://www.apvida-consultas.mx/"+context.getApp_Name()+"/angular/changePswd?code="+token; // PROD
 	        	
 	            Message message = new MimeMessage(session);
 	            message.setFrom(new InternetAddress(from));
@@ -291,8 +291,8 @@ public class ServiceEmail implements EmailPort{
     	        	System.out.println("userDetails: "
     						+ ReflectionToStringBuilder.toString(userDetails, ToStringStyle.JSON_STYLE));
     	        	String token = jwtService.generateToken(userDetails);
-            		String url=context.getServer()+"/"+context.getApp_Name()+"/angular/changePswd?code="+token;
-    	        	//String url="https://www.apvida-consultas.mx/"+context.getApp_Name()+"/angular/changePswd?code="+token; // PROD
+            		//String url=context.getServer()+"/"+context.getApp_Name()+"/angular/changePswd?code="+token;
+    	        	String url="https://www.apvida-consultas.mx/"+context.getApp_Name()+"/angular/changePswd?code="+token; // PROD
      	            message.setContent(TemplateEmail.template(email.getNombre(),url), "text/html");
             		break;
             	case "Cambio de Contraseña AP":
